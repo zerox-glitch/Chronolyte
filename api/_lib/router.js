@@ -89,6 +89,21 @@ export async function handleApi({ req, res, method, pathname, url, store }) {
   if (pathname === '/api/health') {
     return ok(res, { status: 'ok', timestamp: nowIso(), store: store.kind, environment: process.env.NODE_ENV || 'development' });
   }
+  // Public one-click diagnostic for deployment troubleshooting (no sensitive values).
+  if (pathname === '/api/diag') {
+    const admins = await store.admins.list().catch(() => []);
+    const envUser = (process.env.ADMIN_USERNAME || '').trim();
+    return ok(res, {
+      store: store.kind,
+      database_url_set: Boolean(process.env.DATABASE_URL),
+      runtime_commit: process.env.VERCEL_GIT_COMMIT_SHA ? process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : null,
+      env_admin_set: Boolean(envUser && process.env.ADMIN_PASSWORD),
+      env_admin_username: envUser || null,
+      admins_in_db: admins.length,
+      admin_usernames: admins.map((a) => a.username),
+      env_admin_in_db: Boolean(envUser) && admins.some((a) => String(a.username).toLowerCase() === envUser.toLowerCase())
+    });
+  }
   if (pathname === '/api' || pathname === '/api/') {
     return ok(res, {
       name: 'Chronolyte API', version: '1.0', store: store.kind,
