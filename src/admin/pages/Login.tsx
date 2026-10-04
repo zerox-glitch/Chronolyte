@@ -31,10 +31,37 @@ export function AdminLogin() {
         body: JSON.stringify({ username: email.trim(), password }),
       });
 
-      const data = await response.json().catch(() => null);
+      // The API must answer with JSON. If it answers with HTML (or a bare 404)
+      // the request was rewritten to the SPA shell instead of reaching the API,
+      // which is a deployment/routing problem — not a wrong password.
+      const contentType = String(response.headers.get('content-type') || '').toLowerCase();
+      let data: any = null;
+      let rawText = '';
+      if (contentType.includes('application/json')) {
+        data = await response.json().catch(() => null);
+      } else {
+        rawText = await response.text().catch(() => '');
+      }
 
       if (!response.ok || !data?.success) {
-        setError(data?.error || data?.message || 'Login failed. Check your credentials.');
+        if (!contentType.includes('application/json')) {
+          const looksHtml = /^\s*(<!doctype html|<html)/i.test(rawText);
+          if (response.status === 404) {
+            setError(
+              looksHtml
+                ? 'Admin API not reached: the server returned the website page (HTML) instead of JSON. The API route was not deployed or the rewrite is missing — check the latest Vercel deployment.'
+                : 'Admin API not found (HTTP 404). The API route was not deployed — check the latest Vercel deployment.'
+            );
+          } else {
+            setError(
+              `Admin API returned an unexpected HTTP ${response.status}${
+                looksHtml ? ' HTML' : ''
+              } response instead of JSON. Please retry in a moment, or check the Vercel function logs.`
+            );
+          }
+        } else {
+          setError(data?.error || data?.message || 'Login failed. Check your credentials.');
+        }
         setIsLoading(false);
         return;
       }
