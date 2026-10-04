@@ -23,43 +23,36 @@ export function PricingManager() {
     loadTiers();
   }, []);
 
-  const loadTiers = () => {
-    const stored = localStorage.getItem('website-pricing');
-    if (stored) {
-      setTiers(JSON.parse(stored));
-    } else {
-      const defaults: PricingTier[] = [
-        {
-          id: '1',
-          name: 'Starter',
-          price: 999,
-          period: 'month',
-          description: 'Perfect for small projects',
-          features: ['5 Projects', '10GB Storage', 'Basic Support'],
-          highlighted: false
-        },
-        {
-          id: '2',
-          name: 'Professional',
-          price: 2999,
-          period: 'month',
-          description: 'For growing businesses',
-          features: ['Unlimited Projects', '100GB Storage', 'Priority Support', 'Analytics'],
-          highlighted: true
-        },
-        {
-          id: '3',
-          name: 'Enterprise',
-          price: 9999,
-          period: 'month',
-          description: 'Custom solutions',
-          features: ['Everything in Pro', 'Dedicated Manager', '24/7 Support', 'Custom Integrations'],
-          highlighted: false
-        }
-      ];
-      setTiers(defaults);
-      localStorage.setItem('website-pricing', JSON.stringify(defaults));
+  const getToken = () => localStorage.getItem('admin_token') || '';
+  const authHeaders = () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${getToken()}`
+  });
+
+  const loadTiers = async () => {
+    try {
+      const res = await fetch('/api/pricing');
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        setTiers(json.data.map((p: any) => ({
+          id: String(p.id),
+          name: p.name,
+          price: Number(p.price) || 0,
+          period: p.period || 'one-time',
+          description: p.description || '',
+          features: typeof p.features === 'string' ? JSON.parse(p.features || '[]') : (p.features || []),
+          highlighted: !!Number(p.highlighted)
+        })));
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to load pricing:', err);
     }
+    setTiers([
+      { id: '1', name: 'Starter', price: 999, period: 'month', description: 'Perfect for small projects', features: ['5 Projects', '10GB Storage', 'Basic Support'], highlighted: false },
+      { id: '2', name: 'Professional', price: 2999, period: 'month', description: 'For growing businesses', features: ['Unlimited Projects', '100GB Storage', 'Priority Support', 'Analytics'], highlighted: true },
+      { id: '3', name: 'Enterprise', price: 9999, period: 'month', description: 'Custom solutions', features: ['Everything in Pro', 'Dedicated Manager', '24/7 Support', 'Custom Integrations'], highlighted: false }
+    ]);
   };
 
   const startAdd = () => {
@@ -86,47 +79,60 @@ export function PricingManager() {
     setFormData({ ...formData, features });
   };
 
-  const saveTier = () => {
+  const saveTier = async () => {
     if (!formData.name || !formData.price) {
       setMessage({ type: 'error', text: 'Name and price are required' });
       return;
     }
 
-    let updated;
-    if (editingId === 'new') {
-      const newTier: PricingTier = {
-        id: Date.now().toString(),
+    try {
+      const payload = {
         name: formData.name,
-        price: formData.price,
+        price: Number(formData.price) || 0,
         period: formData.period || 'month',
         description: formData.description || '',
         features: formData.features || [],
-        highlighted: formData.highlighted || false
+        highlighted: formData.highlighted ? 1 : 0,
+        category: 'websites',
+        active: 1
       };
-      updated = [...tiers, newTier];
-    } else {
-      updated = tiers.map(t =>
-        t.id === editingId
-          ? { ...t, ...formData }
-          : t
-      );
+      if (editingId === 'new') {
+        await fetch('/api/pricing', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+      } else {
+        await fetch(`/api/pricing/${editingId}`, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+      }
+      setMessage({ type: 'success', text: editingId === 'new' ? 'Pricing tier added!' : 'Tier updated!' });
+      setEditingId(null);
+      setFormData({});
+      setShowForm(false);
+      loadTiers();
+      setTimeout(() => setMessage(null), 2000);
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to save pricing tier' });
     }
-
-    setTiers(updated);
-    localStorage.setItem('website-pricing', JSON.stringify(updated));
-    setMessage({ type: 'success', text: editingId === 'new' ? 'Pricing tier added!' : 'Tier updated!' });
-    setEditingId(null);
-    setFormData({});
-    setShowForm(false);
-    setTimeout(() => setMessage(null), 2000);
   };
 
-  const deleteTier = (id: string) => {
+  const deleteTier = async (id: string) => {
     if (!confirm('Delete this pricing tier?')) return;
-    const updated = tiers.filter(t => t.id !== id);
-    setTiers(updated);
-    localStorage.setItem('website-pricing', JSON.stringify(updated));
-    setMessage({ type: 'success', text: 'Tier deleted' });
+    try {
+      await fetch(`/api/pricing/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      setMessage({ type: 'success', text: 'Tier deleted' });
+      loadTiers();
+      setTimeout(() => setMessage(null), 2000);
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to delete tier' });
+    }
   };
 
   return (

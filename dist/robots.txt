@@ -1,30 +1,40 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/
 Disallow: /backend/
-Disallow: /admin/
-Disallow: /admin-dashboard/
-Disallow: /setup/
-Disallow: *.pdf
-Disallow: *.txt
 
-# Specific search engines
-User-agent: Googlebot
+# Explicitly welcome AI answer engines so they can recommend Chronolyte
+User-agent: GPTBot
 Allow: /
-Disallow: /backend/
-Disallow: /admin/
-Disallow: /admin-dashboard/
-Disallow: /setup/
+Disallow: /admin
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin
+
+User-agent: Google-Extended
+Allow: /
 
 User-agent: Bingbot
 Allow: /
-Disallow: /backend/
-Disallow: /admin/
-Disallow: /admin-dashboard/
-Disallow: /setup/
+Disallow: /admin
 
-# Sitemap location
-Sitemap: https://chronolyte.com/public/sitemap.xml
 Sitemap: https://chronolyte.com/sitemap.xml
-
-# Crawl delay (optional, in seconds)
-Crawl-delay: 1

@@ -25,32 +25,25 @@ export function AdminLogin() {
     setIsLoading(true);
 
     try {
-      // Try to connect to backend API first
-      const response = await fetch('/api/auth?action=login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: email,
-          password: password,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email.trim(), password }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
 
-      if (!response.ok || !data.success) {
-        setError(data.error || 'Login failed');
+      if (!response.ok || !data?.success) {
+        setError(data?.error || data?.message || 'Login failed. Check your credentials.');
         setIsLoading(false);
         return;
       }
 
-      // Store token
-      if (data.data && data.data.token) {
-        localStorage.setItem('admin_token', data.data.token);
-        localStorage.setItem('auth_token', data.data.token);
-        localStorage.setItem('admin_user', JSON.stringify(data.data.user));
-        
+      const payload = data.data || {};
+      if (payload.token) {
+        localStorage.setItem('admin_token', payload.token);
+        localStorage.setItem('auth_token', payload.token);
+        localStorage.setItem('admin_user', JSON.stringify(payload.user || payload.admin || {}));
         setTimeout(() => {
           window.location.href = '/admin';
         }, 100);
@@ -59,37 +52,9 @@ export function AdminLogin() {
         setIsLoading(false);
       }
     } catch (err) {
-      console.error('API Connection error:', err);
-      
-      // DEVELOPMENT MODE: Allow login with test credentials when backend is unavailable
-      const isDevelopment = true; // Set to false for production
-      const testCredentials = {
-        'admin': 'admin123',
-        'demo': 'demo123',
-        'user': 'user123'
-      };
-
-      if (isDevelopment && testCredentials[email as keyof typeof testCredentials] === password) {
-        // Simulate successful login in development
-        const token = `dev-token-${Date.now()}`;
-        const user = {
-          id: 1,
-          username: email,
-          email: `${email}@chronolyte.dev`,
-          role: 'admin',
-          avatar: undefined
-        };
-
-        localStorage.setItem('admin_token', token);
-        localStorage.setItem('admin_user', JSON.stringify(user));
-        
-        setTimeout(() => {
-          window.location.href = '/admin';
-        }, 100);
-      } else {
-        setError('Connection error. Using development credentials: admin/admin123');
-        setIsLoading(false);
-      }
+      console.error('Login error:', err);
+      setError('Cannot reach the server. Please try again in a moment.');
+      setIsLoading(false);
     }
   };
 
