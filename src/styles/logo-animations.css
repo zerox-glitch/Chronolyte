@@ -1,0 +1,150 @@
+/* Logo Animations */
+
+/* Navigation slide-in animation */
+@keyframes nav-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nav-slide-in {
+  animation: nav-slide-in 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+/* Navigation Glass Effect */
+.nav-scrolled {
+  backdrop-filter: blur(10px) !important;
+  background-color: rgba(10, 10, 15, 0.7) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-top {
+  backdrop-filter: blur(0px);
+  background-color: rgba(10, 10, 15, 0);
+  border-bottom: 1px solid transparent;
+}
+
+@keyframes logoGlow {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 245, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0);
+  }
+}
+
+@keyframes logoPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-glow-optimized {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes logoRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.logo-animated {
+  animation: logoGlow 3s ease-in-out infinite;
+}
+
+.logo-pulse {
+  animation: logoPulse 2s ease-in-out infinite;
+}
+
+.logo-float {
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+.logo-rotate {
+  animation: logoRotate 8s linear infinite;
+}
+
+/* Logo Styles */
+.logo {
+  border-radius: 12px;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.logo:hover img {
+  transform: scale(1.1);
+}
+
+/* Logo sizes */
+.logo-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.logo-md {
+  width: 40px;
+  height: 40px;
+}
+
+.logo-lg {
+  width: 64px;
+  height: 64px;
+}
+
+.logo-xl {
+  width: 96px;
+  height: 96px;
+}
+
+/* Favicon animation in tab */
+@keyframes faviconPulse {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+.favicon {
+  animation: faviconPulse 2s ease-in-out infinite;
+}

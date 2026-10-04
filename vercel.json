@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/backend/api/auth.php", "destination": "/api/auth" },
+    { "source": "/backend/api/leads.php", "destination": "/api/leads" },
+    { "source": "/backend/api/settings.php", "destination": "/api/settings" },
+    { "source": "/backend/api/project-requests.php", "destination": "/api/project-requests" },
+    { "source": "/backend/api/(.*)", "destination": "/api/$1" },
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ]
+}

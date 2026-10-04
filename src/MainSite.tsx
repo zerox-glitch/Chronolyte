@@ -1,0 +1,1388 @@
+import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { WhatsAppIcon } from './components/WhatsAppIcon';
+import { PhoneIcon } from './components/PhoneIcon';
+
+// ============================================
+// TYPES
+// ============================================
+
+interface HomePageContent {
+  hero: {
+    badge_text: string;
+    headline_1: string;
+    headline_2: string;
+    subheadline: string;
+    cta_primary_text: string;
+    cta_primary_link: string;
+    cta_secondary_text: string;
+    cta_secondary_link: string;
+  };
+  services: {
+    section_title: string;
+    section_subtitle: string;
+    section_description: string;
+    items: Array<{
+      id: string;
+      title: string;
+      description: string;
+      features: string[];
+    }>;
+  };
+  why: {
+    section_title: string;
+    section_subtitle: string;
+    items: Array<{
+      metric: string;
+      label: string;
+      description: string;
+    }>;
+  };
+  process: {
+    section_title: string;
+    section_subtitle: string;
+    steps: Array<{
+      step: string;
+      title: string;
+      description: string;
+    }>;
+  };
+  industries: {
+    section_title: string;
+    section_subtitle: string;
+    items: Array<{ name: string }>;
+  };
+  cta: {
+    headline: string;
+    description: string;
+    button_text: string;
+    button_link: string;
+  };
+}
+
+// ============================================
+// COMPONENTS
+// ============================================
+
+// Animated Section Wrapper
+function AnimatedSection({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 60 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+      transition={{ duration: 0.8, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// Glowing Orb Background Effect
+function GlowOrbs() {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden hidden sm:block">
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px]" style={{ animation: 'pulse-glow-optimized 4s ease-in-out infinite' }} />
+      <div className="absolute bottom-1/4 -right-32 w-80 h-80 bg-blue-500/20 rounded-full blur-[100px]" style={{ animation: 'pulse-glow-optimized 4s ease-in-out infinite 2s' }} />
+    </div>
+  );
+}
+
+// Noise Overlay
+function NoiseOverlay() {
+  return <div className="fixed inset-0 pointer-events-none noise-bg hidden sm:block" />;
+}
+
+// Grid Background
+function GridBackground() {
+  return (
+    <div className="fixed inset-0 pointer-events-none opacity-[0.02] hidden sm:block">
+      <div className="absolute inset-0" style={{
+        backgroundImage: `linear-gradient(rgba(0,245,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.3) 1px, transparent 1px)`,
+        backgroundSize: '100px 100px'
+      }} />
+    </div>
+  );
+}
+
+// Animated Hourglass Logo with Arrow - Rotating with Glow
+function HourglassLogo({ className = '' }: { className?: string }) {
+  return (
+    <motion.div
+      className={`${className} relative`}
+      animate={{ rotate: 360 }}
+      transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+      style={{ filter: 'drop-shadow(0 0 8px rgba(0, 229, 255, 0.6))' }}
+    >
+      <svg 
+        viewBox="0 0 100 100" 
+        className="w-full h-full"
+        style={{ overflow: 'visible' }}
+      >
+        <defs>
+          <linearGradient id="hgCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#00e5ff" />
+            <stop offset="100%" stopColor="#0070ff" />
+          </linearGradient>
+          <linearGradient id="hgSilver" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="40%" stopColor="#c0c0c0" />
+            <stop offset="100%" stopColor="#707070" />
+          </linearGradient>
+          <linearGradient id="hgArrow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#00e5ff" stopOpacity="0.1" />
+            <stop offset="20%" stopColor="#00e5ff" stopOpacity="0.8" />
+            <stop offset="50%" stopColor="#00ffff" />
+            <stop offset="80%" stopColor="#00e5ff" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#0070ff" />
+          </linearGradient>
+          <radialGradient id="hgFlash" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="40%" stopColor="#00ffff" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#00e5ff" stopOpacity="0" />
+          </radialGradient>
+          <filter id="hgGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="hgBright" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="hgBurst" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="3" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        {/* Background arc */}
+        <path d="M 25 80 A 35 35 0 1 1 75 80" fill="none" stroke="url(#hgCyan)" strokeWidth="3" filter="url(#hgGlow)" opacity="0.85"/>
+        <path d="M 28 77 A 31 31 0 1 1 72 77" fill="none" stroke="url(#hgSilver)" strokeWidth="1.5" opacity="0.4"/>
+
+        {/* Hourglass outer cyan */}
+        <g filter="url(#hgGlow)">
+          <path d="M 35 18 L 65 18 L 65 24 L 55 46 L 55 54 L 65 76 L 65 82 L 35 82 L 35 76 L 45 54 L 45 46 L 35 24 Z" 
+            fill="none" stroke="url(#hgCyan)" strokeWidth="3" strokeLinejoin="round"/>
+        </g>
+        
+        {/* Hourglass inner silver */}
+        <path d="M 38 21 L 62 21 L 62 25 L 53 45 L 53 55 L 62 75 L 62 79 L 38 79 L 38 75 L 47 55 L 47 45 L 38 25 Z" 
+          fill="none" stroke="url(#hgSilver)" strokeWidth="2" strokeLinejoin="round" opacity="0.7"/>
+        
+        {/* Top/bottom bars */}
+        <line x1="32" y1="18" x2="68" y2="18" stroke="url(#hgCyan)" strokeWidth="4" strokeLinecap="round" filter="url(#hgGlow)"/>
+        <line x1="32" y1="82" x2="68" y2="82" stroke="url(#hgCyan)" strokeWidth="4" strokeLinecap="round" filter="url(#hgGlow)"/>
+        <line x1="35" y1="21" x2="65" y2="21" stroke="url(#hgSilver)" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+        <line x1="35" y1="79" x2="65" y2="79" stroke="url(#hgSilver)" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+
+        {/* Arrow beam */}
+        <g filter="url(#hgBright)">
+          <line x1="5" y1="50" x2="95" y2="50" stroke="url(#hgArrow)" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M 90 50 L 100 50" stroke="url(#hgCyan)" strokeWidth="3.5" strokeLinecap="round"/>
+          <path d="M 94 45 L 102 50 L 94 55" fill="none" stroke="url(#hgCyan)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+        </g>
+
+        {/* Center burst */}
+        <g filter="url(#hgBurst)">
+          <circle cx="50" cy="50" r="8" fill="url(#hgFlash)"/>
+          <circle cx="50" cy="50" r="4" fill="#ffffff"/>
+          <line x1="50" y1="38" x2="50" y2="32" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round"/>
+          <line x1="50" y1="62" x2="50" y2="68" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round"/>
+          <line x1="38" y1="50" x2="32" y2="50" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" opacity="0.7"/>
+          <line x1="62" y1="50" x2="68" y2="50" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" opacity="0.7"/>
+          <line x1="42" y1="42" x2="38" y2="38" stroke="#00ffff" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+          <line x1="58" y1="42" x2="62" y2="38" stroke="#00ffff" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+          <line x1="42" y1="58" x2="38" y2="62" stroke="#00ffff" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+          <line x1="58" y1="58" x2="62" y2="62" stroke="#00ffff" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+        </g>
+
+        {/* Shattered fragments */}
+        <g opacity="0.85">
+          <polygon points="78,38 84,35 82,43" fill="url(#hgCyan)" filter="url(#hgGlow)"/>
+          <polygon points="85,48 92,45 90,53" fill="url(#hgCyan)" filter="url(#hgGlow)"/>
+          <polygon points="80,60 87,57 85,65" fill="url(#hgCyan)" filter="url(#hgGlow)"/>
+          <polygon points="74,68 80,65 78,73" fill="url(#hgCyan)" filter="url(#hgGlow)"/>
+          <polygon points="88,40 93,38 92,44" fill="#00e5ff" opacity="0.7"/>
+          <polygon points="76,32 81,30 80,36" fill="#00e5ff" opacity="0.6"/>
+          <polygon points="84,70 89,68 88,74" fill="#00e5ff" opacity="0.6"/>
+          <circle cx="94" cy="50" r="1.5" fill="#00e5ff" opacity="0.5"/>
+          <circle cx="90" cy="58" r="1.2" fill="#00ffff" opacity="0.4"/>
+          <circle cx="86" cy="35" r="1" fill="#00e5ff" opacity="0.4"/>
+          <circle cx="78" cy="75" r="1.3" fill="#0070ff" opacity="0.4"/>
+        </g>
+      </svg>
+    </motion.div>
+  );
+}
+
+// Navigation
+function Navigation() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [callMenuOpen, setCallMenuOpen] = useState(false);
+  
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close menu when clicking a link
+  const handleLinkClick = () => setMobileMenuOpen(false);
+  
+  return (
+    <>
+      <nav 
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50 }}
+        className={`nav-slide-in transition-all duration-500 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/10 shadow-lg shadow-black/20 ${scrolled ? 'py-3 md:py-4 bg-dark-900/60' : 'py-4 md:py-6 bg-dark-900/30'}`}
+      >
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
+          <div className="flex items-center gap-2 md:gap-4">
+            {/* Rotating Hourglass Logo */}
+            <HourglassLogo className="w-8 h-8 md:w-12 md:h-12" />
+            
+            {/* CHRONOLYTE Text with glowing O */}
+            <span className="font-display font-bold text-lg md:text-2xl tracking-wide text-white flex items-center" style={{ textShadow: '0 0 10px rgba(0,229,255,0.3)' }}>
+              CHR
+              {/* Glowing O */}
+              <span className="relative inline-flex items-center justify-center w-5 h-5 md:w-7 md:h-7 mx-0.5">
+                {/* Outer glow pulse */}
+                <motion.span 
+                  className="absolute inset-[-4px] rounded-full bg-cyan-400/30 blur-md"
+                  animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.9, 1.1, 0.9] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                {/* Main ring */}
+                <span className="absolute inset-0 rounded-full border-[2px] md:border-[2.5px] border-cyan-400" style={{ boxShadow: '0 0 12px rgba(0,229,255,0.9), 0 0 25px rgba(0,229,255,0.5), inset 0 0 8px rgba(0,229,255,0.4)' }} />
+                {/* Inner ring */}
+                <span className="absolute inset-[2px] md:inset-[3px] rounded-full border border-cyan-300/50" />
+                {/* Horizontal light flare */}
+                <span className="absolute w-7 md:w-9 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent opacity-90" />
+                {/* Vertical light flare */}
+                <span className="absolute h-7 md:h-9 w-[2px] bg-gradient-to-b from-transparent via-white to-transparent opacity-70" />
+                {/* Diagonal flares */}
+                <span className="absolute w-5 md:w-7 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-200 to-transparent rotate-45 opacity-60" />
+                <span className="absolute w-5 md:w-7 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-200 to-transparent -rotate-45 opacity-60" />
+                {/* Center bright dot */}
+                <motion.span 
+                  className="absolute w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white"
+                  animate={{ opacity: [0.8, 1, 0.8], scale: [0.8, 1.2, 0.8] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  style={{ boxShadow: '0 0 6px #fff, 0 0 10px #00e5ff' }}
+                />
+              </span>
+              NOLYTE
+            </span>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-sm text-white/70">
+            <Link to="/services" className="hover:text-cyan-400 transition-colors">Services</Link>
+            <Link to="/pricing" className="hover:text-cyan-400 transition-colors">Pricing</Link>
+            <Link to="/portfolio" className="hover:text-cyan-400 transition-colors">Portfolio</Link>
+            <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
+            <Link to="/faq" className="hover:text-cyan-400 transition-colors">FAQ</Link>
+            <Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
+          </div>
+          <div className="relative hidden md:block">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setCallMenuOpen((v) => !v)}
+              className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-sm font-semibold text-black hover:shadow-lg hover:shadow-cyan-500/30 transition-shadow"
+            >
+              Call Now
+            </motion.button>
+            {callMenuOpen && (
+              <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#0c1220] shadow-lg shadow-cyan-500/10 overflow-hidden">
+                <a
+                  href="https://wa.me/18126906121"
+                  className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors"
+                >
+                  <WhatsAppIcon className="w-4 h-4 text-emerald-400" /> WhatsApp
+                </a>
+                <a
+                  href="tel:+18126906121"
+                  className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors border-t border-white/5"
+                >
+                  <PhoneIcon className="w-4 h-4 text-cyan-400" /> Call Phone
+                </a>
+              </div>
+            )}
+          </div>
+          <motion.button 
+            className="md:hidden text-white p-3 -mr-2 z-50 rounded-lg hover:bg-white/10 transition-colors"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Toggle menu"
+          >
+            <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </motion.button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[60] md:hidden"
+        >
+          <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={() => setMobileMenuOpen(false)} />
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative z-[70] flex flex-col items-center justify-center min-h-screen gap-6 p-8 pt-24"
+          >
+            <Link to="/services" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">Services</Link>
+            <Link to="/pricing" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">Pricing</Link>
+            <Link to="/portfolio" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">Portfolio</Link>
+            <Link to="/about" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">About</Link>
+            <Link to="/faq" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">FAQ</Link>
+            <Link to="/contact" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">Contact</Link>
+            <div className="flex flex-col gap-3 w-full max-w-xs">
+              <a 
+                href="https://wa.me/15551234567" 
+                onClick={handleLinkClick}
+                className="px-8 py-4 bg-emerald-500/20 border border-emerald-400/40 rounded-full text-lg font-semibold text-emerald-200 text-center"
+              >
+                WhatsApp
+              </a>
+              <a 
+                href="tel:+1234567890" 
+                onClick={handleLinkClick}
+                className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-lg font-semibold text-black text-center"
+              >
+                Call Phone
+              </a>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
+  );
+}
+
+// Hero Section
+function HeroSection({ content }: { content: HomePageContent['hero'] }) {
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 100]);
+  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
+  
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-20">
+      {/* Animated Light Streaks */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"
+            style={{
+              width: '200px',
+              top: `${20 + i * 15}%`,
+              left: '-200px',
+            }}
+            animate={{
+              x: ['0vw', '150vw'],
+              opacity: [0, 1, 1, 0],
+            }}
+            transition={{
+              duration: 3 + i * 0.5,
+              repeat: Infinity,
+              delay: i * 1.2,
+              ease: 'linear',
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Central Glow */}
+      <motion.div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[800px] h-[400px] md:h-[800px] rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(0,245,255,0.1) 0%, transparent 70%)',
+          y,
+        }}
+      />
+      
+      <motion.div style={{ opacity }} className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          {/* Badge */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 glass rounded-full mb-8 md:mb-10"
+          >
+            <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+            <span className="text-xs md:text-sm text-white/70">{content.badge_text}</span>
+          </motion.div>
+          
+          {/* Main Headline */}
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95] mb-4 md:mb-6"
+          >
+            <span className="text-white">{content.headline_1}</span>
+            <br />
+            <span className="gradient-text glow-text">{content.headline_2}</span>
+          </motion.h1>
+          
+          {/* Sub-headline */}
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.8 }}
+            className="text-base md:text-xl text-white/60 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed px-2 whitespace-pre-line"
+          >
+            {content.subheadline}
+          </motion.p>
+          
+          {/* CTAs */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.8 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4"
+          >
+            <Link to={content.cta_primary_link}>
+              <motion.div
+                whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(0,245,255,0.4)' }}
+                whileTap={{ scale: 0.95 }}
+                className="group relative w-full sm:w-auto px-6 md:px-8 py-3.5 md:py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full font-semibold text-black overflow-hidden text-center"
+              >
+                <span className="relative z-10">{content.cta_primary_text}</span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              </motion.div>
+            </Link>
+            <Link to={content.cta_secondary_link}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto px-6 md:px-8 py-3.5 md:py-4 glass rounded-full font-semibold text-white hover:bg-white/10 transition-colors text-center"
+              >
+                {content.cta_secondary_text}
+              </motion.div>
+            </Link>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-6 pb-10">
+        <ProjectStarterForm />
+      </div>
+    </section>
+  );
+}
+
+function ProjectStarterForm() {
+  const [step, setStep] = useState(0);
+  const [selectedService, setSelectedService] = useState('website');
+  const [projectSummary, setProjectSummary] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [budget, setBudget] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+
+  const options = [
+    { value: 'website', label: 'Website Design & Development' },
+    { value: 'saas', label: 'SaaS Product Build' },
+    { value: 'automation', label: 'AI Automation & Workflow' },
+    { value: 'branding', label: 'Branding & Landing Pages' },
+    { value: 'app', label: 'App / MVP / Custom Tool' },
+  ];
+
+  const serviceLabels: Record<string, string> = {
+    website: 'Website Design & Development',
+    saas: 'SaaS Product Build',
+    automation: 'AI Automation & Workflow',
+    branding: 'Branding & Landing Pages',
+    app: 'App / MVP / Custom Tool',
+  };
+
+  const canContinue = step === 0 ? !!selectedService : step === 1 ? true : !!name && !!email;
+
+  const handleSubmit = async () => {
+    if (!name || !email) {
+      setError('Please add your name and email so we can contact you.');
+      return;
+    }
+
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/backend/api/leads.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone: phone || '',
+          company: '',
+          service_interested: serviceLabels[selectedService],
+          budget: budget || 'Not specified',
+          notes: projectSummary ? `Project brief: ${projectSummary}` : 'No project brief provided',
+          status: 'new',
+          source: 'homepage-cta',
+        }),
+      });
+
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error || payload?.message || 'Unable to submit your request right now.');
+      }
+
+      setSubmitted(true);
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : 'Unable to submit your request right now.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className="mt-10 max-w-3xl mx-auto rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-left shadow-[0_0_40px_rgba(16,185,129,0.15)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300">Request received</p>
+        <h3 className="mt-3 text-2xl font-bold text-white">Thanks, we&apos;ll reach out within 24 hours.</h3>
+        <p className="mt-2 text-white/70">Your project details are saved in the admin dashboard and we&apos;ll follow up with the next steps.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-10 max-w-4xl mx-auto rounded-[28px] border border-white/10 bg-[#0c1220]/80 p-5 md:p-7 shadow-[0_0_50px_rgba(34,210,255,0.12)] backdrop-blur-xl">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Start your project free</p>
+          <h3 className="mt-2 text-2xl font-bold text-white">Tell us what you need</h3>
+        </div>
+        <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
+          Step {step + 1} / 3
+        </div>
+      </div>
+
+      {step === 0 && (
+        <div className="grid gap-3 md:grid-cols-2">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => setSelectedService(option.value)}
+              className={`rounded-2xl border p-4 text-left transition-all ${
+                selectedService === option.value
+                  ? 'border-cyan-400 bg-cyan-500/10 text-white shadow-[0_0_30px_rgba(34,211,238,0.15)]'
+                  : 'border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:bg-white/10'
+              }`}
+            >
+              <div className="font-semibold">{option.label}</div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {step === 1 && (
+        <div className="space-y-4">
+          <label className="block text-sm font-medium text-white/70">What do you want to build?</label>
+          <textarea
+            value={projectSummary}
+            onChange={(event) => setProjectSummary(event.target.value)}
+            rows={6}
+            placeholder="Example: I need a premium SaaS marketing site with pricing, a custom booking system, and AI chatbot automation..."
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/35 focus:border-cyan-500/50 focus:outline-none"
+          />
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2 md:col-span-2">
+            <label className="block text-sm font-medium text-white/70">Full name</label>
+            <input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Your name"
+              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/35 focus:border-cyan-500/50 focus:outline-none"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-white/70">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/35 focus:border-cyan-500/50 focus:outline-none"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-white/70">Phone (optional)</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              placeholder="(555) 123-4567"
+              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/35 focus:border-cyan-500/50 focus:outline-none"
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <label className="block text-sm font-medium text-white/70">Budget range (optional)</label>
+            <input
+              value={budget}
+              onChange={(event) => setBudget(event.target.value)}
+              placeholder="$2k - $10k, monthly retainers, or custom"
+              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/35 focus:border-cyan-500/50 focus:outline-none"
+            />
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          {error}
+        </div>
+      )}
+
+      <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+        <button
+          type="button"
+          onClick={() => setStep((current) => Math.max(0, current - 1))}
+          className={`rounded-full border border-white/10 bg-white/5 px-5 py-3 font-medium text-white/80 ${step === 0 ? 'invisible' : ''}`}
+        >
+          Back
+        </button>
+
+        {step < 2 ? (
+          <button
+            type="button"
+            onClick={() => {
+              if (canContinue) setStep((current) => current + 1);
+            }}
+            className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-semibold text-black disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={!canContinue}
+          >
+            Continue
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-semibold text-black disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Sending...' : 'Get My Free Quote'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Services Section
+// Default service icons (used as fallback)
+const serviceIcons = [
+  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+  </svg>,
+  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+  </svg>,
+  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>,
+  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+  </svg>
+];
+
+const defaultServices = [
+  { id: "saas", title: "SaaS Creation", description: "Full-stack SaaS products built for scale. From MVP to enterprise-grade platforms with modern architecture, seamless UX, and revenue-ready features.", features: ["Custom Architecture", "Scalable Infrastructure", "User Analytics", "Payment Integration"] },
+  { id: "websites", title: "Premium Websites", description: "Award-worthy websites with cinematic animations, micro-interactions, and immersive experiences that convert visitors into customers.", features: ["Advanced Animations", "Performance Optimized", "SEO Excellence", "Conversion Focused"] },
+  { id: "automation", title: "AI Automation", description: "Intelligent systems that work 24/7. Lead capture, CRM automation, AI chatbots, and custom workflows that save thousands of hours.", features: ["Lead Generation", "Smart Chatbots", "CRM Integration", "Custom Workflows"] },
+  { id: "ai-tools", title: "Custom AI Tools", description: "Bespoke AI solutions tailored to your business. From data analysis to predictive models, we build the intelligence you need.", features: ["Machine Learning", "Data Processing", "API Integration", "Real-time Analytics"] }
+];
+
+// Services Section
+function ServicesSection({ content }: { content: HomePageContent['services'] }) {
+  const services = content.items.length > 0 ? content.items : defaultServices;
+  
+  return (
+    <section id="services" className="relative py-16 md:py-32 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <AnimatedSection className="text-center mb-10 md:mb-20">
+          <span className="text-cyan-400 text-xs md:text-sm font-semibold tracking-wider uppercase mb-3 md:mb-4 block">What We Build</span>
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">
+            {content.section_title || "Precision-Engineered"}
+            <br />
+            <span className="gradient-text">{content.section_subtitle || "Digital Solutions"}</span>
+          </h2>
+          <p className="text-white/60 text-base md:text-lg max-w-2xl mx-auto px-2">
+            {content.section_description || "Every solution we create is custom-built for maximum impact. No templates. No shortcuts. Only results."}
+          </p>
+        </AnimatedSection>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {services.map((service, index) => (
+            <AnimatedSection key={service.id || service.title} delay={index * 0.1}>
+              <motion.div
+                whileHover={{ y: -5, scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+                className="group relative glass rounded-2xl md:rounded-3xl p-5 md:p-8 h-full overflow-hidden hover:glow-box"
+              >
+                {/* Hover Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="relative z-10">
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center mb-4 md:mb-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300">
+                    {serviceIcons[index] || serviceIcons[0]}
+                  </div>
+                  <h3 className="font-display text-xl md:text-2xl font-bold mb-2 md:mb-3 group-hover:text-cyan-400 transition-colors">{service.title}</h3>
+                  <p className="text-white/60 text-sm md:text-base mb-4 md:mb-6 leading-relaxed">{service.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {service.features.map((feature) => (
+                      <span key={feature} className="px-3 py-1 text-xs text-cyan-400/80 bg-cyan-400/10 rounded-full border border-cyan-400/20">
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const defaultBenefits = [
+  { metric: "10x", label: "Faster Delivery", description: "AI-accelerated development cuts project timelines dramatically." },
+  { metric: "99.9%", label: "Precision", description: "Meticulous attention to detail in every pixel and line of code." },
+  { metric: "100%", label: "Custom Built", description: "No templates. Every solution is engineered from scratch." },
+  { metric: "24/7", label: "Automation", description: "Systems that work while you sleep, saving time and money." },
+  { metric: "∞", label: "Scalability", description: "Future-proof architecture that grows with your business." }
+];
+
+// Why Chronolyte Section
+function WhySection({ content }: { content: HomePageContent['why'] }) {
+  const benefits = content.items.length > 0 ? content.items : defaultBenefits;
+  
+  return (
+    <section id="why" className="relative py-16 md:py-32">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <AnimatedSection className="text-center mb-10 md:mb-20">
+          <span className="text-cyan-400 text-xs md:text-sm font-semibold tracking-wider uppercase mb-3 md:mb-4 block">Why Chronolyte</span>
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">
+            {content.section_title || "Built Different."}
+            <br />
+            <span className="gradient-text">{content.section_subtitle || "Engineered Better."}</span>
+          </h2>
+        </AnimatedSection>
+        
+        <div className="grid md:grid-cols-5 gap-4">
+          {benefits.map((benefit, index) => (
+            <AnimatedSection key={benefit.label} delay={index * 0.1}>
+              <motion.div
+                whileHover={{ y: -10 }}
+                className="group relative glass rounded-2xl p-6 text-center h-full overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10">
+                  <motion.span 
+                    className="font-display text-4xl md:text-5xl font-bold gradient-text block mb-2"
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    {benefit.metric}
+                  </motion.span>
+                  <h3 className="font-semibold text-white mb-2">{benefit.label}</h3>
+                  <p className="text-sm text-white/50">{benefit.description}</p>
+                </div>
+              </motion.div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const defaultSteps = [
+  { step: "01", title: "Discover", description: "Deep dive into your vision, goals, and challenges. We map every requirement." },
+  { step: "02", title: "Design", description: "Strategic architecture and stunning UI/UX that sets you apart from competition." },
+  { step: "03", title: "Build", description: "Rapid development with cutting-edge tech. Real-time updates and iterations." },
+  { step: "04", title: "Automate", description: "Intelligent systems integration. AI-powered workflows that multiply efficiency." },
+  { step: "05", title: "Scale", description: "Launch, monitor, and evolve. Continuous optimization for peak performance." }
+];
+
+// Process Section
+function ProcessSection({ content }: { content: HomePageContent['process'] }) {
+  const steps = content.steps.length > 0 ? content.steps : defaultSteps;
+  
+  return (
+    <section id="process" className="relative py-16 md:py-32 overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <AnimatedSection className="text-center mb-10 md:mb-20">
+          <span className="text-cyan-400 text-xs md:text-sm font-semibold tracking-wider uppercase mb-3 md:mb-4 block">The Process</span>
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">
+            {content.section_title || "From Vision to"}
+            <br />
+            <span className="gradient-text">{content.section_subtitle || "Velocity"}</span>
+          </h2>
+          <p className="text-white/60 text-base md:text-lg max-w-2xl mx-auto px-2">
+            A battle-tested framework that transforms ideas into market-dominating products.
+          </p>
+        </AnimatedSection>
+        
+        <div className="relative">
+          {/* Timeline Line */}
+          <div className="absolute top-0 bottom-0 left-1/2 w-px bg-gradient-to-b from-cyan-500/50 via-blue-500/50 to-transparent hidden lg:block" />
+          
+          <div className="space-y-12 lg:space-y-0">
+            {steps.map((step, index) => (
+              <AnimatedSection key={step.step} delay={index * 0.15}>
+                <div className={`lg:flex items-center gap-8 ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}>
+                  <div className={`lg:w-1/2 ${index % 2 === 0 ? 'lg:text-right lg:pr-16' : 'lg:pl-16'}`}>
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      className="glass rounded-2xl p-8 inline-block"
+                    >
+                      <span className="text-cyan-400 font-display text-sm font-bold">{step.step}</span>
+                      <h3 className="font-display text-2xl font-bold mt-2 mb-3">{step.title}</h3>
+                      <p className="text-white/60">{step.description}</p>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Center Node */}
+                  <div className="hidden lg:flex items-center justify-center absolute left-1/2 -translate-x-1/2" style={{ top: `${index * 20 + 10}%` }}>
+                    <motion.div 
+                      whileHover={{ scale: 1.3 }}
+                      className="w-4 h-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 glow-box"
+                    />
+                  </div>
+                  
+                  <div className="lg:w-1/2" />
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Custom SVG Logo Components
+const RocketLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 10L60 35H40L50 10Z" fill="currentColor"/>
+    <path d="M45 35H55V60C55 70 50 80 50 80C50 80 45 70 45 60V35Z" fill="currentColor" opacity="0.8"/>
+    <circle cx="40" cy="65" r="3" fill="currentColor"/>
+    <circle cx="60" cy="65" r="3" fill="currentColor"/>
+    <path d="M35 60L30 70V80L40 75V60H35Z" fill="currentColor" opacity="0.6"/>
+    <path d="M65 60L70 70V80L60 75V60H65Z" fill="currentColor" opacity="0.6"/>
+  </svg>
+);
+
+const TargetLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="2"/>
+    <circle cx="50" cy="50" r="32" stroke="currentColor" strokeWidth="2" opacity="0.6"/>
+    <circle cx="50" cy="50" r="18" fill="currentColor"/>
+    <circle cx="50" cy="50" r="8" fill="white"/>
+  </svg>
+);
+
+const StoreLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 40H80L75 85H25L20 40Z" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <rect x="35" y="50" width="12" height="20" fill="currentColor"/>
+    <rect x="53" y="50" width="12" height="20" fill="currentColor"/>
+    <path d="M30 40L35 25H65L70 40" stroke="currentColor" strokeWidth="2" fill="none"/>
+  </svg>
+);
+
+const DiamondLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 15L75 50L50 85L25 50L50 15Z" fill="currentColor"/>
+    <path d="M50 35L65 50L50 65L35 50L50 35Z" fill="white"/>
+  </svg>
+);
+
+const BoltLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 15L65 45H50L70 85L35 55H50L30 15L50 15Z" fill="currentColor"/>
+  </svg>
+);
+
+const LaptopLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="15" y="20" width="70" height="50" rx="3" stroke="currentColor" strokeWidth="2"/>
+    <rect x="20" y="25" width="60" height="40" fill="currentColor" opacity="0.3"/>
+    <path d="M30 75H70M35 75L40 80H60L65 75" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
+const CartLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 30H25L35 65H70L78 35H30" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <circle cx="40" cy="75" r="4" fill="currentColor"/>
+    <circle cx="65" cy="75" r="4" fill="currentColor"/>
+  </svg>
+);
+
+const HeartLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 85C25 70 15 55 15 45C15 35 22 28 30 28C38 28 45 35 50 42C55 35 62 28 70 28C78 28 85 35 85 45C85 55 75 70 50 85Z" fill="currentColor"/>
+  </svg>
+);
+
+const CoinsLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="35" cy="45" r="20" stroke="currentColor" strokeWidth="2"/>
+    <text x="35" y="52" textAnchor="middle" fontSize="20" fill="currentColor" fontWeight="bold">$</text>
+    <circle cx="65" cy="55" r="20" stroke="currentColor" strokeWidth="2" opacity="0.6"/>
+    <text x="65" y="62" textAnchor="middle" fontSize="20" fill="currentColor" fontWeight="bold" opacity="0.6">$</text>
+  </svg>
+);
+
+const HouseLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 60L50 25L80 60V80H20V60Z" stroke="currentColor" strokeWidth="2" fill="none"/>
+    <rect x="40" y="65" width="20" height="20" fill="currentColor" opacity="0.4"/>
+    <rect x="30" y="55" width="12" height="12" fill="currentColor" opacity="0.3"/>
+    <rect x="58" y="55" width="12" height="12" fill="currentColor" opacity="0.3"/>
+  </svg>
+);
+
+const BookLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 25V75C25 78 27 80 30 80H70C73 80 75 78 75 75V25C75 22 73 20 70 20H30C27 20 25 22 25 25Z" stroke="currentColor" strokeWidth="2"/>
+    <line x1="50" y1="20" x2="50" y2="80" stroke="currentColor" strokeWidth="1.5"/>
+    <line x1="35" y1="35" x2="65" y2="35" stroke="currentColor" strokeWidth="1" opacity="0.6"/>
+    <line x1="35" y1="45" x2="65" y2="45" stroke="currentColor" strokeWidth="1" opacity="0.6"/>
+    <line x1="35" y1="55" x2="65" y2="55" stroke="currentColor" strokeWidth="1" opacity="0.6"/>
+  </svg>
+);
+
+const BuildingLogo = () => (
+  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="25" y="30" width="50" height="55" stroke="currentColor" strokeWidth="2"/>
+    <rect x="32" y="38" width="10" height="10" stroke="currentColor" strokeWidth="1.5" fill="currentColor" opacity="0.4"/>
+    <rect x="46" y="38" width="10" height="10" stroke="currentColor" strokeWidth="1.5" fill="currentColor" opacity="0.4"/>
+    <rect x="60" y="38" width="10" height="10" stroke="currentColor" strokeWidth="1.5" fill="currentColor" opacity="0.4"/>
+    <rect x="32" y="52" width="10" height="10" stroke="currentColor" strokeWidth="1.5" fill="currentColor" opacity="0.4"/>
+    <rect x="46" y="52" width="10" height="10" stroke="currentColor" strokeWidth="1.5" fill="currentColor" opacity="0.4"/>
+    <rect x="60" y="52" width="10" height="10" stroke="currentColor" strokeWidth="1.5" fill="currentColor" opacity="0.4"/>
+    <rect x="42" y="72" width="16" height="13" stroke="currentColor" strokeWidth="1.5" fill="currentColor" opacity="0.3"/>
+  </svg>
+);
+
+const logoComponents: Record<string, React.ReactNode> = {
+  "Startups": <RocketLogo />,
+  "Agencies": <TargetLogo />,
+  "Local Business": <StoreLogo />,
+  "SaaS Founders": <DiamondLogo />,
+  "Entrepreneurs": <BoltLogo />,
+  "SaaS & Tech": <LaptopLogo />,
+  "E-commerce": <CartLogo />,
+  "Healthcare": <HeartLogo />,
+  "Finance": <CoinsLogo />,
+  "Real Estate": <HouseLogo />,
+  "Education": <BookLogo />,
+  "Hospitality": <BuildingLogo />
+};
+
+const defaultIndustries = [
+  { name: "Startups", description: "MVP development and rapid scaling" },
+  { name: "Agencies", description: "White-label solutions and partnerships" },
+  { name: "Local Business", description: "Automation and digital presence" },
+  { name: "SaaS Founders", description: "Full product development lifecycle" },
+  { name: "Entrepreneurs", description: "Idea to execution, end-to-end" }
+];
+
+// Industries Section
+function IndustriesSection({ content }: { content: HomePageContent['industries'] }) {
+  const industries = content.items.length > 0 
+    ? content.items.map(item => ({
+        name: item.name,
+        description: "",
+        icon: item.name
+      }))
+    : defaultIndustries.map(ind => ({ ...ind, icon: ind.name }));
+  
+  return (
+    <section id="industries" className="relative py-16 md:py-32">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <AnimatedSection className="text-center mb-10 md:mb-20">
+          <span className="text-cyan-400 text-xs md:text-sm font-semibold tracking-wider uppercase mb-3 md:mb-4 block">Who We Serve</span>
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">
+            {content.section_title || "Built for"}
+            <br />
+            <span className="gradient-text">{content.section_subtitle || "Visionaries"}</span>
+          </h2>
+        </AnimatedSection>
+        
+        <div className="grid grid-cols-2 md:flex md:flex-wrap justify-center gap-3 md:gap-4">
+          {industries.map((industry, index) => (
+            <AnimatedSection key={industry.name} delay={index * 0.1}>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="glass rounded-xl md:rounded-2xl px-4 py-4 md:px-8 md:py-6 text-center min-w-0 md:min-w-[200px] group hover:glow-box transition-all duration-300"
+              >
+                <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-2 md:mb-4 text-cyan-400 group-hover:text-white group-hover:scale-110 transition-all duration-300">
+                  {logoComponents[industry.name] || logoComponents["Startups"]}
+                </div>
+                <h3 className="font-display font-bold text-sm md:text-lg mb-1 group-hover:text-cyan-400 transition-colors">{industry.name}</h3>
+                {industry.description && <p className="text-xs md:text-sm text-white/50 hidden md:block">{industry.description}</p>}
+              </motion.div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// CTA Section
+function CTASection({ content }: { content: HomePageContent['cta'] }) {
+  return (
+    <section id="cta" className="relative py-16 md:py-32 overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900" />
+        <motion.div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(0,245,255,0.15) 0%, transparent 70%)' }}
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
+      
+      <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6 text-center">
+        <AnimatedSection>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="glass-strong rounded-2xl md:rounded-3xl p-6 md:p-12 lg:p-16 glow-box"
+          >
+            <span className="text-cyan-400 text-xs md:text-sm font-semibold tracking-wider uppercase mb-3 md:mb-4 block">Ready to Lead?</span>
+            <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">
+              {content.headline || "Future-Proof Your Business"}
+            </h2>
+            <p className="text-white/60 text-base md:text-lg max-w-xl mx-auto mb-6 md:mb-10 px-2">
+              {content.description || "The businesses thriving in 2025 and beyond are building with AI today. Don't watch the future happen—create it."}
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
+              <Link to={content.button_link || "/contact"}>
+                <motion.button
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(0,245,255,0.5)' }}
+                  whileTap={{ scale: 0.95 }}
+                  className="group relative w-full sm:w-auto px-6 md:px-10 py-4 md:py-5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full font-bold text-base md:text-lg text-black overflow-hidden"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    {content.button_text || "Start Building Now"}
+                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
+                </motion.button>
+              </Link>
+              <Link to="/contact">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full sm:w-auto px-6 md:px-10 py-4 md:py-5 rounded-full font-semibold text-white border border-white/20 hover:border-cyan-400/50 hover:bg-white/5 transition-all text-center"
+                >
+                  Schedule a Call
+                </motion.button>
+              </Link>
+            </div>
+            
+            <p className="text-white/40 text-sm mt-8">
+              Typically respond within 24 hours
+            </p>
+          </motion.div>
+        </AnimatedSection>
+      </div>
+    </section>
+  );
+}
+
+type SocialKey = 'twitter' | 'linkedin' | 'github' | 'facebook' | 'instagram' | 'youtube' | 'whatsapp';
+
+const socialDefaults: Record<SocialKey, string> = {
+  twitter: '',
+  linkedin: '',
+  github: '',
+  facebook: 'https://facebook.com/chronolyte',
+  instagram: 'https://instagram.com/chronolyte',
+  youtube: '',
+  whatsapp: 'https://wa.me/chronolyte'
+};
+
+const socialIcons: Record<SocialKey, React.ReactNode> = {
+  twitter: (
+    <path d="M22 5.92c-.77.35-1.6.58-2.46.69a4.3 4.3 0 001.9-2.38 8.62 8.62 0 01-2.72 1.04 4.28 4.28 0 00-7.3 3.9 12.14 12.14 0 01-8.82-4.47 4.28 4.28 0 001.32 5.71 4.24 4.24 0 01-1.94-.54v.05a4.28 4.28 0 003.44 4.2 4.32 4.32 0 01-1.93.07 4.28 4.28 0 004 2.97 8.6 8.6 0 01-5.32 1.84c-.35 0-.7-.02-1.05-.06a12.15 12.15 0 006.57 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19-.01-.38-.02-.56A8.7 8.7 0 0022 5.92z" />
+  ),
+  linkedin: (
+    <path d="M20 3H4a1 1 0 00-1 1v16a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1zM8.34 18.34H5.67V10h2.67v8.34zM7 8.72a1.55 1.55 0 110-3.1 1.55 1.55 0 010 3.1zm11.34 9.62h-2.66v-4.5c0-1.07-.02-2.45-1.49-2.45-1.5 0-1.73 1.16-1.73 2.37v4.58h-2.66V10h2.55v1.14h.04c.36-.69 1.24-1.42 2.55-1.42 2.73 0 3.23 1.8 3.23 4.14v4.48z" />
+  ),
+  github: (
+    <path d="M12 .5a12 12 0 00-3.79 23.4c.6.11.82-.26.82-.58 0-.29-.01-1.06-.02-2.07-3.34.73-4.04-1.61-4.04-1.61-.55-1.4-1.35-1.77-1.35-1.77-1.1-.75.08-.74.08-.74 1.22.09 1.86 1.26 1.86 1.26 1.08 1.85 2.83 1.32 3.52 1.01.11-.78.42-1.32.76-1.62-2.67-.3-5.48-1.33-5.48-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.5.12-3.12 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.62.24 2.82.12 3.12.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.29 0 .32.22.7.83.58A12 12 0 0012 .5z" />
+  ),
+  facebook: (
+    <path d="M13.5 9H15V6h-2a3 3 0 00-3 3v2H8v3h2v6h3v-6h2.06L15 11h-2v-.9c0-.7.23-1.1.88-1.1z" />
+  ),
+  instagram: (
+    <path d="M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm0 2a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H7zm11 1.5a1 1 0 11-2 0 1 1 0 012 0zM12 8.5A3.5 3.5 0 1112 15a3.5 3.5 0 010-7zm0 2a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
+  ),
+  youtube: (
+    <path d="M21.8 8.2s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-0.9C16.4 5 12 5 12 5h0s-4.4 0-7 .3c-.4 0-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.8 2 11.4v1.1c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.1 6.8.3 6.8.3s4.4 0 7-.3c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.1c0-1.6-.2-3.2-.2-3.2zM10 14.7V8.7l5.2 3-5.2 3z" />
+  ),
+  whatsapp: (
+    <path d="M20 12.1a8 8 0 10-14.1 5L4 21l4-1a8 8 0 0012-7.9zm-4.1 2.7c-.17-.09-1-.53-1.16-.6-.15-.06-.26-.09-.37.08-.11.17-.43.6-.52.72-.09.12-.19.13-.36.04-.17-.09-.7-.26-1.33-.84-.49-.44-.82-.98-.92-1.15-.1-.17-.01-.26.08-.35.08-.08.17-.21.25-.31.08-.1.11-.17.17-.29.06-.12.03-.22-.02-.31-.05-.09-.37-.9-.51-1.24-.14-.33-.28-.29-.37-.3h-.32c-.12 0-.31.04-.47.22-.16.17-.61.6-.61 1.46 0 .86.63 1.7.72 1.82.09.12 1.23 1.88 3 2.63.42.18.75.29 1.01.37.42.13.8.11 1.1.07.34-.05 1-.41 1.14-.82.14-.41.14-.76.1-.82-.04-.06-.15-.09-.32-.18z" />
+  )
+};
+
+// Footer
+function Footer() {
+  const [socialLinks, setSocialLinks] = useState<Record<SocialKey, string>>(socialDefaults);
+  const [siteSettings, setSiteSettings] = useState({
+    contact_email: 'contact@chronolyte.com',
+    contact_phone: '+1 (555) 000-0000',
+    footer_copyright: '© 2025 Chronolyte. All rights reserved.',
+    footer_tagline: 'We bend time with AI.',
+    footer_show_social: true
+  });
+
+  useEffect(() => {
+    let mounted = true;
+    const loadSettings = async () => {
+      try {
+        // Load site settings
+        const settingsRes = await fetch('/backend/api/settings.php?action=get&key=site_settings');
+        if (settingsRes.ok) {
+          const json = await settingsRes.json();
+          if (json?.success && json?.data?.value) {
+            const parsed = typeof json.data.value === 'string' ? JSON.parse(json.data.value) : json.data.value;
+            if (mounted) {
+              setSiteSettings(prev => ({ ...prev, ...parsed }));
+              // Extract social links from site settings
+              const socials: Record<string, string> = {};
+              if (parsed.social_twitter) socials.twitter = parsed.social_twitter;
+              if (parsed.social_linkedin) socials.linkedin = parsed.social_linkedin;
+              if (parsed.social_github) socials.github = parsed.social_github;
+              if (parsed.social_facebook) socials.facebook = parsed.social_facebook;
+              if (parsed.social_instagram) socials.instagram = parsed.social_instagram;
+              if (parsed.social_youtube) socials.youtube = parsed.social_youtube;
+              if (parsed.social_whatsapp) socials.whatsapp = parsed.social_whatsapp;
+              setSocialLinks(prev => ({ ...prev, ...socials }));
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Settings fetch failed', err);
+      }
+    };
+    loadSettings();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const socialEntries = Object.entries(socialLinks).filter(([_, url]) => Boolean(url));
+
+  return (
+    <footer className="relative py-10 md:py-16 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        {/* Contact Info Row */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-8 text-sm text-white/60">
+          <a href={`mailto:${siteSettings.contact_email}`} className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            {siteSettings.contact_email}
+          </a>
+          <a href={`tel:${siteSettings.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            {siteSettings.contact_phone}
+          </a>
+        </div>
+        
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
+          <div className="flex items-center gap-2 md:gap-3">
+            <HourglassLogo className="w-8 h-8 md:w-10 md:h-10" />
+            <span className="font-display font-bold text-base md:text-lg flex items-center text-white" style={{ textShadow: '0 0 8px rgba(0,229,255,0.3)' }}>
+              CHR
+              <span className="relative inline-flex items-center justify-center w-5 h-5 mx-0.5">
+                <span className="absolute inset-[-2px] rounded-full bg-cyan-400/20 blur-sm"></span>
+                <span className="absolute inset-0 rounded-full border-2 border-cyan-400" style={{ boxShadow: '0 0 8px rgba(0,229,255,0.8), inset 0 0 4px rgba(0,229,255,0.3)' }}></span>
+                <span className="absolute inset-[2px] rounded-full border border-cyan-300/40"></span>
+                <span className="absolute w-6 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent"></span>
+                <span className="absolute h-6 w-[1.5px] bg-gradient-to-b from-transparent via-white/80 to-transparent"></span>
+                <span className="absolute w-1.5 h-1.5 rounded-full bg-white" style={{ boxShadow: '0 0 4px #fff' }}></span>
+              </span>
+              NOLYTE
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-4 md:gap-8 text-xs md:text-sm text-white/50">
+            <Link to="/services" className="hover:text-cyan-400 transition-colors">Services</Link>
+            <Link to="/portfolio" className="hover:text-cyan-400 transition-colors">Portfolio</Link>
+            <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
+            <Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
+          </div>
+          
+          {siteSettings.footer_show_social && socialEntries.length > 0 && (
+            <div className="flex items-center gap-3 md:gap-4">
+              {socialEntries.map(([social, url]) => (
+                <motion.a
+                  key={social}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full glass flex items-center justify-center text-white/50 hover:text-cyan-400 hover:border-cyan-400/50 transition-colors"
+                >
+                  <span className="sr-only">{social}</span>
+                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24">
+                    {socialIcons[social as SocialKey]}
+                  </svg>
+                </motion.a>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 text-xs md:text-sm text-white/30">
+          <p>{siteSettings.footer_copyright}</p>
+          <div className="flex items-center gap-4">
+            <Link to="/terms" className="hover:text-cyan-400 transition-colors">Terms</Link>
+            <Link to="/privacy" className="hover:text-cyan-400 transition-colors">Privacy</Link>
+            <Link to="/refunds" className="hover:text-cyan-400 transition-colors">Refunds</Link>
+          </div>
+          <p>{siteSettings.footer_tagline}</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ============================================
+// MAIN SITE
+// ============================================
+
+const defaultHomeContent: HomePageContent = {
+  hero: {
+    badge_text: "Elite AI Agency",
+    headline_1: "We Bend",
+    headline_2: "Time With AI",
+    subheadline: "Custom SaaS. Stunning Websites. Intelligent Automation.\nBuilt at the speed of tomorrow.",
+    cta_primary_text: "Build With Us",
+    cta_primary_link: "/contact",
+    cta_secondary_text: "Explore Services",
+    cta_secondary_link: "/services"
+  },
+  services: {
+    section_title: "Precision-Engineered",
+    section_subtitle: "Digital Solutions",
+    section_description: "Every solution we create is custom-built for maximum impact. No templates. No shortcuts. Only results.",
+    items: []
+  },
+  why: {
+    section_title: "Why Choose Chronolyte?",
+    section_subtitle: "",
+    items: []
+  },
+  process: {
+    section_title: "Our Process",
+    section_subtitle: "",
+    steps: []
+  },
+  industries: {
+    section_title: "Industries We Serve",
+    section_subtitle: "",
+    items: []
+  },
+  cta: {
+    headline: "Ready to Build Something Amazing?",
+    description: "Let's create digital experiences that bend time and blow minds.",
+    button_text: "Start Your Project",
+    button_link: "/contact"
+  }
+};
+
+export function MainSite() {
+  const [homeContent, setHomeContent] = useState<HomePageContent>(defaultHomeContent);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const res = await fetch('/backend/api/settings.php?action=get&key=homepage_content');
+        const json = await res.json();
+        if (json.success && json.data?.value) {
+          const parsed = typeof json.data.value === 'string' ? JSON.parse(json.data.value) : json.data.value;
+          setHomeContent(prev => ({ ...prev, ...parsed }));
+        }
+      } catch (err) {
+        console.error('Failed to load homepage content:', err);
+      }
+    };
+    fetchContent();
+  }, []);
+
+  return (
+    <>
+      <Navigation />
+      <div className="relative min-h-screen bg-dark-900 text-white overflow-x-hidden">
+        <GlowOrbs />
+        <NoiseOverlay />
+        <GridBackground />
+        <main>
+        <HeroSection content={homeContent.hero} />
+        <ServicesSection content={homeContent.services} />
+        <WhySection content={homeContent.why} />
+        <ProcessSection content={homeContent.process} />
+        <IndustriesSection content={homeContent.industries} />
+        <CTASection content={homeContent.cta} />
+      </main>
+        <Footer />
+      </div>
+    </>
+  );
+}
