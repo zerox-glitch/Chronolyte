@@ -162,19 +162,9 @@ export function ProjectVideoUpload() {
 
       const response = await fetch('/api/project-videos', {
         method: 'POST',
-        body: JSON.stringify({
-          project_id: projectId,
-          video_url: uploadingVideo ? URL.createObjectURL(uploadingVideo) : '',
-          video_title: videoTitle,
-          video_description: videoDescription,
-          video_type: videoType,
-          is_primary: isPrimary,
-          thumbnail_url: uploadingThumbnail ? URL.createObjectURL(uploadingThumbnail) : '',
-          display_order: videos.length
-        }),
+        body: formData,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+          'Authorization': `Bearer ${localStorage.getItem('admin_token') || ''}`
         }
       });
 

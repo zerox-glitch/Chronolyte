@@ -18,34 +18,32 @@ export function ServicesManager() {
 
   const iconOptions = ['Zap', 'Code', 'Rocket', 'Shield', 'Lightbulb', 'Layers', 'Target', 'Gauge'];
 
+  const getToken = () => localStorage.getItem('admin_token') || '';
+  const authHeaders = () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${getToken()}`
+  });
+
   useEffect(() => {
     loadServices();
   }, []);
 
-  const loadServices = () => {
-    const stored = localStorage.getItem('website-services');
-    if (stored) {
-      setServices(JSON.parse(stored));
-    } else {
-      const defaults: Service[] = [
-        {
-          id: '1',
-          title: 'Custom Websites',
-          description: 'Beautiful, fast, and conversion-optimized websites built with modern tech.',
-          icon: 'Code',
-          price: 2500
-        },
-        {
-          id: '2',
-          title: 'SaaS Development',
-          description: 'Complete SaaS platforms with authentication, payments, and analytics.',
-          icon: 'Rocket',
-          price: 5000
-        }
-      ];
-      setServices(defaults);
-      localStorage.setItem('website-services', JSON.stringify(defaults));
+  const loadServices = async () => {
+    try {
+      const res = await fetch('/api/services');
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        setServices(json.data);
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to load services:', err);
     }
+    // Fallback defaults if API empty/unreachable
+    setServices([
+      { id: '1', title: 'Custom Websites', description: 'Beautiful, fast, and conversion-optimized websites built with modern tech.', icon: 'Code', price: 2500 },
+      { id: '2', title: 'SaaS Development', description: 'Complete SaaS platforms with authentication, payments, and analytics.', icon: 'Rocket', price: 5000 }
+    ]);
   };
 
   const startAdd = () => {
@@ -60,45 +58,56 @@ export function ServicesManager() {
     setShowForm(true);
   };
 
-  const saveService = () => {
+  const saveService = async () => {
     if (!formData.title || !formData.description) {
       setMessage({ type: 'error', text: 'Title and description are required' });
       return;
     }
 
-    let updated;
-    if (editingId === 'new') {
-      const newService: Service = {
-        id: Date.now().toString(),
+    try {
+      const payload = {
         title: formData.title,
         description: formData.description,
         icon: formData.icon || 'Zap',
-        price: formData.price
+        price: formData.price || 0
       };
-      updated = [...services, newService];
-    } else {
-      updated = services.map(s =>
-        s.id === editingId
-          ? { ...s, ...formData }
-          : s
-      );
+      if (editingId === 'new') {
+        await fetch('/api/services', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+      } else {
+        await fetch(`/api/services/${editingId}`, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+      }
+      setMessage({ type: 'success', text: editingId === 'new' ? 'Service added!' : 'Service updated!' });
+      setEditingId(null);
+      setFormData({});
+      setShowForm(false);
+      loadServices();
+      setTimeout(() => setMessage(null), 2000);
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to save service' });
     }
-
-    setServices(updated);
-    localStorage.setItem('website-services', JSON.stringify(updated));
-    setMessage({ type: 'success', text: editingId === 'new' ? 'Service added!' : 'Service updated!' });
-    setEditingId(null);
-    setFormData({});
-    setShowForm(false);
-    setTimeout(() => setMessage(null), 2000);
   };
 
-  const deleteService = (id: string) => {
+  const deleteService = async (id: string) => {
     if (!confirm('Delete this service?')) return;
-    const updated = services.filter(s => s.id !== id);
-    setServices(updated);
-    localStorage.setItem('website-services', JSON.stringify(updated));
-    setMessage({ type: 'success', text: 'Service deleted' });
+    try {
+      await fetch(`/api/services/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      setMessage({ type: 'success', text: 'Service deleted' });
+      loadServices();
+      setTimeout(() => setMessage(null), 2000);
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to delete service' });
+    }
   };
 
   return (

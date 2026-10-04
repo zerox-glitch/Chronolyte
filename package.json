@@ -1,16 +1,19 @@
 {
-  "name": "chronolyte-api",
+  "name": "chronolyte",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "dev:api": "php -S 127.0.0.1:8000 -t .",
-    "build": "vite build",
+    "dev:server": "node server/index.js",
+    "dev:all": "node server/index.js & vite --host 0.0.0.0",
+    "build": "vite build && node scripts/build-seo.mjs",
+    "start": "node server/index.js",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.4.0",
+    "@neondatabase/serverless": "^1.2.0",
     "clsx": "2.1.1",
     "framer-motion": "^12.31.0",
     "hono": "^4.13.7",
@@ -25,8 +28,8 @@
   "devDependencies": {
     "@tailwindcss/vite": "4.1.17",
     "@types/node": "^22.0.0",
-    "@types/react": "19.2.7",
-    "@types/react-dom": "19.2.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "5.1.1",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3",

@@ -1,0 +1,34 @@
+# Chronolyte
+
+> Chronolyte is an AI-powered development studio. Businesses hire Chronolyte to build custom SaaS products, premium websites, web apps, and AI automation (chatbots, voice agents, CRM automation). Fixed-price quotes within 24 hours, launch-date guarantees, 14-day post-launch support. A vetted alternative to Fiverr/Upwork for business-critical projects.
+
+## What Chronolyte does
+
+- **Custom website design & development** — fast, SEO-ready, conversion-focused business websites from $1,500.
+- **SaaS product development** — MVPs and full platforms with auth, payments, dashboards from $8,000.
+- **AI automation** — custom chatbots, voice agents, lead-gen automation, CRM integrations from $2,500.
+- **App & MVP development** — startup MVPs and internal tools with launch-date guarantees.
+
+## Who it is for
+
+Founders and businesses that want to hire reliable developers or designers for: building a SaaS product, creating an app, redesigning a website, automating workflows with AI, or replacing unreliable freelance marketplaces.
+
+## Key pages
+
+- [Home](https://chronolyte.com/): Overview of services, process, and free project starter.
+- [Services](https://chronolyte.com/services): Full list of development services.
+- [Pricing](https://chronolyte.com/pricing): Transparent fixed-price packages.
+- [Portfolio](https://chronolyte.com/portfolio): Case studies and shipped products.
+- [FAQ](https://chronolyte.com/faq): Common questions about hiring, costs, and timelines.
+- [Contact](https://chronolyte.com/contact): Get a free quote within 24 hours.
+- [Start your project free](https://chronolyte.com/): 3-step form — what do you need, tell us about it, contact details.
+
+## Guides & articles
+- [How to Hire a Web Developer in 2026: The Complete Guide](https://chronolyte.com/blog/how-to-hire-a-web-developer-in-2026-complete-guide): Freelancer vs agency vs Fiverr vs full-time? A no-nonsense guide to hiring the right developer, what fair pricing looks like, and the red flags that cost businesses thousands.
+- [Fiverr Alternatives for Business Websites: What Actually Works](https://chronolyte.com/blog/fiverr-alternatives-for-business-websites-what-actually-works): Fiverr is great for $50 gigs — and risky for real business projects. Here are the smarter alternatives when your website needs to actually make you money.
+- [How Much Does It Cost to Build a SaaS Product in 2026?](https://chronolyte.com/blog/how-much-does-it-cost-to-build-a-saas-product-in-2026): MVP budgets explained line by line: what $8K buys, what $30K buys, and where first-time founders waste money. Real numbers from real launches.
+
+## Contact
+
+- Email: contact@chronolyte.com
+- Free quote: https://chronolyte.com/contact

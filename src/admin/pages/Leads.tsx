@@ -478,6 +478,12 @@ export function Leads() {
           <p className="text-white/50 mt-1">{loading ? 'Loading...' : `${leads.length} total leads`}</p>
         </div>
         <div className="flex gap-3">
+          <a
+            href={`/api/leads/export?token=${encodeURIComponent(getToken())}`}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl font-medium text-white hover:bg-white/10 transition-colors"
+          >
+            Export CSV
+          </a>
           <button
             onClick={fetchLeads}
             className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl font-medium text-white hover:bg-white/10 transition-colors"
@@ -611,7 +617,7 @@ export function Leads() {
                     <span className="text-sm text-white/70">{lead.service_interested || '—'}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-cyan-400 font-medium">{lead.budget ? `$${Number(lead.budget).toLocaleString()}` : '—'}</span>
+                    <span className="text-sm text-cyan-400 font-medium">{lead.budget || '—'}</span>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[lead.status] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'}`}>

@@ -1,17 +1,44 @@
-import { useState } from 'react';
-import { 
-  Search, 
-  Plus, 
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Search,
+  Plus,
   Star,
   Check,
   X,
   Edit,
   Trash2,
   Quote,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
-import { mockTestimonials } from '../mockData';
 import type { Testimonial } from '../types';
+
+function getToken() {
+  return localStorage.getItem('admin_token') || '';
+}
+
+function authHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${getToken()}`
+  };
+}
+
+/** Normalize an API testimonial row to the shape this page expects. */
+function normalize(t: any): Testimonial {
+  return {
+    id: t.id,
+    client_name: t.client_name || '',
+    client_title: t.client_title || '',
+    company: t.client_company || t.company || '',
+    avatar: t.avatar || '',
+    content: t.content || '',
+    rating: Number(t.rating) || 5,
+    featured: !!Number(t.featured),
+    status: t.status || 'approved',
+    created_at: t.created_at || new Date().toISOString()
+  };
+}
 
 const statusColors: Record<string, { bg: string; text: string }> = {
   pending: { bg: 'bg-yellow-500/20', text: 'text-yellow-400' },
@@ -370,11 +397,30 @@ export function Testimonials() {
   const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditingTestimonial, setIsEditingTestimonial] = useState<Testimonial | null>(null);
-  const [testimonials, setTestimonials] = useState(mockTestimonials);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchTestimonials = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/testimonials', { headers: authHeaders() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      setTestimonials((json.data || []).map(normalize));
+    } catch (err) {
+      console.error('Failed to load testimonials:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTestimonials();
+  }, [fetchTestimonials]);
 
   const filteredTestimonials = testimonials.filter(testimonial => {
     const matchesSearch = testimonial.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          testimonial.company.toLowerCase().includes(searchQuery.toLowerCase());
+                          (testimonial.company || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || testimonial.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -386,34 +432,49 @@ export function Testimonials() {
     featured: testimonials.filter(t => t.featured).length
   };
 
-  const handleSaveTestimonial = (data: Partial<Testimonial>) => {
-    if (isEditingTestimonial) {
-      // Update existing
-      setTestimonials(testimonials.map(t => 
-        t.id === isEditingTestimonial.id ? { ...t, ...data } : t
-      ));
-      setIsEditingTestimonial(null);
-    } else {
-      // Add new
-      const newTestimonial: Testimonial = {
-        id: `testimonial-${Date.now()}`,
-        client_name: data.client_name || '',
-        company: data.company || '',
-        content: data.content || '',
+  const handleSaveTestimonial = async (data: Partial<Testimonial>) => {
+    try {
+      const payload: any = {
+        client_name: data.client_name,
+        client_title: data.client_title || '',
+        client_company: data.company || '',
+        avatar: data.avatar || '',
+        content: data.content,
         rating: data.rating || 5,
         status: data.status || 'pending',
-        featured: data.featured || false,
-        client_title: data.client_title || '',
-        avatar: data.avatar || '',
-        created_at: new Date().toISOString()
+        featured: data.featured ? 1 : 0
       };
-      setTestimonials([...testimonials, newTestimonial]);
+      if (isEditingTestimonial) {
+        await fetch(`/api/testimonials/${isEditingTestimonial.id}`, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+        setIsEditingTestimonial(null);
+      } else {
+        await fetch('/api/testimonials', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+      }
+      setIsAddModalOpen(false);
+      fetchTestimonials();
+    } catch {
+      alert('Failed to save testimonial');
     }
-    setIsAddModalOpen(false);
   };
 
-  const handleDeleteTestimonial = (id: string) => {
-    setTestimonials(testimonials.filter(t => t.id !== id));
+  const handleDeleteTestimonial = async (id: string) => {
+    try {
+      await fetch(`/api/testimonials/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      fetchTestimonials();
+    } catch {
+      alert('Failed to delete testimonial');
+    }
   };
 
   return (
@@ -481,25 +542,33 @@ export function Testimonials() {
       </div>
 
       {/* Testimonials Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredTestimonials.map((testimonial) => (
-          <TestimonialCard 
-            key={testimonial.id} 
-            testimonial={testimonial} 
-            onClick={() => setSelectedTestimonial(testimonial)}
-            onEdit={(t) => {
-              setIsEditingTestimonial(t);
-              setIsAddModalOpen(true);
-            }}
-            onDelete={handleDeleteTestimonial}
-          />
-        ))}
-      </div>
-
-      {filteredTestimonials.length === 0 && (
-        <div className="p-12 text-center bg-[#0d0d14] border border-white/5 rounded-2xl">
-          <p className="text-white/50">No testimonials found matching your criteria.</p>
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
         </div>
+      ) : (
+        <>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredTestimonials.map((testimonial) => (
+            <TestimonialCard
+              key={testimonial.id}
+              testimonial={testimonial}
+              onClick={() => setSelectedTestimonial(testimonial)}
+              onEdit={(t) => {
+                setIsEditingTestimonial(t);
+                setIsAddModalOpen(true);
+              }}
+              onDelete={handleDeleteTestimonial}
+            />
+          ))}
+        </div>
+
+        {filteredTestimonials.length === 0 && (
+          <div className="p-12 text-center bg-[#0d0d14] border border-white/5 rounded-2xl">
+            <p className="text-white/50">No testimonials found matching your criteria.</p>
+          </div>
+        )}
+        </>
       )}
 
       {/* Testimonial View Modal */}
