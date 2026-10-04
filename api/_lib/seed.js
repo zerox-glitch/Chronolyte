@@ -42,13 +42,41 @@ function mdToHtml(md) {
 }
 
 export async function seedStore(store) {
-  // ----- Default admin -----
-  if ((await store.admins.list()).length === 0) {
-    const username = process.env.ADMIN_USERNAME || 'admin';
+  // ----- Admin account -----
+  // When ADMIN_USERNAME + ADMIN_PASSWORD env vars are set they are the source of
+  // truth: the account is created on first boot and its password/email re-synced
+  // on every boot that differs. This makes credential changes = env change + deploy.
+  const envUsername = (process.env.ADMIN_USERNAME || '').trim();
+  const envPassword = process.env.ADMIN_PASSWORD || '';
+  const envEmail = (process.env.ADMIN_EMAIL || '').trim();
+  if (envUsername && envPassword) {
+    const admins = await store.admins.list();
+    const existing = admins.find((a) => String(a.username).toLowerCase() === envUsername.toLowerCase());
+    if (existing) {
+      if (!store.verifyPassword(envPassword, existing.password) || (envEmail && existing.email !== envEmail)) {
+        await store.admins.update(existing.id, {
+          password: store.hashPassword(envPassword),
+          ...(envEmail ? { email: envEmail } : {})
+        });
+        console.log(`[seed] synced admin "${envUsername}" credentials from environment`);
+      }
+    } else {
+      await store.admins.create({
+        username: envUsername,
+        email: envEmail || 'admin@chronolyte.com',
+        password: store.hashPassword(envPassword),
+        role: 'super_admin',
+        avatar: '',
+        active: 1
+      });
+      console.log(`[seed] created admin user "${envUsername}" from environment`);
+    }
+  } else if ((await store.admins.list()).length === 0) {
+    const username = 'admin';
     await store.admins.create({
       username,
-      email: process.env.ADMIN_EMAIL || 'admin@chronolyte.com',
-      password: store.hashPassword(process.env.ADMIN_PASSWORD || 'admin123'),
+      email: 'admin@chronolyte.com',
+      password: store.hashPassword('admin123'),
       role: 'super_admin',
       avatar: '',
       active: 1
