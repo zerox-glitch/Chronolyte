@@ -26,57 +26,29 @@ export function ProjectsManager() {
     loadProjects();
   }, []);
 
-  const loadProjects = () => {
-    // Load from backend or use mock + custom projects
-    const customProjects = localStorage.getItem('all-projects');
-    const stored = customProjects ? JSON.parse(customProjects) : [];
-    
-    const defaults: Project[] = [
-      {
-        id: 1,
-        title: 'InvoiceFlow Pro',
-        client_name: 'InvoiceFlow',
-        project_type: 'saas',
-        short_description: 'Complete invoicing and billing SaaS platform with automated reminders, payment tracking, and financial analytics.',
-        long_description: 'A comprehensive SaaS solution for managing invoices, tracking payments, and generating financial reports. Features automated reminders and integration with major payment gateways.',
-        featured_image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
-        tech_stack: ['React', 'Node.js', 'Stripe', 'PostgreSQL'],
-        price: 4500,
-        metrics: { users: '2,500+', revenue: '$45K MRR' }
-      },
-      {
-        id: 2,
-        title: 'Luxe Real Estate',
-        client_name: 'Luxe RE',
-        project_type: 'website',
-        short_description: 'Premium real estate website with virtual tours, property search, and lead capture system.',
-        long_description: 'A stunning real estate website featuring virtual property tours, advanced search filters, and an integrated lead capture system to convert visitors into qualified leads.',
-        featured_image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
-        tech_stack: ['Next.js', 'Framer Motion', 'Sanity CMS'],
-        price: 3200,
-        metrics: { traffic: '50K/mo', leads: '200+/mo' }
-      },
-      {
-        id: 3,
-        title: 'LeadGen AI',
-        client_name: 'LeadGen',
-        project_type: 'automation',
-        short_description: 'Automated lead generation system with AI-powered qualification and CRM integration.',
-        long_description: 'An intelligent automation system that generates, qualifies, and nurtures leads using AI. Integrates with major CRM platforms for seamless workflow.',
-        featured_image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
-        tech_stack: ['Python', 'OpenAI', 'Zapier', 'HubSpot'],
-        price: 5000,
-        metrics: { leads: '1,000+/mo', accuracy: '95%' }
-      }
-    ];
+  const getToken = () => localStorage.getItem('admin_token') || '';
+  const authHeaders = () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${getToken()}`
+  });
 
-    const combined = defaults.map(d => {
-      const custom = stored.find((p: any) => p.id === d.id);
-      return custom ? { ...d, ...custom } : d;
-    });
-    combined.push(...stored.filter((p: any) => !defaults.find(d => d.id === p.id)));
-    
-    setProjects(combined);
+  const loadProjects = async () => {
+    try {
+      const res = await fetch('/api/projects');
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        setProjects(json.data.map((p: any) => ({
+          ...p,
+          id: Number(p.id),
+          tech_stack: typeof p.tech_stack === 'string' ? JSON.parse(p.tech_stack || '[]') : (p.tech_stack || []),
+          metrics: typeof p.metrics === 'string' ? JSON.parse(p.metrics || '{}') : (p.metrics || {})
+        })));
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to load projects:', err);
+    }
+    setProjects([]);
   };
 
   const startAdd = () => {
@@ -103,65 +75,62 @@ export function ProjectsManager() {
     setFormData({ ...formData, tech_stack });
   };
 
-  const saveProject = () => {
+  const saveProject = async () => {
     if (!formData.title || !formData.client_name) {
       setMessage({ type: 'error', text: 'Title and client name are required' });
       return;
     }
 
-    let updated;
-    if (editingId === -1) {
-      const newId = Math.max(0, ...projects.map(p => p.id)) + 1;
-      const newProject: Project = {
-        id: newId,
+    try {
+      const payload: any = {
         title: formData.title,
         client_name: formData.client_name,
         project_type: formData.project_type || 'saas',
         short_description: formData.short_description || '',
-        long_description: formData.long_description,
-        featured_image: formData.featured_image || 'https://via.placeholder.com/400x300',
+        long_description: formData.long_description || '',
+        featured_image: formData.featured_image || '',
         tech_stack: formData.tech_stack || [],
-        price: formData.price,
-        metrics: formData.metrics
+        metrics: formData.metrics || {},
+        price: formData.price || 0,
+        published: 1
       };
-      updated = [...projects, newProject];
-    } else {
-      updated = projects.map(p =>
-        p.id === editingId
-          ? { ...p, ...formData }
-          : p
-      );
+      if (editingId === -1) {
+        await fetch('/api/projects', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+      } else {
+        await fetch(`/api/projects?id=${editingId}`, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+      }
+      setMessage({ type: 'success', text: editingId === -1 ? 'Project added!' : 'Project updated!' });
+      setEditingId(null);
+      setFormData({});
+      setShowForm(false);
+      loadProjects();
+      setTimeout(() => setMessage(null), 2000);
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to save project' });
     }
-
-    setProjects(updated);
-    
-    // Save custom projects to localStorage
-    const defaultIds = [1, 2, 3];
-    const customProjects = updated.filter(p => !defaultIds.includes(p.id));
-    if (customProjects.length > 0) {
-      localStorage.setItem('all-projects', JSON.stringify(customProjects));
-    }
-
-    setMessage({ type: 'success', text: editingId === -1 ? 'Project added!' : 'Project updated!' });
-    setEditingId(null);
-    setFormData({});
-    setShowForm(false);
-    setTimeout(() => setMessage(null), 2000);
   };
 
-  const deleteProject = (id: number) => {
+  const deleteProject = async (id: number) => {
     if (!confirm('Delete this project?')) return;
-    const updated = projects.filter(p => p.id !== id);
-    setProjects(updated);
-    
-    const customProjects = updated.filter(p => ![1, 2, 3].includes(p.id));
-    if (customProjects.length > 0) {
-      localStorage.setItem('all-projects', JSON.stringify(customProjects));
-    } else {
-      localStorage.removeItem('all-projects');
+    try {
+      await fetch(`/api/projects?id=${id}`, {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
+      setMessage({ type: 'success', text: 'Project deleted' });
+      loadProjects();
+      setTimeout(() => setMessage(null), 2000);
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to delete project' });
     }
-    
-    setMessage({ type: 'success', text: 'Project deleted' });
   };
 
   return (

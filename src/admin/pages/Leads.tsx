@@ -281,6 +281,9 @@ function LeadModal({ lead, onClose }: { lead: Lead | null; onClose: () => void }
       <div className="relative bg-[#15151f] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-[#15151f] px-6 py-4 border-b border-white/10 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-white">Lead Details</h2>
+          {lead.reference_number && (
+            <span className="font-mono text-xs text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-3 py-1">{lead.reference_number}</span>
+          )}
           <button onClick={onClose} className="text-white/60 hover:text-white">
             <X className="w-5 h-5" />
           </button>
@@ -342,7 +345,28 @@ function LeadModal({ lead, onClose }: { lead: Lead | null; onClose: () => void }
               {lead.budget && (
                 <div className="p-4 bg-white/5 rounded-xl">
                   <p className="text-sm text-white/50 mb-1">Budget</p>
-                  <p className="text-cyan-400 font-semibold">${Number(lead.budget).toLocaleString()}</p>
+                  <p className="text-cyan-400 font-semibold">
+                    {Number.isFinite(Number(lead.budget)) && lead.budget !== '' && !String(lead.budget).includes('$')
+                      ? `$${Number(lead.budget).toLocaleString()}`
+                      : lead.budget}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {(lead.timeline || (lead.meta as Record<string, unknown> | null)?.contact_preference) && (
+            <div className="grid grid-cols-2 gap-4">
+              {lead.timeline && (
+                <div className="p-4 bg-white/5 rounded-xl">
+                  <p className="text-sm text-white/50 mb-1">Timeline</p>
+                  <p className="text-white">{lead.timeline}</p>
+                </div>
+              )}
+              {(lead.meta as Record<string, unknown> | null)?.contact_preference && (
+                <div className="p-4 bg-white/5 rounded-xl">
+                  <p className="text-sm text-white/50 mb-1">Preferred Contact</p>
+                  <p className="text-white">{String((lead.meta as Record<string, unknown>).contact_preference)}</p>
                 </div>
               )}
             </div>
@@ -478,6 +502,12 @@ export function Leads() {
           <p className="text-white/50 mt-1">{loading ? 'Loading...' : `${leads.length} total leads`}</p>
         </div>
         <div className="flex gap-3">
+          <a
+            href={`/api/leads/export?token=${encodeURIComponent(getToken())}`}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl font-medium text-white hover:bg-white/10 transition-colors"
+          >
+            Export CSV
+          </a>
           <button
             onClick={fetchLeads}
             className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl font-medium text-white hover:bg-white/10 transition-colors"
@@ -611,7 +641,7 @@ export function Leads() {
                     <span className="text-sm text-white/70">{lead.service_interested || '—'}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-cyan-400 font-medium">{lead.budget ? `$${Number(lead.budget).toLocaleString()}` : '—'}</span>
+                    <span className="text-sm text-cyan-400 font-medium">{lead.budget || '—'}</span>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[lead.status] || 'bg-gray-500/20 text-gray-400 border-gray-500/30'}`}>

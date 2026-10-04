@@ -1,0 +1,10 @@
+# Runtime data (local JSON store, uploads)
+data/
+
+# Dependencies
+node_modules/
+
+# Env files
+.env
+.env.local
+.env.production

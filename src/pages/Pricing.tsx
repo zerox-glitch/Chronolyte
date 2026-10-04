@@ -366,7 +366,7 @@ export function Pricing() {
           <AnimatedSection>
             <div className="text-center mb-16">
               <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">AI Solutions</span>
-              <h2 className="text-4xl font-bold text-white mb-4">AI Tools & Integration</h2>
+              <h2 className="text-4xl font-bold text-white mb-4">Mobile App Development</h2>
               <p className="text-xl text-white/60">
                 Intelligent solutions powered by cutting-edge AI
               </p>
@@ -424,7 +424,7 @@ export function Pricing() {
           <AnimatedSection>
             <div className="text-center mb-16">
               <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Automation</span>
-              <h2 className="text-4xl font-bold text-white mb-4">AI Automation</h2>
+              <h2 className="text-4xl font-bold text-white mb-4">Hire Developers</h2>
               <p className="text-xl text-white/60">
                 Intelligent workflow automation for your business
               </p>

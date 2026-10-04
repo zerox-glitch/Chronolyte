@@ -1,0 +1,36 @@
+# Chronolyte
+
+> Chronolyte is a managed web design and development studio. Businesses hire Chronolyte to build websites, e-commerce stores, web apps, mobile apps, and SaaS products. Free plan, timeline and fixed-price quote within one business day. Websites from $500, SaaS MVPs $20,000-$75,000, apps $15,000-$100,000+, developers $25-$150+/hr. A managed alternative to Fiverr/Upwork for business-critical projects.
+
+## What Chronolyte does
+
+- **Web design & development** — landing pages ($500-$2,500), business websites ($2,000-$8,000), e-commerce stores ($2,500-$15,000).
+- **SaaS product development** — MVPs with auth, billing and dashboards ($20,000-$75,000, 2-4 months).
+- **Mobile app development** — iOS, Android and cross-platform apps ($15,000-$100,000+).
+- **Hire developers** — vetted developers and designers by the project, hour or month ($25-$150+/hr).
+
+## Who it is for
+
+Founders and businesses that want to hire reliable developers or designers for: building a SaaS product, creating an app, redesigning a website, automating workflows with AI, or replacing unreliable freelance marketplaces.
+
+## Key pages
+
+- [Home](https://chronolyte.com/): Overview of services, process, and free project starter.
+- [Services](https://chronolyte.com/services): Full list of development services.
+- [Pricing](https://chronolyte.com/pricing): Transparent fixed-price packages.
+- [Portfolio](https://chronolyte.com/portfolio): Case studies and shipped products.
+- [FAQ](https://chronolyte.com/faq): Common questions about hiring, costs, and timelines.
+- [Contact](https://chronolyte.com/contact): Get a free quote within 24 hours.
+- [Start your project free](https://chronolyte.com/): 3-step form — what do you need, tell us about it, contact details.
+
+## Guides & articles
+- [The Best Fiverr and Upwork Alternative for Web and App Projects](https://chronolyte.com/blog/fiverr-upwork-alternative): Freelance marketplaces are great for some jobs and risky for others. Here is an honest comparison to help you pick the right way to get your website, app or SaaS built.
+- [SaaS MVP Development: The Practical Guide for Founders](https://chronolyte.com/blog/saas-mvp-development-guide): How to build a SaaS MVP: scope, tech stack, cost ($20k-$75k typical), timeline, and the mistakes that sink first-time founders.
+- [How to Hire a Web Developer (Without Getting Burned)](https://chronolyte.com/blog/how-to-hire-a-web-developer): A practical guide for non-technical founders and business owners: where to find developers, what to ask, what it costs and what to avoid.
+- [How Much Does It Cost to Build an App in 2026? Full Breakdown](https://chronolyte.com/blog/how-much-does-it-cost-to-build-an-app): App development costs for 2026: simple, mid-complexity and complex apps, cost drivers, iOS vs Android vs cross-platform and ways to reduce your budget.
+- [How Much Does a Website Cost in 2026? Real Price Ranges](https://chronolyte.com/blog/how-much-does-a-website-cost): A realistic breakdown of website costs for small businesses and startups — what drives the price, what is usually left out, and how to avoid overpaying.
+
+## Contact
+
+- Email: contact@chronolyte.com
+- Free quote: https://chronolyte.com/contact

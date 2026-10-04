@@ -23,6 +23,9 @@ export interface Lead {
   message?: string;
   service_interested?: string;
   budget?: string;
+  timeline?: string;
+  reference_number?: string;
+  meta?: Record<string, unknown> | null;
   source: string;
   status: string;
   priority: string;
