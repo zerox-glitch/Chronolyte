@@ -42,7 +42,17 @@ const cases = [
   ['POST /api/auth/login (2 segments, valid seed creds)', () => req('POST', '/api/auth/login', { username: 'admin', password: 'admin123' }), (r) => r.status === 200 && Boolean(r.json?.data?.token)],
   ['GET  /api/blogs/1001 (2 segments)', () => req('GET', '/api/blogs/1001'), (r) => (r.status === 200 || r.status === 404) && r.ct.includes('json')],
   ['GET  /api/stats/dashboard (2 segments, unauth)', () => req('GET', '/api/stats/dashboard'), (r) => r.status === 401 && r.ct.includes('json')],
-  ['POST /api/leads (public lead, 2 segments)', () => req('POST', '/api/leads', { name: 'Smoke Test', email: 'smoke@test.local', message: 'ping' }), (r) => r.status === 201 && r.ct.includes('json')]
+  ['POST /api/leads (public lead, 2 segments)', () => req('POST', '/api/leads', { name: 'Smoke Test', email: 'smoke@test.local', message: 'ping' }), (r) => r.status === 201 && r.ct.includes('json')],
+
+  // --- vercel.json rewrite funnel: every multi-segment path arrives at the
+  // literal /api/handler target with the original path in ?__orig (+ ?__ns). ---
+  ['GET  /api/handler?__orig=auth/login (funnel)', () => req('GET', '/api/handler?__orig=auth/login'), (r) => r.status === 404 && r.ct.includes('json') && /Unknown auth endpoint/.test(r.text)],
+  ['POST /api/handler?__orig=auth/login (funnel, valid seed creds)', () => req('POST', '/api/handler?__orig=auth/login', { username: 'admin', password: 'admin123' }), (r) => r.status === 200 && Boolean(r.json?.data?.token)],
+  ['GET  /api/handler?__orig=blogs/1001 (funnel)', () => req('GET', '/api/handler?__orig=blogs/1001'), (r) => r.status === 200 && r.json?.success === true],
+  ['GET  /api/handler?__orig=stats/dashboard (funnel, unauth)', () => req('GET', '/api/handler?__orig=stats/dashboard'), (r) => r.status === 401 && r.ct.includes('json')],
+  ['GET  /api/handler?__orig=settings.php&action=get (legacy .php funnel)', () => req('GET', '/api/handler?__orig=settings.php&action=get&key=site_settings'), (r) => r.status === 200 && r.ct.includes('json')],
+  ['GET  /api/handler?__ns=page/blog&__orig=<slug> (funnel, SEO html)', () => req('GET', '/api/handler?__ns=page/blog&__orig=how-much-does-a-website-cost'), (r) => r.status === 200 && r.ct.includes('text/html')],
+  ['GET  /api/handler (funnel, root)', () => req('GET', '/api/handler'), (r) => r.status === 200 && r.json?.success === true]
 ];
 
 let failed = 0;
