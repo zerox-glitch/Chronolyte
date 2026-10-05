@@ -1,6 +1,6 @@
 /**
  * Chronolyte API router — framework-neutral core.
- * Called by api/[[...slug]].js (Vercel) and server/index.js (local).
+ * Called by api/[...slug].js (Vercel) and server/index.js (local).
  *
  * Supports both URL styles:
  *   /api/leads            (clean REST)

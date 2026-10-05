@@ -8,6 +8,7 @@
     "dev:server": "node server/index.js",
     "dev:all": "node server/index.js & vite --host 0.0.0.0",
     "build": "vite build && node scripts/build-seo.mjs",
+    "smoke": "node scripts/smoke-api.mjs",
     "start": "node server/index.js",
     "preview": "vite preview --host 0.0.0.0"
   },
