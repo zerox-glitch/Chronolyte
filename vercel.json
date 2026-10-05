@@ -18,10 +18,12 @@
     { "source": "/start", "destination": "/", "permanent": false }
   ],
   "rewrites": [
-    { "source": "/backend/api/(.*)", "destination": "/api/$1" },
-    { "source": "/uploads/(.*)", "destination": "/api/files/$1" },
-    { "source": "/blog/:slug", "destination": "/api/page/blog/:slug" },
-    { "source": "/blog", "destination": "/api/page/blog" },
+    { "source": "/api", "destination": "/api/handler" },
+    { "source": "/api/:__orig(.*)", "destination": "/api/handler" },
+    { "source": "/backend/api/:__orig(.*)", "destination": "/api/handler" },
+    { "source": "/uploads/:__orig(.*)", "destination": "/api/handler?__ns=files" },
+    { "source": "/blog", "destination": "/api/handler?__ns=page/blog" },
+    { "source": "/blog/:__orig([^/]+)", "destination": "/api/handler?__ns=page/blog" },
     { "source": "/((?!api/|uploads/|assets/|favicon\\.svg|favicon\\.ico|og-image\\.png|robots\\.txt|sitemap\\.xml|llms\\.txt|site\\.webmanifest|browserconfig\\.xml).*)", "destination": "/index.html" }
   ],
   "headers": [

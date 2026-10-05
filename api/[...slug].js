@@ -34,14 +34,44 @@ const storeReady = (async () => {
   }
 })();
 
+// Flatten an error's `cause` chain (undici/Neon hide the real reason in there:
+// ECONNREFUSED / ENOTFOUND / timeouts surface only as "fetch failed" otherwise).
+function errDetail(e) {
+  let d = String((e && e.message) || e);
+  let c = e && e.cause;
+  let i = 0;
+  while (c && i++ < 3) {
+    d += ' -> ' + String((c && c.message) || c);
+    c = c.cause;
+  }
+  return d;
+}
+
 export default async function handler(req, res) {
   await storeReady;
 
-  // Normalize legacy /backend/api/foo.php -> /api/foo (belt & suspenders with vercel.json rewrites)
-  let pathname = req.url.split('?')[0];
+  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+
+  // Reconstruct the original path when reached via a vercel.json rewrite.
+  // Vercel's api-directory router only matches ONE segment per bracket file,
+  // so every multi-segment request is funnelled to the literal /api/handler
+  // target; the captured path arrives as the auto-appended `__orig` query
+  // param (with `__ns` carrying any namespace prefix from the rewrite dest).
+  let pathname = url.pathname;
   try {
     pathname = decodeURIComponent(pathname);
   } catch {}
+  if (pathname === '/api/handler' || pathname === '/api/handler/') {
+    const ns = (url.searchParams.get('__ns') || '').replace(/^\/+|\/+$/g, '');
+    const orig = (url.searchParams.get('__orig') || '').replace(/^\/+/, '');
+    pathname = ns
+      ? `/api/${ns}${orig ? '/' + orig : ''}`
+      : (orig ? `/api/${orig}` : '/api');
+  }
+  url.searchParams.delete('__orig');
+  url.searchParams.delete('__ns');
+
+  // Normalize legacy /backend/api/foo.php -> /api/foo (belt & suspenders with vercel.json rewrites)
   if (pathname.startsWith('/backend/api/')) {
     pathname = '/api/' + pathname.slice('/backend/api/'.length).replace(/\.php$/, '');
   } else if (pathname.startsWith('/api/') && pathname.endsWith('.php')) {
@@ -57,12 +87,18 @@ export default async function handler(req, res) {
     res.end(JSON.stringify({
       success: false,
       error: 'Store initialization failed (database unreachable or seed error) — check DATABASE_URL and the function logs',
-      detail: String((initError && initError.message) || initError)
+      detail: errDetail(initError),
+      runtime_commit: (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7) || null
     }));
     return;
   }
 
-  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  // Keep `url` consistent with the resolved pathname: handleAuth() (and any
+  // other downstream consumer) reads url.pathname, which would still say
+  // "/api/handler" after a rewrite funnel.
+  if (url.pathname !== pathname) {
+    try { url.pathname = pathname; } catch {}
+  }
 
   try {
     const handled = await handleApi({
