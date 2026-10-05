@@ -11,7 +11,7 @@
 
 import { createNeonStore } from './_lib/store-neon.js';
 import { createJsonStore } from './_lib/store-json.js';
-import { handleApi } from './_lib/router.js';
+import { handleApi, initStore } from './_lib/router.js';
 
 function pickStore() {
   if (process.env.DATABASE_URL) {
@@ -26,7 +26,6 @@ const store = pickStore();
 let initError = null;
 const storeReady = (async () => {
   try {
-    const { initStore } = await import('./_lib/router.js');
     await initStore(store);
   } catch (err) {
     initError = err;
@@ -34,15 +33,19 @@ const storeReady = (async () => {
   }
 })();
 
-// Flatten an error's `cause` chain (undici/Neon hide the real reason in there:
-// ECONNREFUSED / ENOTFOUND / timeouts surface only as "fetch failed" otherwise).
+// Flatten an error's cause chain: undici and Neon hide the real reason one or
+// two levels down (ECONNREFUSED / ENOTFOUND / UND_ERR_CONNECT_TIMEOUT surface
+// only as a bare "fetch failed" otherwise). Neon's HTTP driver uses
+// `.sourceError` rather than the standard `.cause`, so follow both.
 function errDetail(e) {
   let d = String((e && e.message) || e);
-  let c = e && e.cause;
+  let c = e && (e.cause || e.sourceError);
   let i = 0;
   while (c && i++ < 3) {
-    d += ' -> ' + String((c && c.message) || c);
-    c = c.cause;
+    const m = String((c && c.message) || c);
+    const code = c && (c.code || c.errno);
+    d += ' -> ' + m + (code ? ` [${code}]` : '');
+    c = c.cause || c.sourceError;
   }
   return d;
 }
@@ -82,6 +85,20 @@ export default async function handler(req, res) {
   // endpoints still answer with JSON explaining why, so the admin login screen
   // and /api/diag show the real cause instead of a blank 500. Other endpoints
   // fall through and retry init via handleApi().
+  // The module-scope init above runs during cold start, where Vercel's
+  // outbound network is not reliably up yet — Neon's HTTP driver then fails
+  // with a bare "fetch failed". Retry once inside the request, which is
+  // exactly what handleApi() already does for every other endpoint (and why
+  // data routes answered fine while /api/health and /api/diag reported 503).
+  if (initError) {
+    try {
+      await initStore(store);
+      initError = null;
+    } catch (err) {
+      initError = err;
+    }
+  }
+
   if (initError && (pathname === '/api/health' || pathname === '/api/diag')) {
     res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end(JSON.stringify({
