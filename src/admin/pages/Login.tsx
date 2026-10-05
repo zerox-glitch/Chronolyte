@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Lock, Mail } from 'lucide-react';
+
+type ApiStatus = { state: 'checking' | 'ok' | 'error'; message: string };
 
 export function AdminLogin() {
   const navigate = useNavigate();
@@ -9,6 +11,7 @@ export function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [apiStatus, setApiStatus] = useState<ApiStatus>({ state: 'checking', message: 'Checking admin API…' });
 
   // Check if already logged in
   useEffect(() => {
@@ -17,6 +20,68 @@ export function AdminLogin() {
     if (token && user) {
       window.location.href = '/admin';
     }
+  }, []);
+
+  // Self-diagnosis on load: ping the public /api/diag endpoint so the screen
+  // can tell "API healthy" (green) apart from deployment/routing/seed
+  // problems (red) BEFORE the user even types a password.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/diag', { headers: { Accept: 'application/json' } });
+        const ct = String(res.headers.get('content-type') || '').toLowerCase();
+        if (!ct.includes('application/json')) {
+          if (!cancelled) {
+            setApiStatus({
+              state: 'error',
+              message: 'Admin API not reached — the server returned the website page (HTML) instead of JSON. The /api route is not deployed on this build.'
+            });
+          }
+          return;
+        }
+        const data = await res.json().catch(() => null);
+        const d = data?.data;
+        if (!res.ok || !data?.success || !d) {
+          if (!cancelled) {
+            setApiStatus({
+              state: 'error',
+              message: data?.error || data?.detail || `Admin API unhealthy (HTTP ${res.status}). Check the Vercel function logs.`
+            });
+          }
+          return;
+        }
+        if (d.env_admin_set && d.env_admin_in_db === false) {
+          if (!cancelled) {
+            setApiStatus({
+              state: 'error',
+              message: `Admin API connected, but user "${d.env_admin_username}" is missing from the database. Check the seed logs, then redeploy.`
+            });
+          }
+          return;
+        }
+        if (d.env_admin_set && d.env_admin_active === false) {
+          if (!cancelled) {
+            setApiStatus({
+              state: 'error',
+              message: `Admin API connected, but "${d.env_admin_username}" is disabled in the database. Redeploy to re-activate it from the environment.`
+            });
+          }
+          return;
+        }
+        if (!cancelled) setApiStatus({ state: 'ok', message: 'Admin API connected' });
+      } catch {
+        if (!cancelled) {
+          setApiStatus({
+            state: 'error',
+            message: 'Cannot reach the admin API (network error). The site may still be deploying — retry in a moment.'
+          });
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -238,6 +303,39 @@ export function AdminLogin() {
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">Chronolyte</h1>
             <p className="text-cyan-400 font-semibold text-lg">Super Admin Panel</p>
+          </div>
+
+          {/* API connectivity self-check */}
+          <div
+            data-testid="api-status"
+            className={`mb-6 p-3 rounded-lg border flex items-center gap-2.5 text-sm ${
+              apiStatus.state === 'ok'
+                ? 'bg-emerald-500/10 border-emerald-500/40'
+                : apiStatus.state === 'error'
+                  ? 'bg-red-500/10 border-red-500/50'
+                  : 'bg-white/5 border-white/10'
+            }`}
+          >
+            {apiStatus.state === 'ok' && (
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            )}
+            {apiStatus.state === 'error' && (
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+            )}
+            {apiStatus.state === 'checking' && (
+              <span className="w-4 h-4 flex-shrink-0 border-2 border-gray-500/40 border-t-gray-300 rounded-full animate-spin" />
+            )}
+            <p
+              className={
+                apiStatus.state === 'ok'
+                  ? 'text-emerald-400 font-medium'
+                  : apiStatus.state === 'error'
+                    ? 'text-red-400'
+                    : 'text-gray-400'
+              }
+            >
+              {apiStatus.message}
+            </p>
           </div>
 
           {/* Error Message */}

@@ -54,7 +54,13 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 
 const store = await createStore();
 const { initStore } = await import('../api/_lib/router.js');
-await initStore(store);
+try {
+  await initStore(store);
+} catch (err) {
+  // Don't hard-crash on a bad DATABASE_URL / seed error: keep serving so
+  // /api/diag can report the failure. The router retries init per request.
+  console.error('[server] store init failed (check DATABASE_URL / admin env vars):', err);
+}
 console.log(`[server] store: ${store.kind}`);
 
 const indexHtmlCache = { html: null, mtime: 0 };
@@ -189,4 +195,5 @@ server.listen(PORT, HOST, () => {
   console.log(`  - Site:        http://localhost:${PORT}/`);
   console.log(`  - Admin panel: http://localhost:${PORT}/admin  (default login: admin / admin123)`);
   console.log(`  - API health:  http://localhost:${PORT}/api/health`);
+  console.log(`  - API diag:    http://localhost:${PORT}/api/diag`);
 });

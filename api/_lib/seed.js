@@ -46,6 +46,11 @@ export async function seedStore(store) {
   // When ADMIN_USERNAME + ADMIN_PASSWORD env vars are set they are the source of
   // truth: the account is created on first boot and its password/email re-synced
   // on every boot that differs. This makes credential changes = env change + deploy.
+  //
+  // Active-flag hardening: the env-managed account is ALWAYS kept active. If it
+  // was deactivated (by mistake, by a stale import, or by a legacy record that
+  // never had an active flag), the next deploy re-activates it — so a redeploy
+  // is a guaranteed recovery path from any admin lockout.
   const envUsername = (process.env.ADMIN_USERNAME || '').trim();
   const envPassword = process.env.ADMIN_PASSWORD || '';
   const envEmail = (process.env.ADMIN_EMAIL || '').trim();
@@ -53,12 +58,21 @@ export async function seedStore(store) {
     const admins = await store.admins.list();
     const existing = admins.find((a) => String(a.username).toLowerCase() === envUsername.toLowerCase());
     if (existing) {
-      if (!store.verifyPassword(envPassword, existing.password) || (envEmail && existing.email !== envEmail)) {
+      const passwordOutOfSync = !store.verifyPassword(envPassword, existing.password);
+      const emailOutOfSync = Boolean(envEmail) && existing.email !== envEmail;
+      const notActive = !Number(existing.active);
+      if (passwordOutOfSync || emailOutOfSync || notActive) {
         await store.admins.update(existing.id, {
-          password: store.hashPassword(envPassword),
-          ...(envEmail ? { email: envEmail } : {})
+          ...(passwordOutOfSync ? { password: store.hashPassword(envPassword) } : {}),
+          ...(emailOutOfSync ? { email: envEmail } : {}),
+          ...(notActive ? { active: 1 } : {})
         });
-        console.log(`[seed] synced admin "${envUsername}" credentials from environment`);
+        console.log(
+          `[seed] synced admin "${envUsername}" from environment` +
+          (passwordOutOfSync ? ' [password]' : '') +
+          (emailOutOfSync ? ' [email]' : '') +
+          (notActive ? ' [re-activated]' : '')
+        );
       }
     } else {
       await store.admins.create({
