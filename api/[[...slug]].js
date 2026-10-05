@@ -23,11 +23,13 @@ function pickStore() {
 }
 
 const store = pickStore();
+let initError = null;
 const storeReady = (async () => {
   try {
     const { initStore } = await import('./_lib/router.js');
     await initStore(store);
   } catch (err) {
+    initError = err;
     console.error('[api] store init failed:', err);
   }
 })();
@@ -44,6 +46,20 @@ export default async function handler(req, res) {
     pathname = '/api/' + pathname.slice('/backend/api/'.length).replace(/\.php$/, '');
   } else if (pathname.startsWith('/api/') && pathname.endsWith('.php')) {
     pathname = '/api/' + pathname.slice('/api/'.length).replace(/\.php$/, '');
+  }
+
+  // Self-diagnosis: if store init (migration/seed) failed, the health + diag
+  // endpoints still answer with JSON explaining why, so the admin login screen
+  // and /api/diag show the real cause instead of a blank 500. Other endpoints
+  // fall through and retry init via handleApi().
+  if (initError && (pathname === '/api/health' || pathname === '/api/diag')) {
+    res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+    res.end(JSON.stringify({
+      success: false,
+      error: 'Store initialization failed (database unreachable or seed error) — check DATABASE_URL and the function logs',
+      detail: String((initError && initError.message) || initError)
+    }));
+    return;
   }
 
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);

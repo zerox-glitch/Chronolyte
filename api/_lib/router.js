@@ -93,6 +93,9 @@ export async function handleApi({ req, res, method, pathname, url, store }) {
   if (pathname === '/api/diag') {
     const admins = await store.admins.list().catch(() => []);
     const envUser = (process.env.ADMIN_USERNAME || '').trim();
+    const envAdmin = envUser
+      ? admins.find((a) => String(a.username).toLowerCase() === envUser.toLowerCase())
+      : null;
     return ok(res, {
       store: store.kind,
       database_url_set: Boolean(process.env.DATABASE_URL),
@@ -101,7 +104,9 @@ export async function handleApi({ req, res, method, pathname, url, store }) {
       env_admin_username: envUser || null,
       admins_in_db: admins.length,
       admin_usernames: admins.map((a) => a.username),
-      env_admin_in_db: Boolean(envUser) && admins.some((a) => String(a.username).toLowerCase() === envUser.toLowerCase())
+      admins: admins.map((a) => ({ username: a.username, active: Number(a.active) ? 1 : 0 })),
+      env_admin_in_db: Boolean(envAdmin),
+      env_admin_active: Boolean(envAdmin) && Number(envAdmin.active) === 1
     });
   }
   if (pathname === '/api' || pathname === '/api/') {
@@ -248,6 +253,18 @@ async function handleAuth({ req, res, method, url, store, admin }) {
 
     const user = await store.admins.byLogin(username);
     if (!user || !store.verifyPassword(password, user.password)) {
+      // Self-diagnose: byLogin() hides disabled accounts (active != 1). If the
+      // login matches a disabled account, say so explicitly instead of the
+      // generic "invalid credentials" that previously masked lockouts.
+      if (!user) {
+        const l = username.toLowerCase();
+        const anyState = (await store.admins.list()).find(
+          (a) => String(a.username).toLowerCase() === l || String(a.email || '').toLowerCase() === l
+        );
+        if (anyState && !Number(anyState.active)) {
+          return fail(res, 403, 'This account is disabled. Another admin can re-enable it under Users, or redeploy with the environment credentials to re-activate it.');
+        }
+      }
       return fail(res, 401, 'Invalid username or password');
     }
     if (!String(user.password).startsWith('pbkdf2$')) {
