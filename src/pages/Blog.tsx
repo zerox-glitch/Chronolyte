@@ -21,6 +21,22 @@ interface Blog {
     images: Array<{id: number; image_url: string; image_alt: string;}>;
 }
 
+// The API returns `tags` as a JSON-encoded string when the post comes from the
+// Neon store (JSONB column) and as a real array from the local JSON store, so
+// normalize before rendering — calling .map() on the string crashed this page.
+function normalizeTags(tags: unknown): string[] {
+    if (Array.isArray(tags)) return tags.filter((t): t is string => typeof t === 'string');
+    if (typeof tags === 'string' && tags.trim()) {
+        try {
+            const parsed = JSON.parse(tags);
+            if (Array.isArray(parsed)) return parsed.filter((t): t is string => typeof t === 'string');
+        } catch {
+            return tags.split(',').map((t) => t.trim()).filter(Boolean);
+        }
+    }
+    return [];
+}
+
 export const BlogPost = () => {
     const { slug } = useParams<{ slug: string }>();
     const [blog, setBlog] = useState<Blog | null>(null);
@@ -180,7 +196,7 @@ export const BlogPost = () => {
                             {blog.category}
                         </Link>
                     )}
-                    {blog.tags && blog.tags.map((tag: string) => (
+                    {normalizeTags(blog.tags).map((tag: string) => (
                         <Link
                             key={tag}
                             to={`/blog/search?q=${tag}`}
