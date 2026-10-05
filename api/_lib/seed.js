@@ -172,42 +172,42 @@ export async function seedStore(store) {
     }));
   }
 
-  // ----- Portfolio projects (same items the public page already falls back to) -----
+  // ----- Original portfolio concepts (labeled clearly on the public page) -----
   if ((await store.records.list('projects')).length === 0) {
     const projects = [
       {
-        title: 'InvoiceFlow Pro', client_name: 'InvoiceFlow', project_type: 'saas',
+        title: 'InvoiceFlow Pro', client_name: 'Concept project', portfolio_kind: 'concept', project_type: 'saas',
         short_description: 'Complete invoicing and billing SaaS platform with automated reminders, payment tracking, and financial analytics.',
         long_description: 'A comprehensive SaaS solution for managing invoices, tracking payments, and generating financial reports. Features automated reminders and integration with major payment gateways.',
         featured_image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
         tech_stack: JSON.stringify(['React', 'Node.js', 'Stripe', 'PostgreSQL']),
         features: JSON.stringify(['Automated invoicing', 'Payment tracking', 'Financial analytics', 'Multi-currency support']),
         images: JSON.stringify([]),
-        metrics: JSON.stringify({ users: '2,500+', revenue: '$45K MRR' }),
+        metrics: JSON.stringify({}),
         price: 4500, category: 'SaaS', published: 1, featured: 1, video_url: '', live_url: '',
         created_at: daysAgoIso(60), updated_at: daysAgoIso(60)
       },
       {
-        title: 'Luxe Real Estate', client_name: 'Luxe RE', project_type: 'website',
+        title: 'Luxe Real Estate', client_name: 'Concept project', portfolio_kind: 'concept', project_type: 'website',
         short_description: 'Premium real estate website with virtual tours, property search, and lead capture system.',
         long_description: 'A stunning real estate website featuring virtual property tours, advanced search filters, and an integrated lead capture system to convert visitors into qualified leads.',
         featured_image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
         tech_stack: JSON.stringify(['Next.js', 'Framer Motion', 'Sanity CMS']),
         features: JSON.stringify(['Virtual tours', 'Property search', 'Lead capture', 'Agent profiles']),
         images: JSON.stringify([]),
-        metrics: JSON.stringify({ traffic: '50K/mo', leads: '200+/mo' }),
+        metrics: JSON.stringify({}),
         price: 3200, category: 'Website', published: 1, featured: 1, video_url: '', live_url: '',
         created_at: daysAgoIso(50), updated_at: daysAgoIso(50)
       },
       {
-        title: 'LeadGen AI', client_name: 'LeadGen', project_type: 'automation',
+        title: 'LeadGen AI', client_name: 'Concept project', portfolio_kind: 'concept', project_type: 'automation',
         short_description: 'Automated lead generation system with AI-powered qualification and CRM integration.',
         long_description: 'An intelligent automation system that generates, qualifies, and nurtures leads using AI. Integrates with major CRM platforms for seamless workflow.',
         featured_image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
         tech_stack: JSON.stringify(['Python', 'OpenAI', 'Zapier', 'HubSpot']),
         features: JSON.stringify(['AI qualification', 'CRM sync', 'Email sequences', 'Analytics dashboard']),
         images: JSON.stringify([]),
-        metrics: JSON.stringify({ leads: '1,000+/mo', accuracy: '95%' }),
+        metrics: JSON.stringify({}),
         price: 5000, category: 'Automation', published: 1, featured: 1, video_url: '', live_url: '',
         created_at: daysAgoIso(40), updated_at: daysAgoIso(40)
       }
@@ -216,6 +216,67 @@ export async function seedStore(store) {
       p.id = await store.counters.next('project');
       await store.records.insert('projects', p);
     }
+  }
+
+  // Add the owner's live product and clearly labeled portfolio concepts to
+  // existing stores too. This is idempotent and never overwrites user projects.
+  const showcaseProjects = [
+    {
+      slug: 'qrwho-online', title: 'QRWho', client_name: 'Built by me', portfolio_kind: 'personal', project_type: 'website',
+      short_description: 'A free, browser-based studio for artistic, photo-based QR codes, with live scannability checks and PNG/SVG export.',
+      long_description: 'QRWho is a personal product for creating static, photo-based QR codes in the browser. It offers artistic styles, checks whether a design remains scannable, and exports PNG or SVG files.',
+      featured_image: 'https://www.qrwho.online/samples/aurora.jpg',
+      tech_stack: JSON.stringify(['Browser-side processing', 'PNG export', 'SVG export']),
+      features: JSON.stringify(['Artistic QR styles', 'Photo-to-QR rendering', 'Live scannability checks', 'PNG and SVG export']),
+      images: JSON.stringify([]),
+      metrics: JSON.stringify({}),
+      price: 0, category: 'Personal project', published: 1, featured: 1, video_url: '', live_url: 'https://qrwho.online',
+      status: 'completed', created_at: nowIso(), updated_at: nowIso()
+    },
+    {
+      slug: 'verdant-and-co', title: 'Verdant & Co.', client_name: 'Concept project', portfolio_kind: 'concept', project_type: 'website',
+      short_description: 'An editorial storefront concept for a sustainable skincare brand, pairing calm product storytelling with a streamlined checkout.',
+      long_description: 'A self-initiated e-commerce concept exploring a premium, low-waste skincare experience: warm product photography, clear ingredient storytelling, subscription options and a simple path to checkout.',
+      featured_image: '/images/portfolio/verdant-commerce.jpg',
+      tech_stack: JSON.stringify(['Next.js', 'Shopify', 'Stripe']),
+      features: JSON.stringify(['Editorial product pages', 'Subscription-ready catalog', 'Mobile-first shopping', 'Streamlined checkout']),
+      images: JSON.stringify([]), metrics: JSON.stringify({}),
+      price: 0, category: 'E-commerce concept', published: 1, featured: 1, video_url: '', live_url: '',
+      status: 'concept', created_at: daysAgoIso(3), updated_at: daysAgoIso(3)
+    },
+    {
+      slug: 'atelier-estates', title: 'Atelier Estates', client_name: 'Concept project', portfolio_kind: 'concept', project_type: 'website',
+      short_description: 'A boutique property discovery concept with cinematic home pages, saved searches and direct enquiry journeys.',
+      long_description: 'A self-initiated real-estate experience concept for a boutique agency, focused on large property photography, useful search filters and clear paths from browsing to a viewing enquiry.',
+      featured_image: '/images/portfolio/atelier-estates.jpg',
+      tech_stack: JSON.stringify(['Next.js', 'Mapbox', 'CMS']),
+      features: JSON.stringify(['Property discovery', 'Saved searches', 'Editorial listing pages', 'Enquiry flows']),
+      images: JSON.stringify([]), metrics: JSON.stringify({}),
+      price: 0, category: 'Website concept', published: 1, featured: 1, video_url: '', live_url: '',
+      status: 'concept', created_at: daysAgoIso(4), updated_at: daysAgoIso(4)
+    },
+    {
+      slug: 'pulseboard', title: 'Pulseboard', client_name: 'Concept project', portfolio_kind: 'concept', project_type: 'saas',
+      short_description: 'A SaaS dashboard concept that brings operational metrics, trend charts and shared team views into one focused workspace.',
+      long_description: 'A self-initiated operations product concept exploring a calm, dark analytics workspace with KPI summaries, trends and collaborative team views.',
+      featured_image: '/images/portfolio/pulseboard-dashboard.jpg',
+      tech_stack: JSON.stringify(['React', 'TypeScript', 'Node.js', 'PostgreSQL']),
+      features: JSON.stringify(['KPI dashboard', 'Trend visualizations', 'Shared team views', 'Responsive workspace']),
+      images: JSON.stringify([]), metrics: JSON.stringify({}),
+      price: 0, category: 'SaaS concept', published: 1, featured: 1, video_url: '', live_url: '',
+      status: 'concept', created_at: daysAgoIso(5), updated_at: daysAgoIso(5)
+    }
+  ];
+  const existingShowcaseProjects = await store.records.list('projects');
+  for (const project of showcaseProjects) {
+    const exists = existingShowcaseProjects.some((existing) =>
+      (project.slug && existing.slug === project.slug) ||
+      String(existing.title || '').toLowerCase() === project.title.toLowerCase()
+    );
+    if (exists) continue;
+    project.id = await store.counters.next('project');
+    await store.records.insert('projects', project);
+    existingShowcaseProjects.push(project);
   }
 
   // ----- Testimonials (mirrors admin defaults) -----
