@@ -50,7 +50,7 @@ Default login: **admin / admin123** (change via Admin → Settings, or set `ADMI
 | `ADMIN_PASSWORD` | your admin password | First run only |
 | `ADMIN_EMAIL` | your email | Optional |
 
-The database schema is created automatically on the first API request. The default content (homepage, pricing, FAQs, blog posts, portfolio) seeds itself — your UI stays exactly as designed.
+The database schema is created automatically on the first API request. The default content (homepage, pricing, FAQs, blog posts, portfolio) seeds itself — your UI stays exactly as designed. Production lead capture requires `DATABASE_URL`: if it is missing, the API now returns a clear 503 instead of reporting success while storing leads in Vercel's per-instance temporary filesystem.
 
 ### Step 3 — Domains & search engines
 1. Add your custom domain in Vercel → Settings → Domains

@@ -51,6 +51,15 @@ export function AdminLogin() {
           }
           return;
         }
+        if (d.lead_storage_ready === false) {
+          if (!cancelled) {
+            setApiStatus({
+              state: 'error',
+              message: 'Lead storage is temporary on this Vercel deployment. Set DATABASE_URL to a persistent Neon database in Project Settings, then redeploy.'
+            });
+          }
+          return;
+        }
         if (d.env_admin_set && d.env_admin_in_db === false) {
           if (!cancelled) {
             setApiStatus({

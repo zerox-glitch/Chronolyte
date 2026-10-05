@@ -145,8 +145,8 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit form');
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || errorData?.message || 'Failed to submit form');
       }
 
       setSubmitted(true);
@@ -167,7 +167,7 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
         onClose();
       }, 3000);
     } catch (err) {
-      setError('Failed to submit form. Please try again.');
+      setError(err instanceof Error ? err.message : 'Failed to submit form. Please try again.');
       console.error('Form submission error:', err);
     } finally {
       setIsSubmitting(false);

@@ -84,6 +84,11 @@ export async function handleApi({ req, res, method, pathname, url, store }) {
   await initStore(store);
 
   const admin = await getAdmin(req, url, store);
+  // Vercel's function filesystem is per-instance and ephemeral. The JSON store
+  // is only safe for local development; acknowledging leads written there would
+  // make submissions appear successful even though another invocation cannot
+  // reliably read them back.
+  const leadStorageReady = !process.env.VERCEL || store.kind !== 'json';
 
   // ---------------- Health / root ----------------
   if (pathname === '/api/health') {
@@ -99,6 +104,7 @@ export async function handleApi({ req, res, method, pathname, url, store }) {
     return ok(res, {
       store: store.kind,
       database_url_set: Boolean(process.env.DATABASE_URL),
+      lead_storage_ready: leadStorageReady,
       runtime_commit: process.env.VERCEL_GIT_COMMIT_SHA ? process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : null,
       env_admin_set: Boolean(envUser && process.env.ADMIN_PASSWORD),
       env_admin_username: envUser || null,
@@ -141,6 +147,16 @@ export async function handleApi({ req, res, method, pathname, url, store }) {
   // ---------------- AUTH ----------------
   if (pathname === '/api/auth' || pathname.startsWith('/api/auth/')) {
     return handleAuth({ req, res, method, url, store, admin });
+  }
+
+  // Do not accept or display leads from Vercel's temporary /tmp JSON fallback.
+  // Every serverless instance has its own short-lived filesystem, so a lead
+  // could otherwise return success and still be missing from the admin panel.
+  if (!leadStorageReady && (
+    pathname === '/api/leads' || pathname.startsWith('/api/leads/') ||
+    pathname === '/api/stats/dashboard'
+  )) {
+    return fail(res, 503, 'Lead storage is not configured. Set DATABASE_URL to a persistent Neon database in Vercel Project Settings, then redeploy.');
   }
 
   // ---------------- LEADS ----------------
@@ -915,7 +931,10 @@ async function handleBlogs({ req, res, method, url, store, admin, pathname }) {
       const q = (url.searchParams.get('q') || '').toLowerCase();
       const page = pageParam(url);
       const limit = limitParam(url, 9, 50);
-      const list = published.filter((b) => [b.title, b.excerpt, stripHtml(b.content), b.category].some((v) => (v || '').toLowerCase().includes(q)));
+      const list = published.filter((b) => {
+        const tags = Array.isArray(b.tags) ? b.tags.join(' ') : (typeof b.tags === 'string' ? b.tags : '');
+        return [b.title, b.excerpt, stripHtml(b.content), b.category, tags].some((v) => (v || '').toLowerCase().includes(q));
+      });
       return jsonList({
         data: list.slice((page - 1) * limit, page * limit),
         pagination: { page, limit, total: list.length, pages: Math.max(1, Math.ceil(list.length / limit)) }

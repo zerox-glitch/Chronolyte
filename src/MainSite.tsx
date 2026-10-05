@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { ShieldCheck, Clock, BadgeCheck, Globe } from 'lucide-react';
-import { WhatsAppIcon } from './components/WhatsAppIcon';
-import { PhoneIcon } from './components/PhoneIcon';
 import { LeadCaptureForm } from './components/LeadCaptureForm';
+import { SiteNavigation } from './components/SiteNavigation';
+import { FeaturedBlogs } from './components/FeaturedBlogs';
+import { HourglassLogo } from './components/HourglassLogo';
 
 // ============================================
 // TYPES
@@ -112,270 +113,7 @@ function GridBackground() {
   );
 }
 
-// Animated Hourglass Logo with Arrow - Rotating with Glow
-function HourglassLogo({ className = '' }: { className?: string }) {
-  return (
-    <motion.div
-      className={`${className} relative`}
-      animate={{ rotate: 360 }}
-      transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-      style={{ filter: 'drop-shadow(0 0 8px rgba(0, 229, 255, 0.6))' }}
-    >
-      <svg 
-        viewBox="0 0 100 100" 
-        className="w-full h-full"
-        style={{ overflow: 'visible' }}
-      >
-        <defs>
-          <linearGradient id="hgCyan" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#00e5ff" />
-            <stop offset="100%" stopColor="#0070ff" />
-          </linearGradient>
-          <linearGradient id="hgSilver" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="40%" stopColor="#c0c0c0" />
-            <stop offset="100%" stopColor="#707070" />
-          </linearGradient>
-          <linearGradient id="hgArrow" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00e5ff" stopOpacity="0.1" />
-            <stop offset="20%" stopColor="#00e5ff" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#00ffff" />
-            <stop offset="80%" stopColor="#00e5ff" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#0070ff" />
-          </linearGradient>
-          <radialGradient id="hgFlash" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="40%" stopColor="#00ffff" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#00e5ff" stopOpacity="0" />
-          </radialGradient>
-          <filter id="hgGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="1.5" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <filter id="hgBright" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <filter id="hgBurst" x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur stdDeviation="3" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-
-        {/* Background arc */}
-        <path d="M 25 80 A 35 35 0 1 1 75 80" fill="none" stroke="url(#hgCyan)" strokeWidth="3" filter="url(#hgGlow)" opacity="0.85"/>
-        <path d="M 28 77 A 31 31 0 1 1 72 77" fill="none" stroke="url(#hgSilver)" strokeWidth="1.5" opacity="0.4"/>
-
-        {/* Hourglass outer cyan */}
-        <g filter="url(#hgGlow)">
-          <path d="M 35 18 L 65 18 L 65 24 L 55 46 L 55 54 L 65 76 L 65 82 L 35 82 L 35 76 L 45 54 L 45 46 L 35 24 Z" 
-            fill="none" stroke="url(#hgCyan)" strokeWidth="3" strokeLinejoin="round"/>
-        </g>
-        
-        {/* Hourglass inner silver */}
-        <path d="M 38 21 L 62 21 L 62 25 L 53 45 L 53 55 L 62 75 L 62 79 L 38 79 L 38 75 L 47 55 L 47 45 L 38 25 Z" 
-          fill="none" stroke="url(#hgSilver)" strokeWidth="2" strokeLinejoin="round" opacity="0.7"/>
-        
-        {/* Top/bottom bars */}
-        <line x1="32" y1="18" x2="68" y2="18" stroke="url(#hgCyan)" strokeWidth="4" strokeLinecap="round" filter="url(#hgGlow)"/>
-        <line x1="32" y1="82" x2="68" y2="82" stroke="url(#hgCyan)" strokeWidth="4" strokeLinecap="round" filter="url(#hgGlow)"/>
-        <line x1="35" y1="21" x2="65" y2="21" stroke="url(#hgSilver)" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
-        <line x1="35" y1="79" x2="65" y2="79" stroke="url(#hgSilver)" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
-
-        {/* Arrow beam */}
-        <g filter="url(#hgBright)">
-          <line x1="5" y1="50" x2="95" y2="50" stroke="url(#hgArrow)" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M 90 50 L 100 50" stroke="url(#hgCyan)" strokeWidth="3.5" strokeLinecap="round"/>
-          <path d="M 94 45 L 102 50 L 94 55" fill="none" stroke="url(#hgCyan)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-        </g>
-
-        {/* Center burst */}
-        <g filter="url(#hgBurst)">
-          <circle cx="50" cy="50" r="8" fill="url(#hgFlash)"/>
-          <circle cx="50" cy="50" r="4" fill="#ffffff"/>
-          <line x1="50" y1="38" x2="50" y2="32" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round"/>
-          <line x1="50" y1="62" x2="50" y2="68" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round"/>
-          <line x1="38" y1="50" x2="32" y2="50" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" opacity="0.7"/>
-          <line x1="62" y1="50" x2="68" y2="50" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" opacity="0.7"/>
-          <line x1="42" y1="42" x2="38" y2="38" stroke="#00ffff" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
-          <line x1="58" y1="42" x2="62" y2="38" stroke="#00ffff" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
-          <line x1="42" y1="58" x2="38" y2="62" stroke="#00ffff" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
-          <line x1="58" y1="58" x2="62" y2="62" stroke="#00ffff" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
-        </g>
-
-        {/* Shattered fragments */}
-        <g opacity="0.85">
-          <polygon points="78,38 84,35 82,43" fill="url(#hgCyan)" filter="url(#hgGlow)"/>
-          <polygon points="85,48 92,45 90,53" fill="url(#hgCyan)" filter="url(#hgGlow)"/>
-          <polygon points="80,60 87,57 85,65" fill="url(#hgCyan)" filter="url(#hgGlow)"/>
-          <polygon points="74,68 80,65 78,73" fill="url(#hgCyan)" filter="url(#hgGlow)"/>
-          <polygon points="88,40 93,38 92,44" fill="#00e5ff" opacity="0.7"/>
-          <polygon points="76,32 81,30 80,36" fill="#00e5ff" opacity="0.6"/>
-          <polygon points="84,70 89,68 88,74" fill="#00e5ff" opacity="0.6"/>
-          <circle cx="94" cy="50" r="1.5" fill="#00e5ff" opacity="0.5"/>
-          <circle cx="90" cy="58" r="1.2" fill="#00ffff" opacity="0.4"/>
-          <circle cx="86" cy="35" r="1" fill="#00e5ff" opacity="0.4"/>
-          <circle cx="78" cy="75" r="1.3" fill="#0070ff" opacity="0.4"/>
-        </g>
-      </svg>
-    </motion.div>
-  );
-}
-
-// Navigation
-function Navigation() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [callMenuOpen, setCallMenuOpen] = useState(false);
-  
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close menu when clicking a link
-  const handleLinkClick = () => setMobileMenuOpen(false);
-  
-  return (
-    <>
-      <nav 
-        style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50 }}
-        className={`nav-slide-in transition-all duration-500 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/10 shadow-lg shadow-black/20 ${scrolled ? 'py-3 md:py-4 bg-dark-900/60' : 'py-4 md:py-6 bg-dark-900/30'}`}
-      >
-        <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
-          <div className="flex items-center gap-2 md:gap-4">
-            {/* Rotating Hourglass Logo */}
-            <HourglassLogo className="w-8 h-8 md:w-12 md:h-12" />
-            
-            {/* CHRONOLYTE Text with glowing O */}
-            <span className="font-display font-bold text-lg md:text-2xl tracking-wide text-white flex items-center" style={{ textShadow: '0 0 10px rgba(0,229,255,0.3)' }}>
-              CHR
-              {/* Glowing O */}
-              <span className="relative inline-flex items-center justify-center w-5 h-5 md:w-7 md:h-7 mx-0.5">
-                {/* Outer glow pulse */}
-                <motion.span 
-                  className="absolute inset-[-4px] rounded-full bg-cyan-400/30 blur-md"
-                  animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.9, 1.1, 0.9] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                {/* Main ring */}
-                <span className="absolute inset-0 rounded-full border-[2px] md:border-[2.5px] border-cyan-400" style={{ boxShadow: '0 0 12px rgba(0,229,255,0.9), 0 0 25px rgba(0,229,255,0.5), inset 0 0 8px rgba(0,229,255,0.4)' }} />
-                {/* Inner ring */}
-                <span className="absolute inset-[2px] md:inset-[3px] rounded-full border border-cyan-300/50" />
-                {/* Horizontal light flare */}
-                <span className="absolute w-7 md:w-9 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent opacity-90" />
-                {/* Vertical light flare */}
-                <span className="absolute h-7 md:h-9 w-[2px] bg-gradient-to-b from-transparent via-white to-transparent opacity-70" />
-                {/* Diagonal flares */}
-                <span className="absolute w-5 md:w-7 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-200 to-transparent rotate-45 opacity-60" />
-                <span className="absolute w-5 md:w-7 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-200 to-transparent -rotate-45 opacity-60" />
-                {/* Center bright dot */}
-                <motion.span 
-                  className="absolute w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white"
-                  animate={{ opacity: [0.8, 1, 0.8], scale: [0.8, 1.2, 0.8] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  style={{ boxShadow: '0 0 6px #fff, 0 0 10px #00e5ff' }}
-                />
-              </span>
-              NOLYTE
-            </span>
-          </div>
-          <div className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <Link to="/services" className="hover:text-cyan-400 transition-colors">Services</Link>
-            <Link to="/pricing" className="hover:text-cyan-400 transition-colors">Pricing</Link>
-            <Link to="/portfolio" className="hover:text-cyan-400 transition-colors">Portfolio</Link>
-            <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
-            <Link to="/faq" className="hover:text-cyan-400 transition-colors">FAQ</Link>
-            <Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
-          </div>
-          <div className="relative hidden md:block">
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setCallMenuOpen((v) => !v)}
-              className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-sm font-semibold text-black hover:shadow-lg hover:shadow-cyan-500/30 transition-shadow"
-            >
-              Call Now
-            </motion.button>
-            {callMenuOpen && (
-              <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#0c1220] shadow-lg shadow-cyan-500/10 overflow-hidden">
-                <a
-                  href="https://wa.me/18126906121"
-                  className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors"
-                >
-                  <WhatsAppIcon className="w-4 h-4 text-emerald-400" /> WhatsApp
-                </a>
-                <a
-                  href="tel:+18126906121"
-                  className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors border-t border-white/5"
-                >
-                  <PhoneIcon className="w-4 h-4 text-cyan-400" /> Call Phone
-                </a>
-              </div>
-            )}
-          </div>
-          <motion.button 
-            className="md:hidden text-white p-3 -mr-2 z-50 rounded-lg hover:bg-white/10 transition-colors"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Toggle menu"
-          >
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </motion.button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] md:hidden"
-        >
-          <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={() => setMobileMenuOpen(false)} />
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="relative z-[70] flex flex-col items-center justify-center min-h-screen gap-6 p-8 pt-24"
-          >
-            <Link to="/services" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">Services</Link>
-            <Link to="/pricing" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">Pricing</Link>
-            <Link to="/portfolio" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">Portfolio</Link>
-            <Link to="/about" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">About</Link>
-            <Link to="/faq" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">FAQ</Link>
-            <Link to="/contact" onClick={handleLinkClick} className="text-2xl font-semibold text-white hover:text-cyan-400 transition-colors">Contact</Link>
-            <div className="flex flex-col gap-3 w-full max-w-xs">
-              <a 
-                href="https://wa.me/15551234567" 
-                onClick={handleLinkClick}
-                className="px-8 py-4 bg-emerald-500/20 border border-emerald-400/40 rounded-full text-lg font-semibold text-emerald-200 text-center"
-              >
-                WhatsApp
-              </a>
-              <a 
-                href="tel:+1234567890" 
-                onClick={handleLinkClick}
-                className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-lg font-semibold text-black text-center"
-              >
-                Call Phone
-              </a>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </>
-  );
-}
+// Shared public navigation lives in components/SiteNavigation.tsx.
 
 // Hero Section
 function HeroSection({ content }: { content: HomePageContent['hero'] }) {
@@ -1080,6 +818,7 @@ function Footer() {
             <Link to="/services" className="hover:text-cyan-400 transition-colors">Services</Link>
             <Link to="/portfolio" className="hover:text-cyan-400 transition-colors">Portfolio</Link>
             <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
+            <Link to="/blog" className="hover:text-cyan-400 transition-colors">Guides</Link>
             <Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
           </div>
           
@@ -1183,7 +922,7 @@ export function MainSite() {
 
   return (
     <>
-      <Navigation />
+      <SiteNavigation />
       <div className="relative min-h-screen bg-dark-900 text-white overflow-x-hidden">
         <GlowOrbs />
         <NoiseOverlay />
@@ -1194,6 +933,7 @@ export function MainSite() {
         <WhySection content={homeContent.why} />
         <ProcessSection content={homeContent.process} />
         <IndustriesSection content={homeContent.industries} />
+        <FeaturedBlogs limit={3} />
         <CTASection content={homeContent.cta} />
       </main>
         <Footer />

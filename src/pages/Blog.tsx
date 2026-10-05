@@ -1,347 +1,224 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, BookOpen, CalendarDays, Clock3, Eye, Sparkles } from 'lucide-react';
+import { Footer } from '../components/Footer';
+import { SiteNavigation } from '../components/SiteNavigation';
+import { BlogRecord, formatBlogDate, normalizeBlog } from '../utils/blog';
 
-interface Blog {
-    id: number;
-    title: string;
-    slug: string;
-    excerpt: string;
-    content: string;
-    featured_image: string;
-    featured_image_alt: string;
-    author_name: string;
-    category: string;
-    tags: string[];
-    meta_title: string;
-    meta_description: string;
-    view_count: number;
-    reading_time: number;
-    published_at: string;
-    created_at: string;
-    images: Array<{id: number; image_url: string; image_alt: string;}>;
+interface BlogPostResponse {
+  success?: boolean;
+  data?: unknown;
+  message?: string;
 }
 
-// The API returns `tags` as a JSON-encoded string when the post comes from the
-// Neon store (JSONB column) and as a real array from the local JSON store, so
-// normalize before rendering — calling .map() on the string crashed this page.
-function normalizeTags(tags: unknown): string[] {
-    if (Array.isArray(tags)) return tags.filter((t): t is string => typeof t === 'string');
-    if (typeof tags === 'string' && tags.trim()) {
-        try {
-            const parsed = JSON.parse(tags);
-            if (Array.isArray(parsed)) return parsed.filter((t): t is string => typeof t === 'string');
-        } catch {
-            return tags.split(',').map((t) => t.trim()).filter(Boolean);
-        }
-    }
-    return [];
+interface BlogListResponse {
+  success?: boolean;
+  data?: unknown[];
 }
 
-export const BlogPost = () => {
-    const { slug } = useParams<{ slug: string }>();
-    const [blog, setBlog] = useState<Blog | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [relatedBlogs, setRelatedBlogs] = useState<Blog[]>([]);
+export function BlogPost() {
+  const { slug } = useParams<{ slug: string }>();
+  const [blog, setBlog] = useState<BlogRecord | null>(null);
+  const [relatedBlogs, setRelatedBlogs] = useState<BlogRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-    useEffect(() => {
-        const fetchBlog = async () => {
-            try {
-                const response = await fetch(`/api/blogs.php?action=get&slug=${slug}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    setBlog(data.data);
-                    
-                    // Set meta tags for SEO
-                    document.title = data.data.meta_title || data.data.title;
-                    const metaDesc = document.querySelector('meta[name="description"]');
-                    if (metaDesc) {
-                        metaDesc.setAttribute('content', data.data.meta_description || data.data.excerpt);
-                    }
-                    
-                    // Fetch related blogs by category
-                    if (data.data.category) {
-                        fetchRelatedBlogs(data.data.category, data.data.id);
-                    }
-                } else {
-                    setError('Blog post not found');
-                }
-            } catch (err) {
-                setError('Failed to load blog post');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    let cancelled = false;
+    const fetchBlog = async () => {
+      setLoading(true);
+      setError('');
+      setBlog(null);
+      setRelatedBlogs([]);
+      window.scrollTo({ top: 0, behavior: 'auto' });
 
-        if (slug) {
-            fetchBlog();
+      try {
+        const response = await fetch(`/api/blogs.php?action=get&slug=${encodeURIComponent(slug || '')}`);
+        const data = await response.json() as BlogPostResponse;
+        if (!response.ok || !data.success || !data.data) {
+          throw new Error(data.message || 'This guide may have moved or no longer exists.');
         }
-    }, [slug]);
 
-    const fetchRelatedBlogs = async (category: string, currentBlogId: number) => {
-        try {
-            const response = await fetch(`/api/blogs.php?action=category&category=${category}&limit=3`);
-            const data = await response.json();
-            
-            if (data.success) {
-                // Filter out current blog and limit to 3
-                const related = data.data
-                    .filter((b: Blog) => b.id !== currentBlogId)
-                    .slice(0, 3);
-                setRelatedBlogs(related);
+        const post = normalizeBlog(data.data);
+        if (cancelled) return;
+        setBlog(post);
+        document.title = `${post.meta_title || post.title} | Chronolyte`;
+        const metaDescription = document.querySelector('meta[name="description"]');
+        if (metaDescription) metaDescription.setAttribute('content', post.meta_description || post.excerpt);
+
+        if (post.category) {
+          const params = new URLSearchParams({ action: 'category', category: post.category, limit: '4' });
+          try {
+            const relatedResponse = await fetch(`/api/blogs.php?${params.toString()}`);
+            const relatedData = await relatedResponse.json() as BlogListResponse;
+            if (!cancelled && relatedData.success && Array.isArray(relatedData.data)) {
+              setRelatedBlogs(
+                relatedData.data
+                  .map(normalizeBlog)
+                  .filter((item) => String(item.id) !== String(post.id))
+                  .slice(0, 3)
+              );
             }
-        } catch (err) {
-            console.error('Failed to fetch related blogs:', err);
+          } catch (relatedError) {
+            console.error('Failed to fetch related guides:', relatedError);
+          }
         }
+      } catch (fetchError) {
+        if (!cancelled) {
+          setError(fetchError instanceof Error ? fetchError.message : 'We couldn’t load this guide. Please try again.');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     };
 
-    if (loading) {
-        return (
-            <div style={{ padding: '2rem', textAlign: 'center' }}>
-                <div style={{ fontSize: '1.5rem' }}>Loading...</div>
+    void fetchBlog();
+    return () => { cancelled = true; };
+  }, [slug]);
+
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-dark-900 text-white">
+      <SiteNavigation />
+      <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute -left-40 top-48 h-96 w-96 rounded-full bg-cyan-500/10 blur-[140px]" />
+        <div className="absolute -right-40 top-[55rem] h-96 w-96 rounded-full bg-blue-600/10 blur-[150px]" />
+      </div>
+
+      <main className="relative z-10 px-4 pb-16 pt-28 md:px-6 md:pt-36">
+        {loading ? (
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-8 h-4 w-52 animate-pulse rounded bg-white/10" />
+            <div className="glass animate-pulse rounded-[2rem] p-7 md:p-12">
+              <div className="h-5 w-32 rounded bg-white/10" />
+              <div className="mt-6 h-12 max-w-3xl rounded bg-white/10" />
+              <div className="mt-3 h-12 max-w-2xl rounded bg-white/10" />
+              <div className="mt-8 aspect-[16/7] rounded-2xl bg-white/10" />
+              <div className="mt-10 space-y-3"><div className="h-4 rounded bg-white/10" /><div className="h-4 rounded bg-white/10" /><div className="h-4 max-w-4xl rounded bg-white/10" /></div>
             </div>
-        );
-    }
-
-    if (error || !blog) {
-        return (
-            <div style={{ padding: '2rem', textAlign: 'center' }}>
-                <h1>Oops! {error}</h1>
-                <Link to="/blog">← Back to Blog</Link>
+          </div>
+        ) : error || !blog ? (
+          <div className="mx-auto max-w-3xl pt-8 text-center">
+            <div className="glass rounded-[2rem] px-6 py-14 md:px-12">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 text-cyan-200"><BookOpen className="h-7 w-7" /></div>
+              <h1 className="mt-5 font-display text-3xl font-bold text-white">We couldn’t find that guide</h1>
+              <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-white/55">{error || 'This guide may have moved or no longer exists.'}</p>
+              <Link to="/blog" className="mt-7 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-semibold text-black transition hover:shadow-lg hover:shadow-cyan-500/25">
+                <ArrowLeft className="h-4 w-4" /> Browse all guides
+              </Link>
             </div>
-        );
-    }
+          </div>
+        ) : (
+          <div className="mx-auto max-w-5xl">
+            <nav aria-label="Breadcrumb" className="mb-8 flex flex-wrap items-center gap-2 text-sm text-white/45">
+              <Link to="/" className="transition-colors hover:text-cyan-300">Home</Link>
+              <span aria-hidden="true">/</span>
+              <Link to="/blog" className="transition-colors hover:text-cyan-300">Guides</Link>
+              {blog.category && <><span aria-hidden="true">/</span><Link to={`/blog/category/${encodeURIComponent(blog.category)}`} className="transition-colors hover:text-cyan-300">{blog.category}</Link></>}
+              <span aria-hidden="true">/</span>
+              <span className="max-w-[14rem] truncate text-white/65" aria-current="page">{blog.title}</span>
+            </nav>
 
-    const publishedDate = new Date(blog.published_at);
-    const formattedDate = publishedDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+            <article>
+              <header className="mb-8 max-w-4xl">
+                <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-400/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">
+                  <Sparkles className="h-3.5 w-3.5" /> {blog.category}
+                </span>
+                <h1 className="mt-5 font-display text-4xl font-bold leading-tight text-white md:text-6xl">{blog.title}</h1>
+                {blog.excerpt && <p className="mt-5 max-w-3xl text-lg leading-8 text-white/60 md:text-xl">{blog.excerpt}</p>}
 
-    return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#fafafa' }}>
-            {/* Header with featured image */}
-            {blog.featured_image && (
-                <div style={{
-                    height: '400px',
-                    backgroundImage: `url(${blog.featured_image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    position: 'relative'
-                }}>
-                    <div style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-end',
-                        padding: '2rem',
-                        color: 'white'
-                    }}>
-                        <h1 style={{ margin: '0', fontSize: '2.5rem', fontWeight: 'bold' }}>
-                            {blog.title}
-                        </h1>
-                    </div>
+                <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 border-y border-white/10 py-4 text-sm text-white/50">
+                  <span className="font-medium text-white/75">By {blog.author_name}</span>
+                  <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-4 w-4 text-cyan-300/70" /> {formatBlogDate(blog.published_at, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  {blog.reading_time > 0 && <span className="inline-flex items-center gap-1.5"><Clock3 className="h-4 w-4 text-cyan-300/70" /> {blog.reading_time} min read</span>}
+                  {blog.view_count > 0 && <span className="inline-flex items-center gap-1.5"><Eye className="h-4 w-4 text-cyan-300/70" /> {blog.view_count.toLocaleString()} views</span>}
                 </div>
+              </header>
+
+              {blog.featured_image && (
+                <figure className="mb-10 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/20 md:rounded-[2rem]">
+                  <img src={blog.featured_image} alt={blog.featured_image_alt} fetchPriority="high" className="max-h-[34rem] w-full object-cover" />
+                </figure>
+              )}
+
+              <div className="article-content glass overflow-hidden rounded-[1.5rem] px-5 py-7 md:rounded-[2rem] md:px-10 md:py-12">
+                {blog.content ? (
+                  <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+                ) : (
+                  <p className="text-white/60">The full guide is coming soon.</p>
+                )}
+              </div>
+
+              {blog.images.length > 0 && (
+                <section className="mt-10" aria-labelledby="guide-gallery-title">
+                  <h2 id="guide-gallery-title" className="mb-5 font-display text-2xl font-bold text-white">More from this guide</h2>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {blog.images.map((image) => (
+                      <figure key={image.id} className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                        <img src={image.image_url} alt={image.image_alt || blog.title} loading="lazy" className="aspect-[16/10] w-full object-cover" />
+                      </figure>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {blog.tags.length > 0 && (
+                <div className="mt-8 flex flex-wrap items-center gap-2" aria-label="Guide topics">
+                  <span className="mr-1 text-xs font-medium uppercase tracking-wider text-white/40">Topics</span>
+                  {blog.tags.map((tag) => (
+                    <Link key={tag} to={`/blog/search?q=${encodeURIComponent(tag)}`} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/55 transition hover:border-cyan-300/30 hover:text-cyan-200">#{tag}</Link>
+                  ))}
+                </div>
+              )}
+            </article>
+
+            <section className="relative mt-12 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-r from-cyan-950/50 via-[#0d1523] to-blue-950/40 p-7 md:mt-16 md:p-10">
+              <div className="pointer-events-none absolute -right-10 -top-20 h-64 w-64 rounded-full bg-cyan-400/10 blur-[90px]" />
+              <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                <div className="max-w-2xl">
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Your next step</p>
+                  <h2 className="mt-2 font-display text-2xl font-bold text-white md:text-3xl">Ready to put the plan into motion?</h2>
+                  <p className="mt-3 text-sm leading-6 text-white/55">Tell us what you want to build. We’ll send back a free, no-obligation plan with a scope, timeline and quote.</p>
+                </div>
+                <Link to="/contact" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3.5 font-semibold text-black transition hover:shadow-lg hover:shadow-cyan-500/25">
+                  Start your project free <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </section>
+
+            {relatedBlogs.length > 0 && (
+              <section className="mt-14 md:mt-20" aria-labelledby="related-guides-title">
+                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Keep exploring</p>
+                    <h2 id="related-guides-title" className="mt-1 font-display text-2xl font-bold text-white md:text-3xl">Related guides</h2>
+                  </div>
+                  <Link to="/blog" className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-cyan-300 transition hover:text-white">See all guides <ArrowRight className="h-4 w-4" /></Link>
+                </div>
+                <div className="grid gap-5 md:grid-cols-3">
+                  {relatedBlogs.map((related) => (
+                    <Link key={related.id} to={`/blog/${related.slug}`} className="group glass overflow-hidden rounded-3xl transition hover:-translate-y-1 hover:border-cyan-400/30">
+                      <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-cyan-950 via-[#101a2a] to-blue-950">
+                        {related.featured_image ? <img src={related.featured_image} alt={related.featured_image_alt} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-cyan-300/50"><BookOpen className="h-10 w-10" /></div>}
+                      </div>
+                      <div className="p-5">
+                        <span className="text-xs font-semibold text-cyan-300">{related.category}</span>
+                        <h3 className="mt-2 font-display text-lg font-bold leading-snug text-white transition-colors group-hover:text-cyan-200">{related.title}</h3>
+                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/50">{related.excerpt}</p>
+                        <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300">Read guide <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
             )}
 
-            <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1rem' }}>
-                {/* Post metadata */}
-                <div style={{
-                    display: 'flex',
-                    gap: '1.5rem',
-                    marginBottom: '2rem',
-                    flexWrap: 'wrap',
-                    fontSize: '0.9rem',
-                    color: '#666'
-                }}>
-                    <div>
-                        <strong>By</strong> {blog.author_name}
-                    </div>
-                    <div>
-                        <strong>Published</strong> {formattedDate}
-                    </div>
-                    {blog.reading_time && (
-                        <div>
-                            <strong>Reading time</strong> {blog.reading_time} min
-                        </div>
-                    )}
-                    <div>
-                        <strong>Views</strong> {blog.view_count}
-                    </div>
-                </div>
-
-                {/* Category and tags */}
-                <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                    {blog.category && (
-                        <Link
-                            to={`/blog/category/${blog.category}`}
-                            style={{
-                                backgroundColor: '#e8f5e9',
-                                color: '#2e7d32',
-                                padding: '0.35rem 0.75rem',
-                                borderRadius: '20px',
-                                textDecoration: 'none',
-                                fontSize: '0.85rem',
-                                fontWeight: '500'
-                            }}
-                        >
-                            {blog.category}
-                        </Link>
-                    )}
-                    {normalizeTags(blog.tags).map((tag: string) => (
-                        <Link
-                            key={tag}
-                            to={`/blog/search?q=${tag}`}
-                            style={{
-                                backgroundColor: '#f3e5f5',
-                                color: '#6a1b9a',
-                                padding: '0.35rem 0.75rem',
-                                borderRadius: '20px',
-                                textDecoration: 'none',
-                                fontSize: '0.85rem'
-                            }}
-                        >
-                            #{tag}
-                        </Link>
-                    ))}
-                </div>
-
-                {/* Main content */}
-                <article style={{
-                    backgroundColor: 'white',
-                    padding: '2rem',
-                    borderRadius: '8px',
-                    lineHeight: '1.8',
-                    marginBottom: '3rem'
-                }}>
-                    <div style={{
-                        fontSize: '1.1rem',
-                        color: '#333',
-                        marginBottom: '2rem'
-                    }}>
-                        <p>{blog.excerpt}</p>
-                    </div>
-
-                    <div
-                        style={{
-                            color: '#333',
-                            fontSize: '1rem'
-                        }}
-                        dangerouslySetInnerHTML={{ __html: blog.content }}
-                    />
-
-                    {/* Gallery images */}
-                    {blog.images && blog.images.length > 0 && (
-                        <div style={{
-                            marginTop: '2rem',
-                            paddingTop: '2rem',
-                            borderTop: '1px solid #eee'
-                        }}>
-                            <h3>Gallery</h3>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                                gap: '1rem',
-                                marginTop: '1rem'
-                            }}>
-                                {blog.images.map((img) => (
-                                    <div key={img.id} style={{ borderRadius: '8px', overflow: 'hidden' }}>
-                                        <img
-                                            src={img.image_url}
-                                            alt={img.image_alt || 'Blog image'}
-                                            style={{
-                                                width: '100%',
-                                                height: '250px',
-                                                objectFit: 'cover',
-                                                display: 'block'
-                                            }}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </article>
-
-                {/* Related posts */}
-                {relatedBlogs.length > 0 && (
-                    <div style={{
-                        backgroundColor: '#f9f9f9',
-                        padding: '2rem',
-                        borderRadius: '8px',
-                        marginBottom: '2rem'
-                    }}>
-                        <h2 style={{ marginTop: 0 }}>Related Posts</h2>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                            gap: '1.5rem'
-                        }}>
-                            {relatedBlogs.map((relatedBlog) => (
-                                <Link
-                                    key={relatedBlog.id}
-                                    to={`/blog/${relatedBlog.slug}`}
-                                    style={{
-                                        textDecoration: 'none',
-                                        backgroundColor: 'white',
-                                        borderRadius: '8px',
-                                        overflow: 'hidden',
-                                        transition: 'transform 0.2s, box-shadow 0.2s',
-                                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                                    }}
-                                    onMouseOver={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(-4px)';
-                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-                                    }}
-                                    onMouseOut={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-                                    }}
-                                >
-                                    {relatedBlog.featured_image && (
-                                        <img
-                                            src={relatedBlog.featured_image}
-                                            alt={relatedBlog.featured_image_alt}
-                                            style={{
-                                                width: '100%',
-                                                height: '160px',
-                                                objectFit: 'cover'
-                                            }}
-                                        />
-                                    )}
-                                    <div style={{ padding: '1rem' }}>
-                                        <h4 style={{ marginTop: 0, color: '#333' }}>
-                                            {relatedBlog.title}
-                                        </h4>
-                                        <p style={{ margin: '0.5rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>
-                                            {relatedBlog.excerpt.substring(0, 100)}...
-                                        </p>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Back to blog link */}
-                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-                    <Link to="/blog" style={{
-                        color: '#1976d2',
-                        textDecoration: 'none',
-                        fontWeight: '500'
-                    }}>
-                        ← Back to Blog
-                    </Link>
-                </div>
+            <div className="mt-10 text-center">
+              <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-white/55 transition hover:text-cyan-200"><ArrowLeft className="h-4 w-4" /> Back to all guides</Link>
             </div>
-        </div>
-    );
-};
+          </div>
+        )}
+      </main>
+      <Footer />
+    </div>
+  );
+}

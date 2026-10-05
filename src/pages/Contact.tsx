@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { NavLogo } from '../components/NavLogo';
-import { CallNowButton } from '../components/CallNowButton';
 import { ScheduleCall } from '../components/ScheduleCall';
 import { Footer } from '../components/Footer';
+import { SiteNavigation } from '../components/SiteNavigation';
 
 interface ContactContent {
   hero: {
@@ -173,7 +171,7 @@ export function Contact() {
         setFormData({ name: '', email: '', phone: '', company: '', service: '', budgetOption: '', customBudget: '', message: '' });
       } else {
         const errData = await response.json().catch(() => null);
-        setError(errData?.message || 'Failed to submit form. Please try again.');
+        setError(errData?.error || errData?.message || 'Failed to submit form. Please try again.');
       }
     } catch (err) {
       setError('Failed to submit form. Please try again.');
@@ -243,21 +241,7 @@ export function Contact() {
 
   return (
     <div className="min-h-screen bg-dark-900 text-white">
-      {/* Navigation */}
-      <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50 }} className="backdrop-blur-2xl backdrop-saturate-150 bg-dark-900/60 border-b border-white/10 shadow-lg shadow-black/20 py-4">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <NavLogo />
-          <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
-            <Link to="/services" className="hover:text-cyan-400 transition-colors">Services</Link>
-            <Link to="/pricing" className="hover:text-cyan-400 transition-colors">Pricing</Link>
-            <Link to="/portfolio" className="hover:text-cyan-400 transition-colors">Portfolio</Link>
-            <Link to="/faq" className="hover:text-cyan-400 transition-colors">FAQ</Link>
-            <Link to="/contact" className="text-cyan-400">Contact</Link>
-          </nav>
-          <CallNowButton />
-        </div>
-      </header>
+      <SiteNavigation />
 
       {/* Hero Section */}
       <section className="pt-32 pb-12 px-4 md:px-6">

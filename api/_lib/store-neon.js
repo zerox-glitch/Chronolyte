@@ -273,7 +273,7 @@ export function createNeonStore(databaseUrl) {
         const offset = (Math.max(1, page) - 1) * limit;
         const rows = await sql`
           SELECT * FROM leads${where}
-          ORDER BY CASE priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END, created_at DESC
+          ORDER BY created_at DESC, CASE priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END
           LIMIT ${limit} OFFSET ${offset}`;
         return { items: rows.map(rowLead), total };
       }

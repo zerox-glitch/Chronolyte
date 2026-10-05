@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { MainSite } from './MainSite';
 import { AdminLayout } from './admin/AdminLayout';
 import { AdminLogin } from './admin/pages/Login';
@@ -29,6 +29,11 @@ import { BlogsAdmin } from './admin/pages/Blogs';
 // Import page components
 import { TermsOfService, PrivacyPolicy, RefundPolicy, About, Services, Contact, Portfolio, FAQ, Pricing, BlogListing, BlogPost } from './pages';
 
+function LegacyGuidesRedirect() {
+  const { slug } = useParams<{ slug?: string }>();
+  return <Navigate to={slug ? `/blog/${slug}` : '/blog'} replace />;
+}
+
 export function App() {
   return (
     <BrowserRouter>
@@ -50,6 +55,10 @@ export function App() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/pricing" element={<Pricing />} />
           
+          {/* Legacy guide URLs mirror the current /blog routes outside Vercel too */}
+          <Route path="/guides" element={<Navigate to="/blog" replace />} />
+          <Route path="/guides/:slug" element={<LegacyGuidesRedirect />} />
+
           {/* Blog Pages */}
           <Route path="/blog" element={<BlogListing />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

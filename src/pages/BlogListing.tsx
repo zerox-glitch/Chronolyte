@@ -1,421 +1,279 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Clock3, Search, Sparkles } from 'lucide-react';
+import { Footer } from '../components/Footer';
+import { SiteNavigation } from '../components/SiteNavigation';
+import { BlogRecord, formatBlogDate, normalizeBlog } from '../utils/blog';
 
-interface Blog {
-    id: number;
-    title: string;
-    slug: string;
-    excerpt: string;
-    featured_image: string;
-    featured_image_alt: string;
-    author_name: string;
-    category: string;
-    tags: string[];
-    reading_time: number;
-    published_at: string;
-    view_count: number;
+interface BlogListResponse {
+  success?: boolean;
+  data?: unknown[];
+  pagination?: { pages?: number };
+  message?: string;
 }
 
-export const BlogListing = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [blogs, setBlogs] = useState<Blog[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
-    const [totalPages, setTotalPages] = useState(1);
-    const [categories, setCategories] = useState<string[]>([]);
-    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
-    const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
+export function BlogListing() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { category: routeCategory } = useParams<{ category?: string }>();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const searchQuery = pathname.startsWith('/blog/search')
+    ? searchParams.get('q') || ''
+    : searchParams.get('search') || '';
+  const selectedCategory = routeCategory || searchParams.get('category') || '';
+  const requestedPage = Number(searchParams.get('page') || '1');
+  const page = Number.isFinite(requestedPage) ? Math.max(1, requestedPage) : 1;
 
-    useEffect(() => {
-        fetchBlogs();
-        fetchCategories();
-        
-        // Update meta tags
-        document.title = 'Blog | Chronolyte';
-        const metaDesc = document.querySelector('meta[name="description"]');
-        if (metaDesc) {
-            metaDesc.setAttribute('content', 'Read our latest blog posts about web design, SEO, and digital marketing.');
-        }
-    }, [page, selectedCategory, searchQuery]);
+  const [blogs, setBlogs] = useState<BlogRecord[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [searchInput, setSearchInput] = useState(searchQuery);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [totalPages, setTotalPages] = useState(1);
 
+  useEffect(() => setSearchInput(searchQuery), [searchQuery]);
+
+  useEffect(() => {
+    let cancelled = false;
     const fetchBlogs = async () => {
-        setLoading(true);
-        try {
-            let url = `/api/blogs.php?action=list&page=${page}&limit=9`;
-            
-            if (selectedCategory) {
-                url = `/api/blogs.php?action=category&category=${selectedCategory}&page=${page}&limit=9`;
-            } else if (searchQuery) {
-                url = `/api/blogs.php?action=search&q=${encodeURIComponent(searchQuery)}&page=${page}&limit=9`;
-            }
-
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.success) {
-                setBlogs(data.data);
-                if (data.pagination) {
-                    setTotalPages(data.pagination.pages);
-                }
-            }
-        } catch (error) {
-            console.error('Failed to fetch blogs:', error);
-        } finally {
-            setLoading(false);
+      setLoading(true);
+      setError('');
+      try {
+        let url = `/api/blogs.php?action=list&page=${page}&limit=9`;
+        if (selectedCategory) {
+          url = `/api/blogs.php?action=category&category=${encodeURIComponent(selectedCategory)}&page=${page}&limit=9`;
+        } else if (searchQuery) {
+          url = `/api/blogs.php?action=search&q=${encodeURIComponent(searchQuery)}&page=${page}&limit=9`;
         }
-    };
 
-    const fetchCategories = async () => {
-        try {
-            const response = await fetch('/api/blogs.php?action=list&limit=100');
-            const data = await response.json();
-
-            if (data.success) {
-                const cats = [...new Set(data.data.map((b: Blog) => b.category).filter(Boolean))];
-                setCategories(cats as string[]);
-            }
-        } catch (error) {
-            console.error('Failed to fetch categories:', error);
+        const response = await fetch(url);
+        const data = await response.json() as BlogListResponse;
+        if (!response.ok || !data.success || !Array.isArray(data.data)) {
+          throw new Error(data.message || 'We couldn’t load the guides. Please try again.');
         }
+        if (cancelled) return;
+        setBlogs(data.data.map(normalizeBlog));
+        setTotalPages(Math.max(1, Number(data.pagination?.pages) || 1));
+      } catch (fetchError) {
+        if (cancelled) return;
+        setBlogs([]);
+        setTotalPages(1);
+        setError(fetchError instanceof Error ? fetchError.message : 'We couldn’t load the guides. Please try again.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     };
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        setPage(1);
-        setSelectedCategory('');
-    };
+    void fetchBlogs();
+    return () => { cancelled = true; };
+  }, [page, searchQuery, selectedCategory]);
 
-    const handleCategorySelect = (category: string) => {
-        setPage(1);
-        setSearchQuery('');
-        setSelectedCategory(category === selectedCategory ? '' : category);
-    };
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/blogs.php?action=list&limit=100')
+      .then((response) => response.json() as Promise<BlogListResponse>)
+      .then((data) => {
+        if (!cancelled && data.success && Array.isArray(data.data)) {
+          const names = data.data.map(normalizeBlog).map((blog) => blog.category).filter(Boolean);
+          setCategories([...new Set(names)]);
+        }
+      })
+      .catch((fetchError: unknown) => console.error('Failed to fetch guide categories:', fetchError));
+    return () => { cancelled = true; };
+  }, []);
 
-    return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#fafafa' }}>
-            {/* Header */}
-            <div style={{
-                backgroundColor: '#1976d2',
-                color: 'white',
-                padding: '3rem 1rem',
-                textAlign: 'center'
-            }}>
-                <h1 style={{ margin: '0 0 0.5rem 0', fontSize: '2.5rem' }}>Blog</h1>
-                <p style={{ margin: 0, fontSize: '1.1rem', opacity: 0.9 }}>
-                    Tips, trends, and insights for web design and digital marketing
-                </p>
+  useEffect(() => {
+    document.title = selectedCategory ? `${selectedCategory} | Chronolyte Guides` : 'Guides | Chronolyte';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Practical guides on website and app costs, hiring developers, and building digital products with confidence.');
+    }
+  }, [selectedCategory]);
+
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const query = searchInput.trim();
+    navigate(query ? `/blog/search?q=${encodeURIComponent(query)}` : '/blog');
+  };
+
+  const handleCategorySelect = (category: string) => {
+    navigate(category === selectedCategory ? '/blog' : `/blog/category/${encodeURIComponent(category)}`);
+  };
+
+  const changePage = (nextPage: number) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextPage <= 1) nextParams.delete('page');
+    else nextParams.set('page', String(nextPage));
+    setSearchParams(nextParams);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const clearFilters = () => {
+    setSearchInput('');
+    navigate('/blog');
+  };
+
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-dark-900 text-white">
+      <SiteNavigation />
+      <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute -left-40 top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[140px]" />
+        <div className="absolute -right-40 top-[45rem] h-96 w-96 rounded-full bg-blue-600/10 blur-[150px]" />
+      </div>
+
+      <main className="relative z-10 px-4 pb-16 pt-28 md:px-6 md:pt-36">
+        <div className="mx-auto max-w-7xl">
+          <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-sm text-white/45">
+            <Link to="/" className="transition-colors hover:text-cyan-300">Home</Link>
+            <span aria-hidden="true">/</span>
+            <span className="text-white/80">Guides</span>
+            {selectedCategory && <><span aria-hidden="true">/</span><span className="text-white/65">{selectedCategory}</span></>}
+          </nav>
+
+          <section className="relative mb-10 overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#101c2b] via-[#0a101b] to-[#090b13] px-6 py-10 md:px-12 md:py-14">
+            <div className="pointer-events-none absolute -right-12 -top-20 h-72 w-72 rounded-full bg-cyan-400/10 blur-[90px]" />
+            <div className="relative max-w-3xl">
+              <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-400/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
+                <Sparkles className="h-3.5 w-3.5" /> The Chronolyte guides
+              </span>
+              <h1 className="font-display text-4xl font-bold leading-tight text-white md:text-6xl">
+                {searchQuery ? <>Search <span className="gradient-text">the guides</span></> : selectedCategory ? <>Browse <span className="gradient-text">{selectedCategory}</span></> : <>Build with <span className="gradient-text">more confidence.</span></>}
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-white/60 md:text-lg">
+                Clear, practical advice on project costs, timelines and hiring — so you can make your next digital move with confidence.
+              </p>
             </div>
+          </section>
 
-            <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-                {/* Search and Filter Section */}
-                <div style={{
-                    backgroundColor: 'white',
-                    padding: '2rem',
-                    borderRadius: '8px',
-                    marginBottom: '2rem',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}>
-                    {/* Search Form */}
-                    <form onSubmit={handleSearch} style={{ marginBottom: '1.5rem' }}>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <input
-                                type="text"
-                                placeholder="Search blog posts..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                style={{
-                                    flex: 1,
-                                    padding: '0.75rem',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '4px',
-                                    fontSize: '1rem'
-                                }}
-                            />
-                            <button
-                                type="submit"
-                                style={{
-                                    padding: '0.75rem 1.5rem',
-                                    backgroundColor: '#1976d2',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    fontSize: '1rem',
-                                    fontWeight: '500'
-                                }}
-                            >
-                                Search
-                            </button>
-                            {(searchQuery || selectedCategory) && (
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setSearchQuery('');
-                                        setSelectedCategory('');
-                                        setPage(1);
-                                    }}
-                                    style={{
-                                        padding: '0.75rem 1.5rem',
-                                        backgroundColor: '#f0f0f0',
-                                        color: '#333',
-                                        border: 'none',
-                                        borderRadius: '4px',
-                                        cursor: 'pointer',
-                                        fontSize: '1rem'
-                                    }}
-                                >
-                                    Clear
-                                </button>
-                            )}
-                        </div>
-                    </form>
-
-                    {/* Category Filter */}
-                    {categories.length > 0 && (
-                        <div>
-                            <p style={{ margin: '0 0 0.75rem 0', fontWeight: '500' }}>Filter by Category:</p>
-                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                                {categories.map((cat) => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => handleCategorySelect(cat)}
-                                        style={{
-                                            padding: '0.5rem 1rem',
-                                            backgroundColor: selectedCategory === cat ? '#1976d2' : '#f0f0f0',
-                                            color: selectedCategory === cat ? 'white' : '#333',
-                                            border: selectedCategory === cat ? 'none' : '1px solid #ddd',
-                                            borderRadius: '20px',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s'
-                                        }}
-                                    >
-                                        {cat}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Blogs Grid */}
-                {loading ? (
-                    <div style={{ textAlign: 'center', padding: '2rem' }}>
-                        <div style={{ fontSize: '1.5rem' }}>Loading blogs...</div>
-                    </div>
-                ) : blogs.length > 0 ? (
-                    <>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                            gap: '2rem',
-                            marginBottom: '2rem'
-                        }}>
-                            {blogs.map((blog) => {
-                                const publishedDate = new Date(blog.published_at);
-                                const formattedDate = publishedDate.toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric'
-                                });
-
-                                return (
-                                    <Link
-                                        key={blog.id}
-                                        to={`/blog/${blog.slug}`}
-                                        style={{
-                                            textDecoration: 'none',
-                                            backgroundColor: 'white',
-                                            borderRadius: '8px',
-                                            overflow: 'hidden',
-                                            transition: 'all 0.3s ease',
-                                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                                            display: 'flex',
-                                            flexDirection: 'column'
-                                        }}
-                                        onMouseOver={(e) => {
-                                            e.currentTarget.style.transform = 'translateY(-8px)';
-                                            e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.15)';
-                                        }}
-                                        onMouseOut={(e) => {
-                                            e.currentTarget.style.transform = 'translateY(0)';
-                                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-                                        }}
-                                    >
-                                        {/* Featured Image */}
-                                        {blog.featured_image && (
-                                            <div style={{
-                                                height: '180px',
-                                                backgroundImage: `url(${blog.featured_image})`,
-                                                backgroundSize: 'cover',
-                                                backgroundPosition: 'center'
-                                            }} />
-                                        )}
-
-                                        {/* Content */}
-                                        <div style={{
-                                            padding: '1.5rem',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            flex: 1
-                                        }}>
-                                            {/* Category Badge */}
-                                            {blog.category && (
-                                                <span style={{
-                                                    display: 'inline-block',
-                                                    backgroundColor: '#e3f2fd',
-                                                    color: '#1976d2',
-                                                    padding: '0.25rem 0.75rem',
-                                                    borderRadius: '12px',
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: '600',
-                                                    marginBottom: '0.75rem',
-                                                    width: 'fit-content'
-                                                }}>
-                                                    {blog.category}
-                                                </span>
-                                            )}
-
-                                            {/* Title */}
-                                            <h3 style={{
-                                                margin: '0 0 0.75rem 0',
-                                                color: '#1976d2',
-                                                fontSize: '1.25rem',
-                                                fontWeight: '600',
-                                                lineHeight: '1.4'
-                                            }}>
-                                                {blog.title}
-                                            </h3>
-
-                                            {/* Excerpt */}
-                                            <p style={{
-                                                margin: '0 0 1rem 0',
-                                                color: '#666',
-                                                fontSize: '0.95rem',
-                                                lineHeight: '1.6',
-                                                flex: 1
-                                            }}>
-                                                {blog.excerpt.substring(0, 150)}...
-                                            </p>
-
-                                            {/* Meta Info */}
-                                            <div style={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                fontSize: '0.85rem',
-                                                color: '#999',
-                                                paddingTop: '1rem',
-                                                borderTop: '1px solid #eee'
-                                            }}>
-                                                <div>
-                                                    <span>{formattedDate}</span>
-                                                    {blog.reading_time && (
-                                                        <span> · {blog.reading_time} min read</span>
-                                                    )}
-                                                </div>
-                                                <div>By {blog.author_name}</div>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                );
-                            })}
-                        </div>
-
-                        {/* Pagination */}
-                        {totalPages > 1 && (
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                gap: '0.5rem',
-                                marginTop: '3rem',
-                                flexWrap: 'wrap'
-                            }}>
-                                {page > 1 && (
-                                    <>
-                                        <button
-                                            onClick={() => setPage(1)}
-                                            style={{
-                                                padding: '0.5rem 1rem',
-                                                backgroundColor: '#f0f0f0',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            First
-                                        </button>
-                                        <button
-                                            onClick={() => setPage(page - 1)}
-                                            style={{
-                                                padding: '0.5rem 1rem',
-                                                backgroundColor: '#f0f0f0',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            ← Previous
-                                        </button>
-                                    </>
-                                )}
-
-                                <div style={{
-                                    padding: '0.5rem 1rem',
-                                    backgroundColor: '#1976d2',
-                                    color: 'white',
-                                    borderRadius: '4px'
-                                }}>
-                                    {page} of {totalPages}
-                                </div>
-
-                                {page < totalPages && (
-                                    <>
-                                        <button
-                                            onClick={() => setPage(page + 1)}
-                                            style={{
-                                                padding: '0.5rem 1rem',
-                                                backgroundColor: '#f0f0f0',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            Next →
-                                        </button>
-                                        <button
-                                            onClick={() => setPage(totalPages)}
-                                            style={{
-                                                padding: '0.5rem 1rem',
-                                                backgroundColor: '#f0f0f0',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            Last
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                    </>
-                ) : (
-                    <div style={{
-                        textAlign: 'center',
-                        padding: '3rem 1rem',
-                        backgroundColor: 'white',
-                        borderRadius: '8px'
-                    }}>
-                        <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📝</div>
-                        <h2>No blog posts found</h2>
-                        <p style={{ color: '#666' }}>
-                            {searchQuery || selectedCategory 
-                                ? 'Try adjusting your search or filters'
-                                : 'Check back soon for new content!'}
-                        </p>
-                    </div>
+          <section aria-label="Search and filter guides" className="glass mb-9 rounded-3xl p-4 md:p-6">
+            <form onSubmit={handleSearch} className="flex flex-col gap-3 sm:flex-row">
+              <label className="relative flex-1">
+                <span className="sr-only">Search guides</span>
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/35" />
+                <input
+                  type="search"
+                  placeholder="Search costs, websites, apps, hiring…"
+                  value={searchInput}
+                  onChange={(event) => setSearchInput(event.target.value)}
+                  className="h-12 w-full rounded-2xl border border-white/10 bg-black/20 pl-12 pr-4 text-sm text-white outline-none placeholder:text-white/35 transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/10"
+                />
+              </label>
+              <button type="submit" className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 font-semibold text-black transition hover:shadow-lg hover:shadow-cyan-500/20">
+                Search <ArrowRight className="h-4 w-4" />
+              </button>
+            </form>
+            {categories.length > 0 && (
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <span className="mr-1 text-xs font-medium uppercase tracking-wider text-white/40">Explore</span>
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => handleCategorySelect(category)}
+                    aria-pressed={selectedCategory === category}
+                    className={`rounded-full border px-3.5 py-2 text-xs font-medium transition ${selectedCategory === category ? 'border-cyan-300/50 bg-cyan-400/15 text-cyan-200' : 'border-white/10 bg-white/[0.03] text-white/55 hover:border-white/20 hover:text-white'}`}
+                  >
+                    {category}
+                  </button>
+                ))}
+                {(selectedCategory || searchQuery) && (
+                  <button type="button" onClick={clearFilters} className="ml-auto text-xs text-cyan-300 transition hover:text-white">Clear filters</button>
                 )}
+              </div>
+            )}
+          </section>
+
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{selectedCategory || 'Explore'}</p>
+              <h2 className="mt-1 font-display text-2xl font-bold text-white md:text-3xl">
+                {searchQuery ? `Results for “${searchQuery}”` : selectedCategory ? `Latest ${selectedCategory.toLowerCase()}` : 'Ideas worth getting right'}
+              </h2>
             </div>
+            {!loading && blogs.length > 0 && <span className="text-sm text-white/40">Page {page} of {totalPages}</span>}
+          </div>
+
+          {error && (
+            <div role="alert" className="mb-6 rounded-2xl border border-red-400/20 bg-red-400/5 px-5 py-4 text-sm text-red-200">
+              {error} <button type="button" onClick={() => window.location.reload()} className="ml-2 underline underline-offset-4">Retry</button>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {[0, 1, 2, 3, 4, 5].map((item) => <div key={item} className="glass h-[390px] animate-pulse rounded-3xl" />)}
+            </div>
+          ) : blogs.length > 0 ? (
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {blogs.map((blog) => (
+                <Link
+                  key={blog.id}
+                  to={`/blog/${blog.slug}`}
+                  className="group glass flex h-full flex-col overflow-hidden rounded-3xl transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:shadow-[0_18px_55px_rgba(0,200,255,0.12)]"
+                >
+                  <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-cyan-950 via-[#101a2a] to-blue-950">
+                    {blog.featured_image ? (
+                      <img src={blog.featured_image} alt={blog.featured_image_alt} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-cyan-300/50"><BookOpen className="h-12 w-12" /></div>
+                    )}
+                    <span className="absolute left-4 top-4 rounded-full border border-cyan-300/25 bg-[#07101e]/85 px-3 py-1.5 text-xs font-semibold text-cyan-100 backdrop-blur">
+                      {blog.category}
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col p-5 md:p-6">
+                    <h3 className="font-display text-xl font-bold leading-snug text-white transition-colors group-hover:text-cyan-200">{blog.title}</h3>
+                    <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-white/55">{blog.excerpt}</p>
+                    <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/10 pt-4 text-xs text-white/40">
+                      <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> {formatBlogDate(blog.published_at)}</span>
+                      {blog.reading_time > 0 && <span className="inline-flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" /> {blog.reading_time} min read</span>}
+                    </div>
+                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 transition group-hover:gap-3">
+                      Read the guide <ArrowUpRight className="h-4 w-4" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : !error ? (
+            <div className="glass rounded-3xl px-6 py-14 text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 text-cyan-200"><BookOpen className="h-7 w-7" /></div>
+              <h2 className="mt-5 font-display text-2xl font-bold text-white">No guides found</h2>
+              <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-white/50">
+                {searchQuery || selectedCategory ? 'Try another search or clear your filters to see all guides.' : 'We’re preparing more practical guides. Check back soon.'}
+              </p>
+              {(searchQuery || selectedCategory) && <button type="button" onClick={clearFilters} className="mt-5 rounded-full border border-cyan-300/25 px-5 py-2.5 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-400/10">Show all guides</button>}
+            </div>
+          ) : null}
+
+          {!loading && totalPages > 1 && (
+            <nav aria-label="Guide pages" className="mt-10 flex flex-wrap items-center justify-center gap-3">
+              <button type="button" disabled={page <= 1} onClick={() => changePage(page - 1)} className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2.5 text-sm text-white/65 transition enabled:hover:border-cyan-300/40 enabled:hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-30">
+                <ArrowRight className="h-4 w-4 rotate-180" /> Previous
+              </button>
+              <span className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2.5 text-sm font-medium text-cyan-100">{page} / {totalPages}</span>
+              <button type="button" disabled={page >= totalPages} onClick={() => changePage(page + 1)} className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2.5 text-sm text-white/65 transition enabled:hover:border-cyan-300/40 enabled:hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-30">
+                Next <ArrowRight className="h-4 w-4" />
+              </button>
+            </nav>
+          )}
+
+          <section className="relative mt-16 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-r from-cyan-950/50 via-[#0d1523] to-blue-950/40 p-7 md:mt-24 md:p-12">
+            <div className="pointer-events-none absolute -right-10 -top-20 h-64 w-64 rounded-full bg-cyan-400/10 blur-[90px]" />
+            <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+              <div className="max-w-2xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Have something in mind?</p>
+                <h2 className="mt-2 font-display text-3xl font-bold text-white md:text-4xl">Turn the next idea into a real plan.</h2>
+                <p className="mt-3 text-sm leading-6 text-white/55 md:text-base">Tell us what you’re building. We’ll help you map the scope, timeline and budget — free, with no obligation.</p>
+              </div>
+              <Link to="/contact" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3.5 font-semibold text-black transition hover:shadow-lg hover:shadow-cyan-500/25">
+                Start your project free <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </section>
         </div>
-    );
-};
+      </main>
+      <Footer />
+    </div>
+  );
+}
