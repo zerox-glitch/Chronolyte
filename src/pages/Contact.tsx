@@ -31,7 +31,7 @@ const defaultContactContent: ContactContent = {
   },
   info: {
     email: "hello@chronolyte.com",
-    phone: "+1 (812) 690-6121",
+    phone: CONTACT_PHONE_DISPLAY,
     response_time: "We typically respond within 24 hours"
   },
   form: {

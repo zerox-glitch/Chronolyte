@@ -49,6 +49,11 @@ export function routeMeta(pathname) {
       description: 'Chronolyte works remotely with organizations throughout all 50 states, from major cities to smaller communities. Browse example cities and plan a project online.',
       keywords: 'nationwide web design, remote web development United States, web design across the U.S., website development for businesses in all 50 states'
     },
+    '/fiverr-upwork-alternative': {
+      title: 'Fiverr & Upwork Alternatives for Web Development | Chronolyte',
+      description: 'Compare Fiverr, Upwork, and a managed web development studio for websites, apps, and SaaS. See who manages the work and request a free project scope.',
+      keywords: 'Fiverr alternative for web development, Upwork alternative for website development, managed web development studio, freelance marketplace comparison, hire a web development team'
+    },
     '/portfolio': {
       title: 'Portfolio — QRWho & Concept Web Projects | Chronolyte',
       description: 'Explore QRWho, a live browser-based QR design product, alongside clearly labeled website, e-commerce, property, and SaaS concept projects.',
@@ -461,6 +466,7 @@ export function llmsTxt(blogs = []) {
     `- [Services](${SITE_URL}/services): Website, e-commerce, application, and automation services.`,
     `- [Industries](${SITE_URL}/industries): Examples of business types and common digital needs.`,
     `- [U.S. service areas](${SITE_URL}/locations): All 50 states and representative city examples.`,
+    `- [Fiverr and Upwork alternatives](${SITE_URL}/fiverr-upwork-alternative): Compare marketplace and managed-studio models for web and software projects.`,
     `- [Pricing](${SITE_URL}/pricing): Typical project ranges; request a current scoped quote.`,
     `- [Portfolio](${SITE_URL}/portfolio): QRWho and clearly labeled concept work.`,
     `- [Guides](${SITE_URL}/blog): Published articles and project planning guides.`,

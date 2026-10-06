@@ -18,3 +18,4 @@ export { BlogPost } from './Blog';
 // Search landing pages
 export { Industries } from './Industries';
 export { Locations } from './Locations';
+export { FiverrAlternative } from './FiverrAlternative';

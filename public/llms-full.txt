@@ -44,6 +44,7 @@ Chronolyte serves projects remotely throughout all 50 U.S. states: Alabama, Alas
 - [Services](https://chronolyte.com/services): Website, e-commerce, application, and automation services.
 - [Industries](https://chronolyte.com/industries): Examples of business types and common digital needs.
 - [U.S. service areas](https://chronolyte.com/locations): All 50 states and representative city examples.
+- [Fiverr and Upwork alternatives](https://chronolyte.com/fiverr-upwork-alternative): Compare marketplace and managed-studio models for web and software projects.
 - [Pricing](https://chronolyte.com/pricing): Typical project ranges; request a current scoped quote.
 - [Portfolio](https://chronolyte.com/portfolio): QRWho and clearly labeled concept work.
 - [Guides](https://chronolyte.com/blog): Published articles and project planning guides.
@@ -58,7 +59,7 @@ Chronolyte serves projects remotely throughout all 50 U.S. states: Alabama, Alas
 
 ## Contact
 
-- Phone: +1 (812) 690-6121
+- Phone: +18126906121
 - Telephone link: +18126906121
 - WhatsApp: https://wa.me/18126906121
 - Email: contact@chronolyte.com

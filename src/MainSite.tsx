@@ -817,6 +817,7 @@ function Footer() {
           
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/50 md:gap-x-6 md:text-sm">
             <Link to="/services" className="hover:text-cyan-400 transition-colors">Services</Link>
+            <Link to="/fiverr-upwork-alternative" className="hover:text-cyan-400 transition-colors">Fiverr alternative</Link>
             <Link to="/industries" className="hover:text-cyan-400 transition-colors">Industries</Link>
             <Link to="/locations" className="hover:text-cyan-400 transition-colors">Locations</Link>
             <Link to="/portfolio" className="hover:text-cyan-400 transition-colors">Portfolio</Link>

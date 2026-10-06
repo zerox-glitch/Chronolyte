@@ -16,14 +16,16 @@ import {
 import { guidePosts } from '../api/_lib/guides.js';
 import US_SERVICE_AREAS from '../src/data/usServiceAreas.json' with { type: 'json' };
 import BUSINESS_TYPES from '../src/data/businessTypes.json' with { type: 'json' };
+import FIVERR_ALTERNATIVE_FAQS from '../src/data/fiverrAlternativeFaqs.json' with { type: 'json' };
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../src/constants/siteContact.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 
-const STATIC_ROUTES = ['/', '/services', '/industries', '/locations', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/terms', '/privacy', '/refunds'];
+const STATIC_ROUTES = ['/', '/services', '/industries', '/locations', '/fiverr-upwork-alternative', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/terms', '/privacy', '/refunds'];
 
 const BREADCRUMB_NAMES = {
-  '/services': 'Services', '/industries': 'Industries', '/locations': 'U.S. Service Areas', '/pricing': 'Pricing', '/portfolio': 'Portfolio',
+  '/services': 'Services', '/industries': 'Industries', '/locations': 'U.S. Service Areas', '/fiverr-upwork-alternative': 'Fiverr & Upwork Alternatives', '/pricing': 'Pricing', '/portfolio': 'Portfolio',
   '/about': 'About', '/contact': 'Contact', '/faq': 'FAQ', '/blog': 'Blog',
   '/terms': 'Terms', '/privacy': 'Privacy', '/refunds': 'Refunds'
 };
@@ -114,6 +116,33 @@ async function main() {
       breadcrumbsLd([{ name: 'Home', path: '/' }, { name: BREADCRUMB_NAMES[route] || meta.title, path: route }])
     ];
     if (route === '/faq' && faqs.length) jsonLd.push(faqLd(faqs));
+    if (route === '/fiverr-upwork-alternative') {
+      jsonLd.push(faqLd(FIVERR_ALTERNATIVE_FAQS));
+      jsonLd.push({
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        '@id': `${SITE_URL}${route}#webpage`,
+        url: `${SITE_URL}${route}`,
+        name: meta.title,
+        description: meta.description,
+        about: [
+          { '@type': 'Thing', name: 'Fiverr' },
+          { '@type': 'Thing', name: 'Upwork' },
+          { '@type': 'Thing', name: 'Web development project management' }
+        ],
+        isPartOf: { '@id': `${SITE_URL}/#website` }
+      });
+      jsonLd.push({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Ways to hire for a web or software project',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Fiverr marketplace', description: 'Seller services and custom offers, often used for defined individual deliverables.' },
+          { '@type': 'ListItem', position: 2, name: 'Upwork marketplace', description: 'Freelance engagements with different contract formats; the client typically selects and coordinates the freelancer.' },
+          { '@type': 'ListItem', position: 3, name: 'Managed development studio', description: 'A coordinated team for project planning, design, development, and delivery.' }
+        ]
+      });
+    }
     if (route === '/blog' && blogs.length) {
       jsonLd.push(itemListLd('Chronolyte Blog', blogs.slice(0, 20), (b) => `/blog/${b.slug}`));
     }
@@ -170,9 +199,11 @@ async function main() {
       ? locationsSsr()
       : route === '/industries'
         ? industriesSsr()
-        : route === '/blog'
-          ? blogListingSsr(blogs)
-          : '';
+        : route === '/fiverr-upwork-alternative'
+          ? fiverrAlternativeSsr()
+          : route === '/blog'
+            ? blogListingSsr(blogs)
+            : '';
     const html = injectSeo(shell, {
       pathname: route,
       title: meta.title,
@@ -219,6 +250,7 @@ async function main() {
   pushUrl('/services', { freq: 'weekly', priority: '0.9' });
   pushUrl('/industries', { priority: '0.8' });
   pushUrl('/locations', { priority: '0.8' });
+  pushUrl('/fiverr-upwork-alternative', { priority: '0.85' });
   pushUrl('/pricing', { freq: 'weekly', priority: '0.9' });
   pushUrl('/portfolio', { freq: 'weekly', priority: '0.8' });
   pushUrl('/about', { priority: '0.7' });
@@ -293,6 +325,35 @@ function locationsSsr() {
 
 function industriesSsr() {
   return `<main><h1>Websites and software for different business types</h1><p>Chronolyte scopes digital projects around each organization’s customers, workflows, and goals. The following examples are not a closed list.</p>${BUSINESS_TYPES.map((industry) => `<section id="industry-${slugify(industry.name)}"><h2>${escapeHtml(industry.name)}</h2><p>${escapeHtml(industry.examples)}.</p><p>${escapeHtml(industry.digitalNeeds)}</p></section>`).join('')}<a href="${SITE_URL}/contact">Request a project plan</a></main>`;
+}
+
+function fiverrAlternativeSsr() {
+  const comparisons = [
+    {
+      name: 'Fiverr',
+      model: 'Marketplace of seller services and custom offers.',
+      fit: 'Small, clearly defined deliverables when you can select the provider and manage the work.',
+      coordination: 'You review sellers, confirm requirements, and coordinate the engagement.',
+      tradeoff: 'Several separate gigs can require extra integration and project planning.'
+    },
+    {
+      name: 'Upwork',
+      model: 'Freelance marketplace with different engagement formats.',
+      fit: 'Finding an individual specialist or building a flexible freelance arrangement.',
+      coordination: 'You review candidates, agree on the contract, and manage communication and delivery.',
+      tradeoff: 'You remain responsible for joining the work together unless project leadership is arranged.'
+    },
+    {
+      name: 'Chronolyte',
+      model: 'Remote managed web and software development studio.',
+      fit: 'A website, app, online store, or SaaS project that needs coordinated planning, design, and development.',
+      coordination: 'Start with one brief and a point of contact for a proposed scope, timeline, and quote.',
+      tradeoff: 'A managed studio is not a marketplace for browsing many individual sellers and may not fit every micro-task.'
+    }
+  ];
+  const cards = comparisons.map((option) => `<article><h3>${escapeHtml(option.name)}</h3><dl><dt>Model</dt><dd>${escapeHtml(option.model)}</dd><dt>Often a fit for</dt><dd>${escapeHtml(option.fit)}</dd><dt>Who coordinates?</dt><dd>${escapeHtml(option.coordination)}</dd><dt>Consider</dt><dd>${escapeHtml(option.tradeoff)}</dd></dl></article>`).join('');
+  const faqHtml = FIVERR_ALTERNATIVE_FAQS.map((faq) => `<article><h3>${escapeHtml(faq.question)}</h3><p>${escapeHtml(faq.answer)}</p></article>`).join('');
+  return `<main id="main"><h1>Looking for a Fiverr or Upwork alternative for web development?</h1><p>The right choice depends on the size of the job and how much project coordination you want to do. Compare freelance marketplaces with a managed studio before you choose a team for your website, app, online store, or SaaS product.</p><section><h2>Short answer: which option should you choose?</h2><p>Fiverr or Upwork may suit a small, well-defined task when you are comfortable selecting and managing the freelancer. A managed development studio is another option when a website, app, or SaaS project needs connected planning, design, development, and delivery. Chronolyte works remotely with U.S. businesses nationwide and provides a free initial project plan and quote; fit depends on your scope and requirements.</p></section><section><h2>Fiverr vs Upwork vs a managed development studio</h2>${cards}<p>Fiverr and Upwork are mentioned for comparison only. Chronolyte is independent and is not affiliated with or endorsed by either platform. Confirm current platform features, fees, and terms directly with each provider.</p></section><section><h2>When a marketplace may fit</h2><ul><li>The brief is small and specific, and you can describe exactly what “done” means.</li><li>You have time to compare providers, review work, and manage handoffs.</li><li>You need one skill or deliverable and can coordinate it yourself.</li></ul></section><section><h2>When a managed studio may fit</h2><ul><li>The project needs discovery, user experience, engineering, and testing to work together.</li><li>You prefer one project contact instead of coordinating several independent contracts.</li><li>You want the scope, milestones, timeline, and quote discussed before work starts.</li></ul></section><section><h2>Compare the full project cost</h2><p>Look beyond a listing price or hourly rate. Compare written deliverables, management time, testing, revisions, integrations, handoff, payment terms, and ongoing costs.</p></section><section><h2>Practical safeguards when hiring through a marketplace</h2><ul><li>Agree in writing on deliverables, acceptance criteria, dates, revision limits, and exclusions.</li><li>Review relevant work and use the marketplace's current communication, payment, and dispute processes.</li><li>Confirm ownership of code, design files, content, and assets, including any third-party licenses.</li><li>Protect accounts and customer data with individual, least-privilege access; do not share passwords or production credentials.</li><li>Set scope-appropriate milestones and plan for testing, documentation, and handoff.</li><li>Check current platform terms before changing communication or payment arrangements.</li></ul></section><section><h2>Frequently asked questions</h2>${faqHtml}</section><section id="start"><h2>Get a free project plan</h2><p>Chronolyte works remotely with businesses across all 50 U.S. states. Share your goals and constraints to receive a proposed scope, timeline, and quote with no obligation.</p><a href="#start">Start your project brief</a> <a href="${CONTACT_PHONE_TEL}">Call ${escapeHtml(CONTACT_PHONE_DISPLAY)}</a></section></main>`;
 }
 
 function blogListingSsr(blogs) {

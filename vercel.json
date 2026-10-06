@@ -12,8 +12,6 @@
   "redirects": [
     { "source": "/guides", "destination": "/blog", "permanent": true },
     { "source": "/guides/:slug", "destination": "/blog/:slug", "permanent": true },
-    { "source": "/fiverr-upwork-alternative", "destination": "/blog/fiverr-upwork-alternative", "permanent": true },
-    { "source": "/fiverr-upwork-alternative/", "destination": "/blog/fiverr-upwork-alternative", "permanent": true },
     { "source": "/services/:slug", "destination": "/services", "permanent": false },
     { "source": "/start", "destination": "/", "permanent": false }
   ],
