@@ -5,6 +5,7 @@
 
 import { nowIso } from './util.js';
 import { guidePosts } from './guides.js';
+import { CONTACT_PHONE_DISPLAY, CONTACT_WHATSAPP_URL } from '../../src/constants/siteContact.js';
 
 function daysAgoIso(days) {
   return new Date(Date.now() - days * 86400000).toISOString();
@@ -162,14 +163,28 @@ export async function seedStore(store) {
     }));
   }
 
-  if (!(await store.settings.get('site_settings'))) {
+  const storedSiteSettings = await store.settings.get('site_settings');
+  if (!storedSiteSettings) {
     await store.settings.set('site_settings', JSON.stringify({
       contact_email: 'contact@chronolyte.com',
-      contact_phone: '+1 (555) 000-0000',
+      contact_phone: CONTACT_PHONE_DISPLAY,
+      social_whatsapp: CONTACT_WHATSAPP_URL,
       footer_copyright: '© 2025 Chronolyte. All rights reserved.',
       footer_tagline: 'We bend time with AI.',
       footer_show_social: true
     }));
+  } else if (!(await store.settings.get('contact_phone_8126906121_migrated'))) {
+    let settings = storedSiteSettings;
+    if (typeof settings === 'string') {
+      try { settings = JSON.parse(settings); } catch { settings = {}; }
+    }
+    if (!settings || typeof settings !== 'object' || Array.isArray(settings)) settings = {};
+    await store.settings.set('site_settings', JSON.stringify({
+      ...settings,
+      contact_phone: CONTACT_PHONE_DISPLAY,
+      social_whatsapp: CONTACT_WHATSAPP_URL
+    }));
+    await store.settings.set('contact_phone_8126906121_migrated', '1');
   }
 
   // ----- Original portfolio concepts (labeled clearly on the public page) -----

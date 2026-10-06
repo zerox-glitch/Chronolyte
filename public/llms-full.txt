@@ -1,0 +1,150 @@
+# Chronolyte
+
+> Chronolyte is a remote web design and software development studio. It plans and builds business websites, e-commerce stores, SaaS products, mobile apps, and workflow automation for organizations across the United States and worldwide. Chronolyte works remotely; it does not claim to have a physical office in every listed city.
+
+## Services
+
+- Custom website design and development for service businesses, organizations, and product teams.
+- E-commerce design and development, including catalogs, checkout, and platform integrations.
+- SaaS and web application planning, MVP development, dashboards, and integrations.
+- Mobile application design and development for iOS, Android, or cross-platform products.
+- Workflow automation, CRM integrations, and custom AI-assisted tools where appropriate.
+
+## Business types
+
+- **Local service businesses** — Cleaning companies, repair services, salons, pet care, and other appointment-led businesses.
+- **Home services and trades** — HVAC, plumbing, electrical, roofing, landscaping, painting, and construction.
+- **Healthcare and clinics** — Dental, medical, therapy, allied-health, and private practices.
+- **Legal services** — Law firms, attorneys, mediators, and specialist practices.
+- **Accounting and financial services** — Accounting firms, bookkeepers, financial advisors, and fintech teams.
+- **Real estate and property** — Brokerages, agents, property managers, developers, and mortgage teams.
+- **Retail and e-commerce** — Online stores, independent retailers, direct-to-consumer brands, and marketplaces.
+- **Restaurants and food businesses** — Restaurants, cafes, caterers, food producers, and delivery brands.
+- **Hospitality and travel** — Hotels, venues, tour operators, and travel services.
+- **Education and training** — Schools, tutors, training providers, coaches, and online course creators.
+- **Manufacturing and distribution** — Manufacturers, wholesalers, suppliers, and industrial companies.
+- **Logistics and transportation** — Freight providers, delivery companies, fleet operators, and mobility services.
+- **Professional services and consulting** — Consultants, architects, engineers, recruiters, and research firms.
+- **Insurance** — Independent agencies, brokers, and insurtech businesses.
+- **Automotive** — Dealerships, repair shops, parts retailers, and vehicle services.
+- **Beauty, fitness, and wellness** — Gyms, studios, spas, wellness practices, and personal-care brands.
+- **Nonprofits and community organizations** — Charities, membership groups, foundations, and community programs.
+- **Startups and SaaS companies** — Software startups, B2B platforms, subscription products, and technology ventures.
+- **Agencies and franchises** — Marketing and creative agencies, multi-location operators, and franchise groups.
+- **Agriculture and food production** — Farms, agricultural suppliers, food processors, and agtech teams.
+- **Other business types** — Specialist, hybrid, and emerging business models.
+
+## United States coverage
+
+Chronolyte serves projects remotely throughout all 50 U.S. states: Alabama, Alaska, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Hawaii, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, New Hampshire, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, South Carolina, South Dakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, West Virginia, Wisconsin, Wyoming. The city examples in the coverage directory are representative, not an exhaustive list or a claim of local offices. Businesses in other U.S. cities and smaller communities can request a project plan.
+
+## Useful pages
+
+- [Home](https://chronolyte.com/): Company overview and project intake.
+- [Services](https://chronolyte.com/services): Website, e-commerce, application, and automation services.
+- [Industries](https://chronolyte.com/industries): Examples of business types and common digital needs.
+- [U.S. service areas](https://chronolyte.com/locations): All 50 states and representative city examples.
+- [Pricing](https://chronolyte.com/pricing): Typical project ranges; request a current scoped quote.
+- [Portfolio](https://chronolyte.com/portfolio): QRWho and clearly labeled concept work.
+- [Guides](https://chronolyte.com/blog): Published articles and project planning guides.
+- [Contact](https://chronolyte.com/contact): Send a brief or contact Chronolyte directly.
+
+## Published guides
+- [How Much Does a Website Cost in 2026? Real Price Ranges](https://chronolyte.com/blog/how-much-does-a-website-cost): A realistic breakdown of website costs for small businesses and startups — what drives the price, what is usually left out, and how to avoid overpaying.
+- [How Much Does It Cost to Build an App in 2026? Full Breakdown](https://chronolyte.com/blog/how-much-does-it-cost-to-build-an-app): App development costs for 2026: simple, mid-complexity and complex apps, cost drivers, iOS vs Android vs cross-platform and ways to reduce your budget.
+- [How to Hire a Web Developer (Without Getting Burned)](https://chronolyte.com/blog/how-to-hire-a-web-developer): A practical guide for non-technical founders and business owners: where to find developers, what to ask, what it costs and what to avoid.
+- [SaaS MVP Development: The Practical Guide for Founders](https://chronolyte.com/blog/saas-mvp-development-guide): How to build a SaaS MVP: scope, tech stack, cost ($20k-$75k typical), timeline, and the mistakes that sink first-time founders.
+- [The Best Fiverr and Upwork Alternative for Web and App Projects](https://chronolyte.com/blog/fiverr-upwork-alternative): Freelance marketplaces are great for some jobs and risky for others. Here is an honest comparison to help you pick the right way to get your website, app or SaaS built.
+
+## Contact
+
+- Phone: +1 (812) 690-6121
+- Telephone link: +18126906121
+- WhatsApp: https://wa.me/18126906121
+- Email: contact@chronolyte.com
+
+## U.S. states and representative cities
+
+- **Alabama (AL)**: Birmingham, Montgomery, Huntsville, Mobile, Tuscaloosa.
+- **Alaska (AK)**: Anchorage, Fairbanks, Juneau, Sitka, Ketchikan.
+- **Arizona (AZ)**: Phoenix, Tucson, Mesa, Scottsdale, Chandler.
+- **Arkansas (AR)**: Little Rock, Fayetteville, Fort Smith, Springdale, Jonesboro.
+- **California (CA)**: Los Angeles, San Diego, San Jose, San Francisco, Sacramento, Fresno, Oakland, Irvine.
+- **Colorado (CO)**: Denver, Colorado Springs, Aurora, Fort Collins, Boulder.
+- **Connecticut (CT)**: Bridgeport, New Haven, Stamford, Hartford, Waterbury.
+- **Delaware (DE)**: Wilmington, Dover, Newark, Middletown, Smyrna.
+- **Florida (FL)**: Jacksonville, Miami, Tampa, Orlando, St. Petersburg, Tallahassee, Fort Lauderdale, West Palm Beach.
+- **Georgia (GA)**: Atlanta, Augusta, Columbus, Savannah, Athens, Macon.
+- **Hawaii (HI)**: Honolulu, Hilo, Kailua, Kapolei, Kahului.
+- **Idaho (ID)**: Boise, Meridian, Nampa, Idaho Falls, Pocatello.
+- **Illinois (IL)**: Chicago, Aurora, Naperville, Rockford, Springfield, Peoria.
+- **Indiana (IN)**: Indianapolis, Fort Wayne, Evansville, South Bend, Carmel, Bloomington.
+- **Iowa (IA)**: Des Moines, Cedar Rapids, Davenport, Sioux City, Iowa City.
+- **Kansas (KS)**: Wichita, Overland Park, Kansas City, Topeka, Olathe.
+- **Kentucky (KY)**: Louisville, Lexington, Bowling Green, Owensboro, Covington.
+- **Louisiana (LA)**: New Orleans, Baton Rouge, Shreveport, Lafayette, Lake Charles.
+- **Maine (ME)**: Portland, Lewiston, Bangor, South Portland, Auburn.
+- **Maryland (MD)**: Baltimore, Frederick, Rockville, Gaithersburg, Annapolis.
+- **Massachusetts (MA)**: Boston, Worcester, Springfield, Cambridge, Lowell.
+- **Michigan (MI)**: Detroit, Grand Rapids, Ann Arbor, Lansing, Sterling Heights, Traverse City.
+- **Minnesota (MN)**: Minneapolis, Saint Paul, Rochester, Duluth, Bloomington.
+- **Mississippi (MS)**: Jackson, Gulfport, Southaven, Hattiesburg, Biloxi.
+- **Missouri (MO)**: Kansas City, St. Louis, Springfield, Columbia, Independence.
+- **Montana (MT)**: Billings, Missoula, Great Falls, Bozeman, Helena.
+- **Nebraska (NE)**: Omaha, Lincoln, Bellevue, Grand Island, Kearney.
+- **Nevada (NV)**: Las Vegas, Henderson, Reno, North Las Vegas, Carson City.
+- **New Hampshire (NH)**: Manchester, Nashua, Concord, Portsmouth, Dover.
+- **New Jersey (NJ)**: Newark, Jersey City, Paterson, Trenton, Elizabeth, Princeton.
+- **New Mexico (NM)**: Albuquerque, Las Cruces, Rio Rancho, Santa Fe, Roswell.
+- **New York (NY)**: New York City, Buffalo, Rochester, Syracuse, Albany, Yonkers, Ithaca.
+- **North Carolina (NC)**: Charlotte, Raleigh, Greensboro, Durham, Asheville, Wilmington.
+- **North Dakota (ND)**: Fargo, Bismarck, Grand Forks, Minot, West Fargo.
+- **Ohio (OH)**: Columbus, Cleveland, Cincinnati, Toledo, Akron, Dayton.
+- **Oklahoma (OK)**: Oklahoma City, Tulsa, Norman, Broken Arrow, Edmond.
+- **Oregon (OR)**: Portland, Eugene, Salem, Bend, Gresham.
+- **Pennsylvania (PA)**: Philadelphia, Pittsburgh, Allentown, Harrisburg, Lancaster, Erie.
+- **Rhode Island (RI)**: Providence, Warwick, Cranston, Pawtucket, Newport.
+- **South Carolina (SC)**: Charleston, Columbia, North Charleston, Greenville, Myrtle Beach, Spartanburg.
+- **South Dakota (SD)**: Sioux Falls, Rapid City, Aberdeen, Brookings, Pierre.
+- **Tennessee (TN)**: Nashville, Memphis, Knoxville, Chattanooga, Clarksville, Murfreesboro.
+- **Texas (TX)**: Houston, San Antonio, Dallas, Austin, Fort Worth, El Paso, Arlington, Plano, Corpus Christi, Waco.
+- **Utah (UT)**: Salt Lake City, West Valley City, Provo, St. George, Ogden.
+- **Vermont (VT)**: Burlington, South Burlington, Rutland, Montpelier, Barre.
+- **Virginia (VA)**: Virginia Beach, Richmond, Norfolk, Arlington, Chesapeake, Alexandria, Roanoke.
+- **Washington (WA)**: Seattle, Spokane, Tacoma, Bellevue, Vancouver, Everett, Olympia.
+- **West Virginia (WV)**: Charleston, Huntington, Morgantown, Parkersburg, Wheeling.
+- **Wisconsin (WI)**: Milwaukee, Madison, Green Bay, Kenosha, Racine, Appleton.
+- **Wyoming (WY)**: Cheyenne, Casper, Laramie, Gillette, Rock Springs.
+
+## Common digital needs by business type
+
+- **Local service businesses** — Examples: Cleaning companies, repair services, salons, pet care, and other appointment-led businesses. Common needs: Clear service pages, local search foundations, quote forms, reviews, and easy-to-use booking or contact flows.
+- **Home services and trades** — Examples: HVAC, plumbing, electrical, roofing, landscaping, painting, and construction. Common needs: Service-area pages grounded in real operations, estimate requests, project galleries, and mobile-first calls to action.
+- **Healthcare and clinics** — Examples: Dental, medical, therapy, allied-health, and private practices. Common needs: Accessible service information, appointment enquiries, staff profiles, and careful handling of sensitive information.
+- **Legal services** — Examples: Law firms, attorneys, mediators, and specialist practices. Common needs: Practice-area content, attorney profiles, consultation requests, and clear disclaimers.
+- **Accounting and financial services** — Examples: Accounting firms, bookkeepers, financial advisors, and fintech teams. Common needs: Trust-building information, secure enquiry paths, client portals, and useful educational content.
+- **Real estate and property** — Examples: Brokerages, agents, property managers, developers, and mortgage teams. Common needs: Property discovery, search and filter tools, listing content, and enquiry workflows.
+- **Retail and e-commerce** — Examples: Online stores, independent retailers, direct-to-consumer brands, and marketplaces. Common needs: Product catalogs, checkout, inventory connections, customer accounts, and post-purchase communications.
+- **Restaurants and food businesses** — Examples: Restaurants, cafes, caterers, food producers, and delivery brands. Common needs: Menus, reservations or order enquiries, location details, and up-to-date hours and contact information.
+- **Hospitality and travel** — Examples: Hotels, venues, tour operators, and travel services. Common needs: Service and room details, availability enquiries, booking connections, and destination information.
+- **Education and training** — Examples: Schools, tutors, training providers, coaches, and online course creators. Common needs: Course catalogs, enrollment enquiries, learning portals, and clear schedules.
+- **Manufacturing and distribution** — Examples: Manufacturers, wholesalers, suppliers, and industrial companies. Common needs: Product specifications, quote requests, distributor information, and business-to-business catalogs.
+- **Logistics and transportation** — Examples: Freight providers, delivery companies, fleet operators, and mobility services. Common needs: Service-area details, quote and tracking integrations, customer portals, and operations dashboards.
+- **Professional services and consulting** — Examples: Consultants, architects, engineers, recruiters, and research firms. Common needs: Expertise pages, project examples, lead qualification, and scheduling workflows.
+- **Insurance** — Examples: Independent agencies, brokers, and insurtech businesses. Common needs: Coverage explanations, quote requests, secure customer access, and educational resources.
+- **Automotive** — Examples: Dealerships, repair shops, parts retailers, and vehicle services. Common needs: Inventory or service catalogs, appointment requests, financing enquiries, and location information.
+- **Beauty, fitness, and wellness** — Examples: Gyms, studios, spas, wellness practices, and personal-care brands. Common needs: Class or service schedules, membership details, booking paths, and mobile-friendly updates.
+- **Nonprofits and community organizations** — Examples: Charities, membership groups, foundations, and community programs. Common needs: Accessible program information, donation journeys, volunteer signups, and impact reporting.
+- **Startups and SaaS companies** — Examples: Software startups, B2B platforms, subscription products, and technology ventures. Common needs: Product positioning, onboarding, dashboards, billing, integrations, and an MVP roadmap.
+- **Agencies and franchises** — Examples: Marketing and creative agencies, multi-location operators, and franchise groups. Common needs: Consistent brand systems, location content, team workflows, and lead routing.
+- **Agriculture and food production** — Examples: Farms, agricultural suppliers, food processors, and agtech teams. Common needs: Product and capability information, wholesale enquiries, seasonal updates, and customer portals.
+- **Other business types** — Examples: Specialist, hybrid, and emerging business models. Common needs: A discovery-led scope based on your customers, operations, compliance needs, and growth goals.
+
+## Project process
+
+- Share the business goal, audience, requirements, current tools, and target launch window.
+- Receive a proposed scope, timeline, and quote before deciding whether to proceed.
+- Agree on milestones and review working progress during delivery.
+- Confirm handoff, hosting, ownership, and any ongoing support in the project agreement.
+
+Information on this site describes Chronolyte services and published editorial guidance. Confirm current scope, timing, and pricing directly before making a purchase decision.

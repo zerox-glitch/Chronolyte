@@ -5,6 +5,15 @@ import { Footer } from '../components/Footer';
 import { SiteNavigation } from '../components/SiteNavigation';
 import { BlogRecord, formatBlogDate, normalizeBlog } from '../utils/blog';
 
+function setDocumentMeta(selector: string, attribute: string, value: string, create: () => HTMLElement) {
+  let element = document.querySelector<HTMLElement>(selector);
+  if (!element) {
+    element = create();
+    document.head.appendChild(element);
+  }
+  element.setAttribute(attribute, value);
+}
+
 interface BlogPostResponse {
   success?: boolean;
   data?: unknown;
@@ -42,9 +51,68 @@ export function BlogPost() {
         const post = normalizeBlog(data.data);
         if (cancelled) return;
         setBlog(post);
-        document.title = `${post.meta_title || post.title} | Chronolyte`;
-        const metaDescription = document.querySelector('meta[name="description"]');
-        if (metaDescription) metaDescription.setAttribute('content', post.meta_description || post.excerpt);
+        const pageTitle = post.meta_title || (/\bChronolyte\b/i.test(post.title) ? post.title : `${post.title} | Chronolyte`);
+        const description = post.meta_description || post.excerpt;
+        const canonicalUrl = `${window.location.origin}/blog/${encodeURIComponent(post.slug || slug || '')}`;
+        let socialImage = '/og-image.png';
+        if (post.featured_image) {
+          try {
+            const candidate = new URL(post.featured_image, window.location.origin);
+            if (candidate.protocol === 'http:' || candidate.protocol === 'https:') socialImage = candidate.href;
+          } catch { /* Keep the site-wide fallback image. */ }
+        }
+
+        document.title = pageTitle;
+        setDocumentMeta('meta[name="description"]', 'content', description, () => {
+          const element = document.createElement('meta');
+          element.name = 'description';
+          return element;
+        });
+        setDocumentMeta('meta[name="robots"]', 'content', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', () => {
+          const element = document.createElement('meta');
+          element.name = 'robots';
+          return element;
+        });
+        setDocumentMeta('link[rel="canonical"]', 'href', canonicalUrl, () => {
+          const element = document.createElement('link');
+          element.rel = 'canonical';
+          return element;
+        });
+        setDocumentMeta('meta[property="og:title"]', 'content', pageTitle, () => {
+          const element = document.createElement('meta');
+          element.setAttribute('property', 'og:title');
+          return element;
+        });
+        setDocumentMeta('meta[property="og:description"]', 'content', description, () => {
+          const element = document.createElement('meta');
+          element.setAttribute('property', 'og:description');
+          return element;
+        });
+        setDocumentMeta('meta[property="og:url"]', 'content', canonicalUrl, () => {
+          const element = document.createElement('meta');
+          element.setAttribute('property', 'og:url');
+          return element;
+        });
+        setDocumentMeta('meta[property="og:image"]', 'content', socialImage, () => {
+          const element = document.createElement('meta');
+          element.setAttribute('property', 'og:image');
+          return element;
+        });
+        setDocumentMeta('meta[name="twitter:title"]', 'content', pageTitle, () => {
+          const element = document.createElement('meta');
+          element.name = 'twitter:title';
+          return element;
+        });
+        setDocumentMeta('meta[name="twitter:description"]', 'content', description, () => {
+          const element = document.createElement('meta');
+          element.name = 'twitter:description';
+          return element;
+        });
+        setDocumentMeta('meta[name="twitter:image"]', 'content', socialImage, () => {
+          const element = document.createElement('meta');
+          element.name = 'twitter:image';
+          return element;
+        });
 
         if (post.category) {
           const params = new URLSearchParams({ action: 'category', category: post.category, limit: '4' });

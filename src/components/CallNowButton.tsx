@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { WhatsAppIcon } from './WhatsAppIcon';
 import { PhoneIcon } from './PhoneIcon';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL, CONTACT_WHATSAPP_URL } from '../constants/siteContact.js';
 
 interface CallNowButtonProps {
   className?: string;
@@ -28,6 +29,7 @@ export function CallNowButton({ className, ...props }: CallNowButtonProps) {
     <div className={`relative ${className || ''}`} ref={ref} {...props}>
       <button
         type="button"
+        aria-label={`Call or WhatsApp ${CONTACT_PHONE_DISPLAY}`}
         onClick={() => setOpen(v => !v)}
         className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-sm font-semibold text-black hover:shadow-lg hover:shadow-cyan-500/30 transition-shadow flex items-center gap-2"
       >
@@ -37,18 +39,18 @@ export function CallNowButton({ className, ...props }: CallNowButtonProps) {
         Call Now
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#0c1220] shadow-lg shadow-cyan-500/10 overflow-hidden z-[100]">
+        <div className="absolute right-0 mt-2 w-64 rounded-xl border border-white/10 bg-[#0c1220] shadow-lg shadow-cyan-500/10 overflow-hidden z-[100]">
           <a
-            href="https://wa.me/18126906121"
+            href={CONTACT_WHATSAPP_URL}
             className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors"
           >
-            <WhatsAppIcon className="w-4 h-4 text-emerald-400" /> WhatsApp
+            <WhatsAppIcon className="w-4 h-4 text-emerald-400" /> WhatsApp {CONTACT_PHONE_DISPLAY}
           </a>
           <a
-            href="tel:+18126906121"
+            href={CONTACT_PHONE_TEL}
             className="flex items-center gap-2 px-4 py-3 text-sm text-white hover:bg-white/5 transition-colors border-t border-white/5"
           >
-            <PhoneIcon className="w-4 h-4 text-cyan-400" /> Call Phone
+            <PhoneIcon className="w-4 h-4 text-cyan-400" /> Call {CONTACT_PHONE_DISPLAY}
           </a>
         </div>
       )}

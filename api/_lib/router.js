@@ -14,7 +14,7 @@ import {
   nowIso, isValidEmail, sanitizeText, clientIp, rateLimit
 } from './util.js';
 import { seedStore } from './seed.js';
-import { routeMeta, injectSeo, noIndexHtml, organizationLd, websiteLd, faqLd, breadcrumbsLd, blogPostingLd, itemListLd, serviceLd, stripHtml } from '../../seo/engine.js';
+import { SITE_URL, routeMeta, injectSeo, noIndexHtml, organizationLd, websiteLd, faqLd, breadcrumbsLd, blogPostingLd, itemListLd, serviceLd, stripHtml } from '../../seo/engine.js';
 
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 let initPromise = null;
@@ -1370,21 +1370,49 @@ async function serveSeoPage({ req, res, url, store, pathname }) {
   }
 
   const blogMatch = /^\/blog\/([^/]+)$/.exec(sub);
-  const noIndex = sub === '/admin' || sub.startsWith('/admin/');
+  const hasBlogFilterQuery = sub === '/blog' && ['page', 'search', 'category', 'q'].some((key) => url.searchParams.has(key));
+  const noIndex = sub === '/admin' || sub.startsWith('/admin/') || sub === '/blog/search' || sub.startsWith('/blog/search/') || sub === '/blog/category' || sub.startsWith('/blog/category/') || hasBlogFilterQuery;
+
+  if (sub === '/blog' && !noIndex) {
+    const posts = (await store.records.list('blogs'))
+      .filter((post) => post.status === 'published')
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const meta = routeMeta('/blog');
+    const ssr = `<main><h1>Web design, development, and product-building guides</h1><p>Practical articles about budgets, scope, hiring, and launching digital products.</p><ol>${posts.slice(0, 100).map((post) => `<li><article><h2><a href="${SITE_URL}/blog/${encodeURIComponent(post.slug)}">${escapeHtml(post.title)}</a></h2><p>${escapeHtml(post.excerpt || '')}</p><p>${escapeHtml(post.category || 'Guide')}</p></article></li>`).join('')}</ol></main>`;
+    const html = injectSeo(shell, {
+      pathname: '/blog',
+      title: meta?.title || 'Web Design, Development & SaaS Guides | Chronolyte',
+      description: meta?.description || 'Practical guides for planning digital projects.',
+      keywords: meta?.keywords,
+      jsonLd: [
+        organizationLd(),
+        websiteLd(),
+        itemListLd('Chronolyte Guides', posts.slice(0, 100), (post) => `/blog/${post.slug}`),
+        breadcrumbsLd([{ name: 'Home', path: '/' }, { name: 'Guides', path: '/blog' }])
+      ],
+      ssrContent: ssr
+    });
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300', 'X-Robots-Tag': 'index, follow' });
+    return res.end(html);
+  }
 
   if (blogMatch && !noIndex) {
     const slug = decodeURIComponent(blogMatch[1]);
     const post = (await store.records.list('blogs')).find((b) => b.slug === slug && b.status === 'published');
     if (post) {
       const plain = stripHtml(post.content || '');
-      // Full raw HTML (tables, lists, headings) so crawlers and LLMs see the complete guide.
-      const ssr = `<article><h1>${post.title}</h1><p><em>By ${post.author || 'Chronolyte'}${post.updated_at ? ` · Updated ${String(post.updated_at).slice(0, 10)}` : ''}</em></p><p><strong>${post.excerpt || ''}</strong></p>${post.content || ''}</article>`;
+      const blogTitle = post.seo_title || post.meta_title || `${post.title} | Chronolyte`;
+      const escapedTitle = escapeHtml(post.title);
+      const escapedAuthor = escapeHtml(post.author_name || post.author || 'Chronolyte');
+      const escapedDate = escapeHtml(String(post.updated_at || '').slice(0, 10));
+      const escapedExcerpt = escapeHtml(post.excerpt || '');
+      const ssr = `<article><h1>${escapedTitle}</h1><p><em>By ${escapedAuthor}${escapedDate ? ` · Updated ${escapedDate}` : ''}</em></p><p><strong>${escapedExcerpt}</strong></p>${sanitizeBlogHtml(post.content || '')}</article>`;
       const html = injectSeo(shell, {
         pathname: sub,
-        title: post.seo_title || `${post.title} | Chronolyte`,
-        description: post.seo_description || post.excerpt || plain.slice(0, 155),
+        title: blogTitle,
+        description: post.seo_description || post.meta_description || post.excerpt || plain.slice(0, 155),
         keywords: safeTagsList(post.tags),
-        image: post.cover_image || undefined,
+        image: post.cover_image || post.featured_image || undefined,
         type: 'article',
         jsonLd: [
           organizationLd(),
@@ -1396,18 +1424,51 @@ async function serveSeoPage({ req, res, url, store, pathname }) {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300', 'X-Robots-Tag': 'index, follow' });
       return res.end(html);
     }
+
+    const notFound = injectSeo(shell, {
+      pathname: sub,
+      title: 'Guide not found | Chronolyte',
+      description: 'This guide could not be found. Browse all Chronolyte guides.',
+      noIndex: true
+    });
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Robots-Tag': 'noindex, nofollow' });
+    return res.end(notFound);
   }
 
   const meta = routeMeta(sub);
-  const html = noIndex ? noIndexHtml(shell) : meta
-    ? injectSeo(shell, { pathname: meta.path, title: meta.title, description: meta.description, keywords: meta.keywords })
-    : shell;
+  const html = noIndex && sub.startsWith('/admin')
+    ? noIndexHtml(shell)
+    : noIndex
+      ? injectSeo(shell, { pathname: sub, title: 'Browse guides | Chronolyte', description: 'Browse and search Chronolyte guides.', noIndex: true })
+      : meta
+        ? injectSeo(shell, { pathname: meta.path, title: meta.title, description: meta.description, keywords: meta.keywords })
+        : shell;
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8',
     'Cache-Control': 'no-cache',
     ...(noIndex ? { 'X-Robots-Tag': 'noindex, nofollow' } : {})
   });
   return res.end(html);
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function sanitizeBlogHtml(value) {
+  return String(value ?? '')
+    .replace(/<(script|style|iframe|object|embed|form|textarea|select|button|svg|math)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')
+    .replace(/<(script|style|iframe|object|embed|form|textarea|select|button|svg|math)\b[^>]*\/?\s*>/gi, '')
+    .replace(/<(meta|link)\b[^>]*\/?>/gi, '')
+    .replace(/\s+on[a-z0-9_-]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/\s+(href|src|xlink:href)\s*=\s*("|')\s*(?:javascript|vbscript|data):[\s\S]*?\2/gi, '')
+    .replace(/\s+(href|src|xlink:href)\s*=\s*(?:javascript|vbscript|data):[^\s>]*/gi, '')
+    .replace(/\s+style\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
 }
 
 function safeTagsList(tags) {

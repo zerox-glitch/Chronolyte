@@ -3,16 +3,20 @@
  * Used by: local dev server, the /api/page serverless renderer, and the build-time prerenderer.
  *
  * Generates per-route titles, meta descriptions, canonical URLs, Open Graph,
- * Twitter cards, and rich JSON-LD structured data (Organization, WebSite, Service,
- * FAQPage, BlogPosting, ItemList, BreadcrumbList) so Google/Bing AND LLM answer
- * engines (ChatGPT, Perplexity, Claude, Gemini) can extract and recommend the site.
+ * Twitter cards, and structured data (Organization, WebSite, Service,
+ * FAQPage, BlogPosting, ItemList, BreadcrumbList) to make public site information
+ * clearer to search engines and other crawlers.
  */
+
+import { CONTACT_PHONE_E164, CONTACT_PHONE_DISPLAY } from '../src/constants/siteContact.js';
+import US_SERVICE_AREAS from '../src/data/usServiceAreas.json' with { type: 'json' };
+import BUSINESS_TYPES from '../src/data/businessTypes.json' with { type: 'json' };
 
 export const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://chronolyte.com').replace(/\/$/, '');
 export const SITE_NAME = 'Chronolyte';
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
-const PILLAR_KEYWORDS = 'hire web developer, web designer near me, fiverr alternative, SaaS development company, build a SaaS product, MVP development, AI automation agency, custom website design, app development help, AI chatbot developer, CRM automation, upwork alternative';
+const PILLAR_KEYWORDS = 'website design and development, custom business websites, e-commerce development, SaaS and MVP development, mobile app development, AI automation, remote web development for U.S. businesses';
 
 // ---------------------------------------------------------------------------
 // Per-route metadata
@@ -21,34 +25,44 @@ export function routeMeta(pathname) {
   const p = normalize(pathname);
   const TABLE = {
     '/': {
-      title: 'Chronolyte — Hire Web Designers & Developers - Start Free',
-      description: 'Tell us what you want to build — get a free plan, timeline and fixed-price quote within one business day. Websites from $500, SaaS MVPs $20,000-$75,000, apps $15,000-$100,000+. No obligation, worldwide.',
-      keywords: `${PILLAR_KEYWORDS}, start your project free, web development agency, hire developers online`
+      title: 'Website Design & Development Across the U.S. | Chronolyte',
+      description: 'Custom websites, e-commerce, SaaS, apps, and AI automation for businesses in all 50 U.S. states. Get a free scope, timeline, and project quote.',
+      keywords: `${PILLAR_KEYWORDS}, website design company, small business web design, U.S. web development studio`
     },
     '/services': {
-      title: 'Web Development, SaaS & AI Automation Services | Chronolyte',
-      description: 'Custom SaaS development, premium website design, AI automation & chatbots, custom AI tools, e-commerce and MVP development. No templates — engineered from scratch for maximum conversions. Fixed prices, fast delivery.',
-      keywords: 'saas development services, website development services, ai automation services, chatbot development, custom ai tools, mvp development services, ecommerce development, hire developers'
+      title: 'Website, E-commerce, SaaS & App Development Services | Chronolyte',
+      description: 'Plan and build custom business websites, online stores, SaaS products, mobile apps, and workflow automation. Remote delivery for U.S. businesses, with a clear scope and quote.',
+      keywords: 'business website design, e-commerce development, SaaS product development, mobile app development, workflow automation, remote U.S. web services'
     },
     '/pricing': {
-      title: 'Pricing — Websites from $500, SaaS MVPs from $20,000 | Chronolyte',
-      description: 'Transparent fixed-price ranges: landing pages $500-$2,500, business websites $2,000-$8,000, e-commerce $2,500-$15,000, mobile apps $15,000+, SaaS MVPs $20,000-$75,000, developers $25-$150+/hr. Free plan and quote.',
-      keywords: 'web development pricing, how much does a website cost, saas development cost, mvp cost, ai automation pricing, fixed price web design'
+      title: 'Website, E-commerce & App Development Pricing | Chronolyte',
+      description: 'See typical project ranges for landing pages, business websites, online stores, mobile apps, SaaS MVPs, and developer support. Request a scoped fixed-price quote.',
+      keywords: 'website design pricing, e-commerce website cost, SaaS MVP cost, mobile app development cost, fixed-price web development'
+    },
+    '/industries': {
+      title: 'Websites & Software for Every Business Type | Chronolyte',
+      description: 'Digital projects for trades, clinics, law firms, real estate, retail, restaurants, manufacturers, nonprofits, SaaS teams, and more. Scope around your real workflow.',
+      keywords: 'small business website design, contractor websites, healthcare websites, law firm websites, real estate websites, ecommerce, restaurant websites, manufacturing websites, nonprofit websites, SaaS'
+    },
+    '/locations': {
+      title: 'Remote Web Design Across All 50 U.S. States | Chronolyte',
+      description: 'Chronolyte works remotely with organizations throughout all 50 states, from major cities to smaller communities. Browse example cities and plan a project online.',
+      keywords: 'nationwide web design, remote web development United States, web design across the U.S., website development for businesses in all 50 states'
     },
     '/portfolio': {
-      title: 'Portfolio — SaaS Platforms, Websites & AI Systems We Shipped | Chronolyte',
-      description: 'See real projects: invoicing SaaS platforms, real estate websites with lead capture, AI lead-generation systems. Live products serving thousands of users — not screenshots.',
-      keywords: 'web development portfolio, saas case study, website design examples, ai automation examples, developer portfolio'
+      title: 'Portfolio — QRWho & Concept Web Projects | Chronolyte',
+      description: 'Explore QRWho, a live browser-based QR design product, alongside clearly labeled website, e-commerce, property, and SaaS concept projects.',
+      keywords: 'web development portfolio, QRWho, website design concepts, e-commerce concept, SaaS concept work'
     },
     '/about': {
-      title: 'About Chronolyte — The Team That Bends Time With AI',
-      description: 'Chronolyte is an elite AI-powered development studio. We build custom SaaS products, stunning websites, and intelligent automation for startups and businesses worldwide — at the speed of tomorrow.',
-      keywords: 'about chronolyte, ai development agency, web development team, hire dedicated developers'
+      title: 'About Chronolyte — Remote Web & Product Development',
+      description: 'Meet Chronolyte, a remote digital product team working with businesses across the United States and worldwide on websites, apps, SaaS, and automation.',
+      keywords: 'about Chronolyte, remote web development team, digital product studio, U.S. website development'
     },
     '/contact': {
-      title: 'Contact — Get a Free Quote Within 24 Hours | Chronolyte',
-      description: 'Tell us about your project and get a free fixed-price quote within 24 hours. Websites, SaaS, apps, and AI automation. WhatsApp, phone, and email support worldwide.',
-      keywords: 'get a website quote, free development quote, hire a developer today, contact web development agency'
+      title: 'Contact Chronolyte — Plan Your Website or Software Project',
+      description: `Discuss a website, online store, app, SaaS product, or automation project. Call ${CONTACT_PHONE_DISPLAY} or send a project brief for a free scope and quote.`,
+      keywords: 'contact web development studio, website quote, software project consultation, call Chronolyte'
     },
     '/faq': {
       title: 'FAQ — Hiring, Pricing, Timelines & Process | Chronolyte',
@@ -56,9 +70,9 @@ export function routeMeta(pathname) {
       keywords: 'web development faq, how long to build a website, saas development timeline, who owns the code'
     },
     '/blog': {
-      title: 'Blog — Hiring Guides, Costs & Building SaaS | Chronolyte',
-      description: 'Expert guides on hiring web developers, Fiverr vs agency trade-offs, SaaS development costs, MVP budgets, and AI automation — written by the team that ships these products daily.',
-      keywords: 'web development blog, hire developer guide, saas cost guide, ai automation blog'
+      title: 'Web Design, Development & SaaS Guides | Chronolyte',
+      description: 'Practical guides on website and app costs, hiring developers, SaaS MVP planning, e-commerce, and building digital products with clearer scope and budgets.',
+      keywords: 'website development guides, web design cost, app development guide, SaaS MVP guide, e-commerce development advice'
     },
     '/terms': { title: 'Terms of Service | Chronolyte', description: 'Terms of service for Chronolyte web development, SaaS, and AI automation services — payment terms, scope, ownership, and liabilities.' },
     '/privacy': { title: 'Privacy Policy | Chronolyte', description: 'How Chronolyte collects, uses, and protects your data — lead information, cookies, analytics, and your rights.' },
@@ -79,6 +93,16 @@ export function absoluteUrl(pathname) {
   return `${SITE_URL}${normalize(pathname) === '/' ? '/' : normalize(pathname)}`;
 }
 
+function absoluteImageUrl(image) {
+  if (!image) return DEFAULT_OG_IMAGE;
+  try {
+    const parsed = new URL(String(image), `${SITE_URL}/`);
+    return ['https:', 'http:'].includes(parsed.protocol) ? parsed.href : DEFAULT_OG_IMAGE;
+  } catch {
+    return DEFAULT_OG_IMAGE;
+  }
+}
+
 function escapeHtml(s) {
   return String(s ?? '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -93,35 +117,57 @@ function escapeJsonLd(s) {
 // JSON-LD builders
 // ---------------------------------------------------------------------------
 export function organizationLd(overrides = {}) {
+  const phone = overrides.contact_phone || CONTACT_PHONE_E164;
+  const stateAreas = US_SERVICE_AREAS.map((state) => ({
+    '@type': 'AdministrativeArea',
+    name: state.name,
+    containedInPlace: { '@type': 'Country', name: 'United States' }
+  }));
   return {
     '@context': 'https://schema.org',
-    '@type': 'ProfessionalService',
+    '@type': 'Organization',
     '@id': `${SITE_URL}/#organization`,
     name: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/favicon.svg`,
     image: DEFAULT_OG_IMAGE,
-    description: 'Chronolyte is an AI-powered development studio building custom SaaS products, premium websites, apps, and AI automation for startups and businesses worldwide.',
+    description: 'Chronolyte plans and builds websites, e-commerce stores, SaaS products, apps, and automation for businesses across the United States and worldwide, working remotely.',
     slogan: 'We bend time with AI.',
     email: 'contact@chronolyte.com',
+    telephone: phone,
+    contactPoint: [{
+      '@type': 'ContactPoint',
+      telephone: phone,
+      contactType: 'sales',
+      url: `${SITE_URL}/contact`,
+      availableLanguage: ['English']
+    }],
     priceRange: '$$',
-    ...(overrides.contact_phone ? { telephone: overrides.contact_phone } : {}),
     sameAs: [
       'https://facebook.com/chronolyte',
       'https://instagram.com/chronolyte'
     ],
-    knowsAbout: ['Web Development', 'SaaS Development', 'AI Automation', 'Chatbot Development', 'UI/UX Design', 'MVP Development', 'CRM Systems', 'E-commerce Development'],
-    areaServed: 'Worldwide',
+    knowsAbout: [
+      'Responsive website design', 'Website development', 'E-commerce development',
+      'SaaS development', 'MVP planning', 'Mobile app development',
+      'Workflow automation', 'AI-assisted software', 'CRM integrations',
+      ...BUSINESS_TYPES.map((businessType) => businessType.name)
+    ],
+    areaServed: [
+      { '@type': 'Country', name: 'United States' },
+      ...stateAreas,
+      { '@type': 'Place', name: 'Remote projects worldwide' }
+    ],
     ...(overrides.address ? { address: overrides.address } : {}),
-    aggregateRating: { '@type': 'AggregateRating', ratingValue: '5', reviewCount: '27' },
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: 'Development Services',
       itemListElement: [
-        offer('Custom Website Design & Development', 'Conversion-focused, custom-coded business websites with SEO and lead capture built in.', '$500 - $8,000'),
-        offer('SaaS Product Development', 'Full-cycle SaaS builds: MVPs, dashboards, payments, auth, analytics, deployment.', '$20,000 - $75,000'),
-        offer('Mobile App Development', 'iOS, Android and cross-platform apps, from MVP to full product.', 'from $15,000'),
-        offer('Hire Developers', 'Vetted developers and designers by the project, hour or month.', '$25 - $150+ per hour')
+        offer('Custom Website Design & Development', 'Custom, responsive websites for business services, content, and lead generation.', '$500 - $8,000'),
+        offer('E-commerce Development', 'Online stores, product catalogs, checkout flows, and integrations scoped to the business.', '$2,500 - $15,000'),
+        offer('SaaS Product Development', 'Product planning and software development for SaaS MVPs and established products.', '$20,000 - $75,000'),
+        offer('Mobile App Development', 'iOS, Android, and cross-platform applications, planned to match product scope.', 'from $15,000'),
+        offer('Workflow Automation', 'Business process automation and integrations, scoped to existing systems.', undefined)
       ]
     }
   };
@@ -142,7 +188,7 @@ export function websiteLd() {
     '@id': `${SITE_URL}/#website`,
     url: SITE_URL,
     name: SITE_NAME,
-    description: 'Hire expert developers for custom websites, SaaS products, apps, and AI automation.',
+    description: 'Plan and build custom websites, e-commerce, SaaS products, apps, and automation remotely with Chronolyte for U.S. and worldwide businesses.',
     publisher: { '@id': `${SITE_URL}/#organization` },
     potentialAction: {
       '@type': 'SearchAction',
@@ -178,23 +224,24 @@ export function breadcrumbsLd(items) {
 }
 
 export function blogPostingLd(post, pathname) {
-  const plain = stripHtml(post.content || '').slice(0, 5000);
+  const plain = stripHtml(post.content || '');
+  const readingTime = Number(post.reading_time || post.read_time);
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     '@id': `${absoluteUrl(pathname)}#article`,
-    headline: post.seo_title || post.title,
-    description: post.seo_description || post.excerpt || '',
-    image: post.cover_image ? [post.cover_image] : [DEFAULT_OG_IMAGE],
-    datePublished: post.created_at,
-    dateModified: post.updated_at || post.created_at,
-    author: { '@type': 'Organization', name: post.author || SITE_NAME, url: SITE_URL },
+    headline: post.seo_title || post.meta_title || post.title,
+    description: post.seo_description || post.meta_description || post.excerpt || '',
+    image: [absoluteImageUrl(post.cover_image || post.featured_image)],
+    ...(post.created_at || post.published_at ? { datePublished: post.created_at || post.published_at } : {}),
+    ...(post.updated_at || post.created_at || post.published_at ? { dateModified: post.updated_at || post.created_at || post.published_at } : {}),
+    author: { '@type': 'Organization', name: post.author_name || post.author || SITE_NAME, url: SITE_URL },
     publisher: { '@id': `${SITE_URL}/#organization` },
     mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(pathname) },
-    wordCount: plain.split(/\s+/).length,
+    wordCount: plain ? plain.split(/\s+/).length : 0,
     keywords: safeTags(post.tags),
-    articleSection: post.category,
-    timeRequired: post.read_time ? `PT${post.read_time}M` : undefined,
+    articleSection: post.category || undefined,
+    timeRequired: readingTime > 0 ? `PT${readingTime}M` : undefined,
     inLanguage: 'en'
   };
 }
@@ -226,7 +273,10 @@ export function serviceLd(services) {
         name: s.title || s.name,
         description: s.description || s.short_description || '',
         provider: { '@id': `${SITE_URL}/#organization` },
-        areaServed: 'Worldwide'
+        areaServed: [
+          { '@type': 'Country', name: 'United States' },
+          { '@type': 'Place', name: 'Remote projects worldwide' }
+        ]
       }
     }))
   };
@@ -266,6 +316,7 @@ export function buildHead(opts) {
   } = opts;
 
   const url = absoluteUrl(pathname);
+  const socialImage = absoluteImageUrl(image);
   const robots = noIndex
     ? 'noindex, nofollow'
     : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
@@ -281,14 +332,14 @@ export function buildHead(opts) {
   parts.push(`<meta property="og:description" content="${escapeHtml(description)}" />`);
   parts.push(`<meta property="og:type" content="${type}" />`);
   parts.push(`<meta property="og:url" content="${escapeHtml(url)}" />`);
-  parts.push(`<meta property="og:image" content="${escapeHtml(image)}" />`);
+  parts.push(`<meta property="og:image" content="${escapeHtml(socialImage)}" />`);
   parts.push(`<meta property="og:image:width" content="1200" />`);
   parts.push(`<meta property="og:image:height" content="630" />`);
   parts.push(`<meta property="og:locale" content="en_US" />`);
   parts.push(`<meta name="twitter:card" content="summary_large_image" />`);
   parts.push(`<meta name="twitter:title" content="${escapeHtml(title)}" />`);
   parts.push(`<meta name="twitter:description" content="${escapeHtml(description)}" />`);
-  parts.push(`<meta name="twitter:image" content="${escapeHtml(image)}" />`);
+  parts.push(`<meta name="twitter:image" content="${escapeHtml(socialImage)}" />`);
 
   const ldBlocks = jsonLd
     .filter(Boolean)
@@ -331,8 +382,9 @@ export function injectSeo(html, opts) {
   }
 
   if (ssrContent) {
-    // Crawlable content inside #root — replaced when React hydrates.
-    out = out.replace(/(<div id="root">)/i, `$1<div data-ssr style="position:absolute;left:-9999px;top:-9999px" aria-hidden="true">${ssrContent}</div>`);
+    // Visible crawlable fallback. React's createRoot replaces this markup on the
+    // client; without JavaScript, the page still exposes readable page content.
+    out = out.replace(/(<div id="root">)/i, `$1<div data-ssr>${ssrContent}</div>`);
   }
 
   return out;
@@ -380,40 +432,79 @@ export function noIndexHtml(html) {
   });
 }
 
-/** llms.txt — the emerging standard for letting AI answer engines understand your site. */
+/** llms.txt — an additional, openly crawlable summary of the site. */
 export function llmsTxt(blogs = []) {
   const lines = [
     `# ${SITE_NAME}`,
     '',
-    '> Chronolyte is a managed web design and development studio. Businesses hire Chronolyte to build websites, e-commerce stores, web apps, mobile apps, and SaaS products. Free plan, timeline and fixed-price quote within one business day. Websites from $500, SaaS MVPs $20,000-$75,000, apps $15,000-$100,000+, developers $25-$150+/hr. A managed alternative to Fiverr/Upwork for business-critical projects.',
+    '> Chronolyte is a remote web design and software development studio. It plans and builds business websites, e-commerce stores, SaaS products, mobile apps, and workflow automation for organizations across the United States and worldwide. Chronolyte works remotely; it does not claim to have a physical office in every listed city.',
     '',
-    '## What Chronolyte does',
+    '## Services',
     '',
-    '- **Web design & development** — landing pages ($500-$2,500), business websites ($2,000-$8,000), e-commerce stores ($2,500-$15,000).',
-    '- **SaaS product development** — MVPs with auth, billing and dashboards ($20,000-$75,000, 2-4 months).',
-    '- **Mobile app development** — iOS, Android and cross-platform apps ($15,000-$100,000+).',
-    '- **Hire developers** — vetted developers and designers by the project, hour or month ($25-$150+/hr).',
+    '- Custom website design and development for service businesses, organizations, and product teams.',
+    '- E-commerce design and development, including catalogs, checkout, and platform integrations.',
+    '- SaaS and web application planning, MVP development, dashboards, and integrations.',
+    '- Mobile application design and development for iOS, Android, or cross-platform products.',
+    '- Workflow automation, CRM integrations, and custom AI-assisted tools where appropriate.',
     '',
-    '## Who it is for',
+    '## Business types',
     '',
-    'Founders and businesses that want to hire reliable developers or designers for: building a SaaS product, creating an app, redesigning a website, automating workflows with AI, or replacing unreliable freelance marketplaces.',
+    ...BUSINESS_TYPES.map((businessType) => `- **${businessType.name}** — ${businessType.examples}.`),
     '',
-    '## Key pages',
+    '## United States coverage',
     '',
-    '- [Home](' + SITE_URL + '/): Overview of services, process, and free project starter.',
-    '- [Services](' + SITE_URL + '/services): Full list of development services.',
-    '- [Pricing](' + SITE_URL + '/pricing): Transparent fixed-price packages.',
-    '- [Portfolio](' + SITE_URL + '/portfolio): Case studies and shipped products.',
-    '- [FAQ](' + SITE_URL + '/faq): Common questions about hiring, costs, and timelines.',
-    '- [Contact](' + SITE_URL + '/contact): Get a free quote within 24 hours.',
-    '- [Start your project free](' + SITE_URL + '/): 3-step form — what do you need, tell us about it, contact details.'
+    `Chronolyte serves projects remotely throughout all 50 U.S. states: ${US_SERVICE_AREAS.map((state) => state.name).join(', ')}. The city examples in the coverage directory are representative, not an exhaustive list or a claim of local offices. Businesses in other U.S. cities and smaller communities can request a project plan.`,
+    '',
+    '## Useful pages',
+    '',
+    `- [Home](${SITE_URL}/): Company overview and project intake.`,
+    `- [Services](${SITE_URL}/services): Website, e-commerce, application, and automation services.`,
+    `- [Industries](${SITE_URL}/industries): Examples of business types and common digital needs.`,
+    `- [U.S. service areas](${SITE_URL}/locations): All 50 states and representative city examples.`,
+    `- [Pricing](${SITE_URL}/pricing): Typical project ranges; request a current scoped quote.`,
+    `- [Portfolio](${SITE_URL}/portfolio): QRWho and clearly labeled concept work.`,
+    `- [Guides](${SITE_URL}/blog): Published articles and project planning guides.`,
+    `- [Contact](${SITE_URL}/contact): Send a brief or contact Chronolyte directly.`
   ];
   if (blogs.length) {
-    lines.push('', '## Guides & articles');
-    for (const b of blogs) {
-      lines.push(`- [${b.title}](${SITE_URL}/blog/${b.slug}): ${b.excerpt || ''}`);
+    lines.push('', '## Published guides');
+    for (const post of blogs) {
+      lines.push(`- [${post.title}](${SITE_URL}/blog/${post.slug}): ${post.excerpt || ''}`);
     }
   }
-  lines.push('', '## Contact', '', `- Email: contact@chronolyte.com`, `- Free quote: ${SITE_URL}/contact`);
+  lines.push(
+    '',
+    '## Contact',
+    '',
+    '- Phone: ' + CONTACT_PHONE_DISPLAY,
+    '- Telephone link: ' + CONTACT_PHONE_E164,
+    '- WhatsApp: ' + `https://wa.me/${CONTACT_PHONE_E164.replace(/\D/g, '')}`,
+    '- Email: contact@chronolyte.com'
+  );
+  return lines.join('\n');
+}
+
+/** Expanded machine-readable context, including city examples and industries. */
+export function llmsFullTxt(blogs = []) {
+  const lines = [
+    llmsTxt(blogs),
+    '',
+    '## U.S. states and representative cities',
+    '',
+    ...US_SERVICE_AREAS.map((state) => `- **${state.name} (${state.abbr})**: ${state.cities.join(', ')}.`),
+    '',
+    '## Common digital needs by business type',
+    '',
+    ...BUSINESS_TYPES.map((businessType) => `- **${businessType.name}** — Examples: ${businessType.examples}. Common needs: ${businessType.digitalNeeds}`),
+    '',
+    '## Project process',
+    '',
+    '- Share the business goal, audience, requirements, current tools, and target launch window.',
+    '- Receive a proposed scope, timeline, and quote before deciding whether to proceed.',
+    '- Agree on milestones and review working progress during delivery.',
+    '- Confirm handoff, hosting, ownership, and any ongoing support in the project agreement.',
+    '',
+    'Information on this site describes Chronolyte services and published editorial guidance. Confirm current scope, timing, and pricing directly before making a purchase decision.'
+  ];
   return lines.join('\n');
 }

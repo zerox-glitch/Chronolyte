@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { CONTACT_PHONE_DISPLAY } from '../../constants/siteContact.js';
 import {
   FileText,
   Save,
@@ -270,7 +271,7 @@ const defaultContactContent: ContactContent = {
   },
   info: {
     email: "hello@chronolyte.com",
-    phone: "+1 (555) 000-0000",
+    phone: CONTACT_PHONE_DISPLAY,
     response_time: "We typically respond within 24 hours"
   },
   form: {

@@ -1,287 +1,93 @@
-/* Mobile Responsive Enhancements - Additional Optimizations */
+/* Small, safe responsive refinements. Layout sizing remains in component classes so
+   global rules do not override each page's mobile spacing or button design. */
 
-/* ====================================================== */
-/* MOBILE FIRST APPROACH - Base styles for smallest devices */
-/* ====================================================== */
-
-/* Ensure proper touch targets on all devices */
-button, a, input, select, textarea {
-  min-height: 44px;
-  min-width: 44px;
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
 }
-
-/* Proper spacing for mobile readability */
-@media (max-width: 640px) {
-  body {
-    font-size: 16px; /* Prevents zoom on input focus (iOS) */
-  }
-  
-  h1 {
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-  }
-  
-  /* Safety margins to prevent edge cutoff */
-  main, section {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-  
-  /* Proper button sizing for touch */
-  button {
-    padding: 12px 20px;
-    font-size: 16px;
-  }
-  
-  /* Prevent double-tap zoom on buttons */
-  button, a {
-    touch-action: manipulation;
-  }
-}
-
-/* ====================================================== */
-/* TABLET OPTIMIZATIONS (640px - 1024px) */
-/* ====================================================== */
-
-@media (min-width: 640px) and (max-width: 1024px) {
-  /* More generous spacing on tablets */
-  main, section {
-    padding: 24px;
-  }
-  
-  /* Better use of tablet space */
-  .grid-cols-auto {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-}
-
-/* ====================================================== */
-/* DESKTOP ENHANCEMENTS (1024px+) */
-/* ====================================================== */
-
-@media (min-width: 1024px) {
-  /* Smooth transitions on desktop */
-  * {
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-  }
-  
-  /* Hover effects only on desktop */
-  button:hover, a:hover {
-    transform: translateY(-2px);
-  }
-}
-
-/* ====================================================== */
-/* DEVICE-SPECIFIC FIXES */
-/* ====================================================== */
-
-/* iPhone notch safety area */
-@supports (padding: max(0px)) {
-  body {
-    padding-left: max(12px, env(safe-area-inset-left));
-    padding-right: max(12px, env(safe-area-inset-right));
-  }
-}
-
-/* iOS specific fixes */
-input, textarea, select {
-  -webkit-appearance: none;
-  -webkit-border-radius: 0;
-}
-
-/* Android specific optimizations */
-@media screen and (device-aspect-ratio: 16/9) {
-  html {
-    font-size: 112.5%; /* 18px base */
-  }
-}
-
-/* ====================================================== */
-/* PERFORMANCE OPTIMIZATIONS */
-/* ====================================================== */
-
-/* Reduce animations on battery saver mode */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-/* Low power mode optimizations */
-@media (max-width: 480px) {
-  .animate-pulse-glow {
-    animation: none;
-    opacity: 0.8;
-  }
-  
-  .glow-box, .glow-text {
-    filter: none;
-    text-shadow: none;
-    box-shadow: none;
-  }
-}
-
-/* ====================================================== */
-/* ORIENTATION SPECIFIC */
-/* ====================================================== */
-
-/* Landscape orientation adjustments */
-@media (orientation: landscape) and (max-height: 500px) {
-  header {
-    padding: 8px 0;
-  }
-  
-  section {
-    padding: 16px 0;
-  }
-  
-  h1 {
-    font-size: 2.5rem;
-  }
-}
-
-/* Portrait orientation - full height */
-@media (orientation: portrait) {
-  body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-/* ====================================================== */
-/* TEXT RENDERING & TYPOGRAPHY */
-/* ====================================================== */
 
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 
-/* Better mobile text rendering */
+img,
+video,
+iframe,
+svg {
+  max-width: 100%;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+}
+
 @media (max-width: 768px) {
   body {
     -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
-}
 
-/* ====================================================== */
-/* FORM OPTIMIZATION */
-/* ====================================================== */
-
-/* Mobile-friendly form inputs */
-input[type="text"],
-input[type="email"],
-input[type="number"],
-textarea {
-  font-size: 16px; /* Prevents zoom on iOS focus */
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* Touch-friendly form targets */
-label, input, textarea, select, button {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-
-/* ====================================================== */
-/* SCROLL OPTIMIZATION */
-/* ====================================================== */
-
-/* Hardware acceleration removed — perspective on * breaks position:fixed */
-
-/* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-/* ====================================================== */
-/* VIEWPORT OPTIMIZATION */
-/* ====================================================== */
-
-/* Prevent zoom on input focus (iOS) */
-@media (max-width: 768px) {
+  /* Keep form text at 16px to avoid automatic zoom on iOS without changing
+     font sizes on buttons, labels, and ordinary links. */
   input,
   textarea,
   select {
-    font-size: 16px !important;
-  }
-}
-
-/* ====================================================== */
-/* NETWORK-SPECIFIC */
-/* ====================================================== */
-
-/* Reduce complexity on slow connections */
-@media (prefers-color-scheme: dark) {
-  /* Use simpler gradients for dark mode */
-  .gradient-text {
-    background-image: linear-gradient(135deg, #00f5ff 0%, #0080ff 100%);
-  }
-}
-
-/* ====================================================== */
-/* SPECIFIC DEVICE OPTIMIZATIONS */
-/* ====================================================== */
-
-/* iPad specific */
-@media (device-width: 768px) and (device-height: 1024px) {
-  body {
-    font-size: 18px;
-  }
-}
-
-/* iPhone 12 Pro Max specific */
-@media (device-width: 390px) and (device-height: 844px) {
-  body {
     font-size: 16px;
   }
 }
 
-/* Samsung Galaxy S21 specific */
-@media (device-width: 360px) and (device-height: 800px) {
-  body {
-    font-size: 14px;
+@media (max-width: 480px) {
+  .animate-pulse-glow {
+    animation: none;
+    opacity: 0.8;
+  }
+
+  .glow-box,
+  .glow-text {
+    filter: none;
   }
 }
 
-/* ====================================================== */
-/* VISIBILITY & LAYERING */
-/* ====================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 
-/* Stack modals/overlays properly on all devices */
-.modal, .overlay, .dropdown {
-  z-index: 1000;
-  position: fixed;
-  inset: 0;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-/* Navigation layering is handled via inline styles in MainSite.tsx */
-
-/* ====================================================== */
-/* PRINT STYLES */
-/* ====================================================== */
-
 @media print {
-  * {
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
   }
-  
+
   body {
     background: white;
     color: black;
   }
-  
-  nav, footer, .no-print {
-    display: none;
+
+  nav,
+  footer,
+  .no-print {
+    display: none !important;
   }
 }

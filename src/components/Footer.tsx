@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { HourglassLogo } from './HourglassLogo';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL, CONTACT_WHATSAPP_URL } from '../constants/siteContact.js';
 
 type SocialKey = 'twitter' | 'linkedin' | 'github' | 'facebook' | 'instagram' | 'youtube' | 'whatsapp';
 
@@ -12,7 +13,7 @@ const socialDefaults: Record<SocialKey, string> = {
   facebook: '',
   instagram: '',
   youtube: '',
-  whatsapp: ''
+  whatsapp: CONTACT_WHATSAPP_URL
 };
 
 const socialIcons: Record<SocialKey, JSX.Element> = {
@@ -29,7 +30,7 @@ export function Footer() {
   const [socialLinks, setSocialLinks] = useState<Record<SocialKey, string>>(socialDefaults);
   const [siteSettings, setSiteSettings] = useState({
     contact_email: 'contact@chronolyte.com',
-    contact_phone: '+1 (812) 690-6121',
+    contact_phone: CONTACT_PHONE_DISPLAY,
     footer_copyright: '© 2025 Chronolyte. All rights reserved.',
     footer_tagline: 'We bend time with AI.',
     footer_show_social: true
@@ -79,11 +80,11 @@ export function Footer() {
             </svg>
             {siteSettings.contact_email}
           </a>
-          <a href={`tel:${siteSettings.contact_phone.replace(/\D/g, '')}`} className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
+          <a href={CONTACT_PHONE_TEL} className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
-            {siteSettings.contact_phone}
+            {CONTACT_PHONE_DISPLAY}
           </a>
         </div>
         
@@ -104,8 +105,10 @@ export function Footer() {
             </span>
           </Link>
           
-          <div className="flex items-center gap-4 md:gap-8 text-xs md:text-sm text-white/50">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/50 md:gap-x-6 md:text-sm">
             <Link to="/services" className="hover:text-cyan-400 transition-colors">Services</Link>
+            <Link to="/industries" className="hover:text-cyan-400 transition-colors">Industries</Link>
+            <Link to="/locations" className="hover:text-cyan-400 transition-colors">Locations</Link>
             <Link to="/portfolio" className="hover:text-cyan-400 transition-colors">Portfolio</Link>
             <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
             <Link to="/blog" className="hover:text-cyan-400 transition-colors">Guides</Link>

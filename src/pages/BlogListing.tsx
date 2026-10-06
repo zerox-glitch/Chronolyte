@@ -83,12 +83,50 @@ export function BlogListing() {
   }, []);
 
   useEffect(() => {
-    document.title = selectedCategory ? `${selectedCategory} | Chronolyte Guides` : 'Guides | Chronolyte';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Practical guides on website and app costs, hiring developers, and building digital products with confidence.');
-    }
-  }, [selectedCategory]);
+    const title = searchQuery
+      ? `Search results for “${searchQuery.slice(0, 60)}” | Chronolyte Guides`
+      : selectedCategory
+        ? `${selectedCategory} Guides | Chronolyte`
+        : 'Web Design, Development & SaaS Guides | Chronolyte';
+    const description = searchQuery
+      ? `Search Chronolyte guides for ${searchQuery.slice(0, 90)}.`
+      : selectedCategory
+        ? `Practical ${selectedCategory} guides on project scope, costs, hiring, and digital product planning.`
+        : 'Practical guides on website and app costs, hiring developers, SaaS MVP planning, and building digital products with clearer scope and budgets.';
+    const isFiltered = Boolean(searchQuery || selectedCategory || page > 1);
+    const canonicalPath = isFiltered ? pathname : '/blog';
+    const canonicalUrl = `${window.location.origin}${canonicalPath}`;
+
+    document.title = title;
+    const setMeta = (selector: string, attr: string, value: string, create?: () => HTMLElement) => {
+      let element = document.querySelector<HTMLElement>(selector);
+      if (!element && create) {
+        element = create();
+        document.head.appendChild(element);
+      }
+      element?.setAttribute(attr, value);
+    };
+    setMeta('meta[name="description"]', 'content', description, () => {
+      const element = document.createElement('meta');
+      element.name = 'description';
+      return element;
+    });
+    setMeta('meta[name="robots"]', 'content', isFiltered ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', () => {
+      const element = document.createElement('meta');
+      element.name = 'robots';
+      return element;
+    });
+    setMeta('link[rel="canonical"]', 'href', canonicalUrl, () => {
+      const element = document.createElement('link');
+      element.rel = 'canonical';
+      return element;
+    });
+    setMeta('meta[property="og:title"]', 'content', title);
+    setMeta('meta[property="og:description"]', 'content', description);
+    setMeta('meta[property="og:url"]', 'content', canonicalUrl);
+    setMeta('meta[name="twitter:title"]', 'content', title);
+    setMeta('meta[name="twitter:description"]', 'content', description);
+  }, [pathname, page, searchQuery, selectedCategory]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

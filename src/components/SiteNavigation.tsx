@@ -7,6 +7,7 @@ import { HourglassLogo } from './HourglassLogo';
 import { BrandWordmark } from './NavLogo';
 import { PhoneIcon } from './PhoneIcon';
 import { WhatsAppIcon } from './WhatsAppIcon';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL, CONTACT_WHATSAPP_URL } from '../constants/siteContact.js';
 
 const navigationItems = [
   { label: 'Services', to: '/services' },
@@ -130,18 +131,18 @@ export function SiteNavigation() {
               ))}
               <div className="mt-2 flex w-full max-w-xs flex-col gap-3">
                 <a
-                  href="https://wa.me/18126906121"
+                  href={CONTACT_WHATSAPP_URL}
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/15 px-6 py-3.5 font-semibold text-emerald-200 transition hover:bg-emerald-500/25"
                 >
-                  <WhatsAppIcon className="h-5 w-5" /> WhatsApp
+                  <WhatsAppIcon className="h-5 w-5" /> WhatsApp {CONTACT_PHONE_DISPLAY}
                 </a>
                 <a
-                  href="tel:+18126906121"
+                  href={CONTACT_PHONE_TEL}
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3.5 font-semibold text-black transition hover:shadow-lg hover:shadow-cyan-500/30"
                 >
-                  <PhoneIcon className="h-5 w-5" /> Call Now
+                  <PhoneIcon className="h-5 w-5" /> Call {CONTACT_PHONE_DISPLAY}
                 </a>
               </div>
             </motion.nav>
