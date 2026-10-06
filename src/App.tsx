@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { MainSite } from './MainSite';
 import { AdminLayout } from './admin/AdminLayout';
 import { AdminLogin } from './admin/pages/Login';
@@ -94,6 +95,7 @@ export function App() {
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
+        <Analytics />
       </AuthProvider>
     </BrowserRouter>
   );
