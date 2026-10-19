@@ -12,7 +12,7 @@ import { CONTACT_PHONE_E164, CONTACT_PHONE_DISPLAY } from '../src/constants/site
 import US_SERVICE_AREAS from '../src/data/usServiceAreas.json' with { type: 'json' };
 import BUSINESS_TYPES from '../src/data/businessTypes.json' with { type: 'json' };
 
-export const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://chronolyte.com').replace(/\/$/, '');
+export const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.chronolyteai.site').replace(/\/$/, '');
 export const SITE_NAME = 'Chronolyte';
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
@@ -138,7 +138,6 @@ export function organizationLd(overrides = {}) {
     image: DEFAULT_OG_IMAGE,
     description: 'Chronolyte plans and builds websites, e-commerce stores, SaaS products, apps, and automation for businesses across the United States and worldwide, working remotely.',
     slogan: 'We bend time with AI.',
-    email: 'contact@chronolyte.com',
     telephone: phone,
     contactPoint: [{
       '@type': 'ContactPoint',
@@ -148,10 +147,6 @@ export function organizationLd(overrides = {}) {
       availableLanguage: ['English']
     }],
     priceRange: '$$',
-    sameAs: [
-      'https://facebook.com/chronolyte',
-      'https://instagram.com/chronolyte'
-    ],
     knowsAbout: [
       'Responsive website design', 'Website development', 'E-commerce development',
       'SaaS development', 'MVP planning', 'Mobile app development',
@@ -389,7 +384,10 @@ export function injectSeo(html, opts) {
   if (ssrContent) {
     // Visible crawlable fallback. React's createRoot replaces this markup on the
     // client; without JavaScript, the page still exposes readable page content.
-    out = out.replace(/(<div id="root">)/i, `$1<div data-ssr>${ssrContent}</div>`);
+    // Replace the full loading fallback; Vite embeds application JS in the head.
+    const rootPattern = /<div id="root">\\s*<div id="loading-fallback"[\\s\\S]*?<\\/div>\\s*<\\/div>/i;
+    if (!rootPattern.test(out)) throw new Error('SEO prerender root loading fallback not found');
+    out = out.replace(rootPattern, () => `<div id="root">${ssrContent}</div>`);
   }
 
   return out;
