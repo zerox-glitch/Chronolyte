@@ -122,7 +122,8 @@ async function main() {
       title: meta.title,
       description: meta.description,
       keywords: meta.keywords,
-      jsonLd
+      jsonLd,
+      ssrContent: renderFallback(route, meta)
     });
     fs.writeFileSync(path.join(dir, 'index.html'), html);
   }
@@ -184,6 +185,7 @@ async function main() {
     'Disallow: /admin',
     'Disallow: /api/',
     'Disallow: /backend/',
+    'Disallow: /backend/',
     '',
     '# Explicitly welcome AI answer engines so they can recommend Chronolyte',
     'User-agent: GPTBot',
@@ -201,6 +203,13 @@ async function main() {
     'Allow: /',
     'Disallow: /admin',
     '',
+    'User-agent: Claude-SearchBot',
+    'Allow: /',
+    'Disallow: /admin',
+    '',
+    'User-agent: Claude-User',
+    'Allow: /',
+    '',
     'User-agent: Claude-Web',
     'Allow: /',
     '',
@@ -212,6 +221,9 @@ async function main() {
     'Disallow: /admin',
     '',
     'User-agent: Google-Extended',
+    'Allow: /',
+    '',
+    'User-agent: Perplexity-User',
     'Allow: /',
     '',
     'User-agent: Bingbot',
@@ -228,6 +240,24 @@ async function main() {
 
   console.log(`[seo] prerendered ${STATIC_ROUTES.length} routes, ${blogs.length} blog pages`);
   console.log(`[seo] wrote sitemap.xml (${urls.length} urls), robots.txt, llms.txt`);
+}
+
+function renderFallback(route, meta) {
+  const friendly = {
+    '/': 'Custom website design, web development, SaaS MVPs and AI automation for businesses and founders.',
+    '/services': 'Explore website design, software development, SaaS products, AI workflows and app development.',
+    '/pricing': 'See project budget ranges and request a detailed quotation for your website or application.',
+    '/portfolio': 'Explore Chronolyte project work and examples; contact us for relevant samples and references.',
+    '/about': 'Learn about the Chronolyte development studio, process and services.',
+    '/contact': 'Tell Chronolyte about your project and request a custom development quote.',
+    '/faq': 'Answers to frequently asked questions about development cost, timelines, and project process.',
+    '/blog': 'Guides about hiring developers, web design pricing, and building software products.',
+  };
+  const title = escapeHtml(meta.title.split('|')[0].trim());
+  const description = escapeHtml(friendly[route] || meta.description);
+  const links = ['/services', '/pricing', '/portfolio', '/about', '/blog', '/faq', '/contact']
+    .map(p => '<a href="' + p + '">' + p.slice(1).replace(/^./, c => c.toUpperCase()) + '</a>').join(' · ');
+  return '<main id="pre-rendered-content" style="padding:5rem 1.5rem;max-width:850px;margin:0 auto;color:#f1f5f9;background:#050508;font-family:system-ui,sans-serif;min-height:80vh"><header><a href="/">Chronolyte</a></header><h1>' + title + '</h1><p>' + description + '</p><nav aria-label="Site pages">' + links + '</nav><p><a href="/contact">Request a project quote</a></p></main>';
 }
 
 function defaultServices() {
