@@ -49,13 +49,41 @@ async function loadFaqs() {
   return [];
 }
 
+function bundledGuidePosts() {
+  return guidePosts().map((guide) => {
+    const { _updated, ...post } = guide;
+    const publishedAt = _updated ? new Date(`${_updated}T09:00:00.000Z`).toISOString() : new Date().toISOString();
+    return { ...post, author: 'Chronolyte', created_at: publishedAt, updated_at: publishedAt };
+  });
+}
+
+function mergeBundledGuides(posts) {
+  const merged = [...posts];
+  const existingBySlug = new Map(merged.map((post) => [post.slug, post]).filter(([slug]) => slug));
+  for (const post of bundledGuidePosts()) {
+    const existing = existingBySlug.get(post.slug);
+    if (existing) {
+      // Keep database-managed copy, but backfill editorial metadata added to the bundled guide.
+      if (Array.isArray(post.faqs) && !Array.isArray(existing.faqs)) existing.faqs = post.faqs;
+      continue;
+    }
+    merged.push(post);
+    existingBySlug.set(post.slug, post);
+  }
+  return merged.sort((a, b) => {
+    const dateA = Date.parse(a.created_at || a.published_at || '') || 0;
+    const dateB = Date.parse(b.created_at || b.published_at || '') || 0;
+    return dateB - dateA;
+  });
+}
+
 async function loadBlogs() {
   try {
     if (process.env.DATABASE_URL) {
       const { neon } = await import('@neondatabase/serverless');
       const sql = neon(process.env.DATABASE_URL);
       const rows = await sql`SELECT data FROM records WHERE kind = 'blogs' AND data->>'status' = 'published' ORDER BY data->>'created_at' DESC`;
-      if (rows.length) return rows.map((row) => row.data);
+      if (rows.length) return mergeBundledGuides(rows.map((row) => row.data));
     }
   } catch (error) {
     console.warn('[seo] database blog lookup unavailable; trying local/default guides:', error.message);
@@ -67,20 +95,15 @@ async function loadBlogs() {
     if (fs.existsSync(dbFile)) {
       const data = JSON.parse(fs.readFileSync(dbFile, 'utf8'));
       const posts = (data.records?.blogs || [])
-        .filter((post) => post.status === 'published')
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      if (posts.length) return posts;
+        .filter((post) => post.status === 'published');
+      if (posts.length) return mergeBundledGuides(posts);
     }
   } catch (error) {
     console.warn('[seo] local blog lookup unavailable; using bundled guides:', error.message);
   }
 
   // Keep articles crawlable on clean deployments where there is no build-time DB.
-  return guidePosts().map((guide) => {
-    const { _updated, ...post } = guide;
-    const publishedAt = _updated ? new Date(`${_updated}T09:00:00.000Z`).toISOString() : new Date().toISOString();
-    return { ...post, author: 'Chronolyte', created_at: publishedAt, updated_at: publishedAt };
-  });
+  return mergeBundledGuides([]);
 }
 
 async function loadServices() {
@@ -223,6 +246,12 @@ async function main() {
     const plain = (post.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     // Full raw HTML (tables, lists, headings) so crawlers and LLMs see the complete guide.
     const ssr = `<article><h1>${escapeHtml(post.title)}</h1><p><em>By ${escapeHtml(post.author_name || post.author || 'Chronolyte')}${post.updated_at ? ` · Updated ${escapeHtml(String(post.updated_at).slice(0, 10))}` : ''}</em></p><p><strong>${escapeHtml(post.excerpt || '')}</strong></p>${sanitizeBlogHtml(post.content || '')}</article>`;
+    const articleJsonLd = [
+      organizationLd(),
+      blogPostingLd(post, route),
+      breadcrumbsLd([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }, { name: post.title, path: route }])
+    ];
+    if (Array.isArray(post.faqs) && post.faqs.length) articleJsonLd.push(faqLd(post.faqs));
     const html = injectSeo(shell, {
       pathname: route,
       title: post.seo_title || `${post.title} | Chronolyte`,
@@ -230,11 +259,7 @@ async function main() {
       keywords: tagsOf(post),
       image: post.cover_image || undefined,
       type: 'article',
-      jsonLd: [
-        organizationLd(),
-        blogPostingLd(post, route),
-        breadcrumbsLd([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }, { name: post.title, path: route }])
-      ],
+      jsonLd: articleJsonLd,
       ssrContent: ssr
     });
     fs.writeFileSync(path.join(dir, 'index.html'), html);

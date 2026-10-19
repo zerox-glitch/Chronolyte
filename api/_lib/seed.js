@@ -344,11 +344,13 @@ export async function seedStore(store) {
   }
 
   // ----- SEO guides (full content imported from the live Chronolyte site) -----
-  if ((await store.records.list('blogs')).length === 0) {
-    for (const post of blogSeeds()) {
-      post.id = await store.counters.next('blog');
-      await store.records.insert('blogs', post);
-    }
+  // Add missing bundled guides without replacing content already managed in the database.
+  const existingBlogSlugs = new Set((await store.records.list('blogs')).map((post) => post.slug).filter(Boolean));
+  for (const post of blogSeeds()) {
+    if (existingBlogSlugs.has(post.slug)) continue;
+    post.id = await store.counters.next('blog');
+    await store.records.insert('blogs', post);
+    existingBlogSlugs.add(post.slug);
   }
 }
 

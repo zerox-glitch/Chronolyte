@@ -56,6 +56,7 @@ Chronolyte serves projects remotely throughout all 50 U.S. states: Alabama, Alas
 - [How to Hire a Web Developer (Without Getting Burned)](https://chronolyte.com/blog/how-to-hire-a-web-developer): A practical guide for non-technical founders and business owners: where to find developers, what to ask, what it costs and what to avoid.
 - [SaaS MVP Development: The Practical Guide for Founders](https://chronolyte.com/blog/saas-mvp-development-guide): How to build a SaaS MVP: scope, tech stack, cost ($20k-$75k typical), timeline, and the mistakes that sink first-time founders.
 - [The Best Fiverr and Upwork Alternative for Web and App Projects](https://chronolyte.com/blog/fiverr-upwork-alternative): Freelance marketplaces are great for some jobs and risky for others. Here is an honest comparison to help you pick the right way to get your website, app or SaaS built.
+- [Affordable Website Design for Small Businesses and Personal Projects](https://chronolyte.com/blog/affordable-website-design-for-small-businesses-and-personal-projects): Need a polished website on a limited budget? Compare DIY, freelance and studio options, see Chronolyte’s published planning ranges, learn what quality includes, and request a free project assessment.
 
 ## Contact
 
