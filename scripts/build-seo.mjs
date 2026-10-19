@@ -22,7 +22,7 @@ import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../src/constants/siteC
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 
-const STATIC_ROUTES = ['/', '/services', '/industries', '/locations', '/fiverr-upwork-alternative', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/terms', '/privacy', '/refunds'];
+const STATIC_ROUTES = ['/', '/services', '/industries', '/locations', '/fiverr-upwork-alternative', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/website-design', '/affordable-web-design', '/website-redesign', '/ai-automation', '/custom-software', '/terms', '/privacy', '/refunds'];
 
 const BREADCRUMB_NAMES = {
   '/services': 'Services', '/industries': 'Industries', '/locations': 'U.S. Service Areas', '/fiverr-upwork-alternative': 'Fiverr & Upwork Alternatives', '/pricing': 'Pricing', '/portfolio': 'Portfolio',
@@ -226,7 +226,7 @@ async function main() {
           ? fiverrAlternativeSsr()
           : route === '/blog'
             ? blogListingSsr(blogs)
-            : '';
+            : genericLandingSsr(route, meta);
     const html = injectSeo(shell, {
       pathname: route,
       title: meta.title,
@@ -282,6 +282,7 @@ async function main() {
   pushUrl('/contact', { freq: 'monthly', priority: '0.8' });
   pushUrl('/faq', { priority: '0.7' });
   pushUrl('/blog', { freq: 'weekly', priority: '0.8' });
+  for (const route of ["/website-design","/affordable-web-design","/website-redesign","/ai-automation","/custom-software"]) pushUrl(route, { priority: '0.8' });
   pushUrl('/terms', { priority: '0.3' });
   pushUrl('/privacy', { priority: '0.3' });
   pushUrl('/refunds', { priority: '0.3' });
@@ -294,7 +295,7 @@ async function main() {
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap);
 
   // ---------- 4. robots.txt ----------
-  const AI_CRAWLERS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Google-Extended', 'Bingbot'];
+  const AI_CRAWLERS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Googlebot', 'Google-Extended', 'Bingbot'];
   const robots = [
     'User-agent: *',
     'Allow: /',
@@ -328,6 +329,19 @@ async function main() {
 
   console.log(`[seo] prerendered ${STATIC_ROUTES.length} routes, ${blogs.length} blog pages`);
   console.log(`[seo] wrote sitemap.xml (${urls.length} urls), robots.txt, llms.txt, and llms-full.txt`);
+}
+
+
+function genericLandingSsr(route, meta) {
+  const pageName = escapeHtml(meta.title.split('|')[0].trim());
+  const description = escapeHtml(meta.description);
+  const navigation = [
+    ['Website design', '/website-design'], ['Affordable web design', '/affordable-web-design'],
+    ['Website redesign', '/website-redesign'], ['AI automation', '/ai-automation'],
+    ['Custom software', '/custom-software'], ['Pricing', '/pricing'],
+    ['Portfolio', '/portfolio'], ['About', '/about'], ['Contact', '/contact']
+  ].map(([name, link]) => '<a href="' + link + '">' + name + '</a>').join(' · ');
+  return '<main style="max-width:950px;margin:0 auto;min-height:80vh;padding:5rem 1.5rem;background:#050508;color:#f1f5f9;font-family:system-ui,sans-serif"><header><a href="/">Chronolyte</a></header><h1>' + pageName + '</h1><p>' + description + '</p><nav aria-label="Explore services">' + navigation + '</nav><p>Describe your requirements to discuss a practical development scope, project cost and timeline.</p><p><a href="/contact">Request a project quote</a></p></main>';
 }
 
 function defaultServices() {
