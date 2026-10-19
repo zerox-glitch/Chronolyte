@@ -4,7 +4,7 @@ import { join } from 'node:path';
 const root = 'dist';
 const read = (file) => readFileSync(join(root,file), 'utf8');
 const html = read('index.html');
-const origin = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.chronolyteai.site').replace(/\/$/, '');
+const origin = 'https://www.chronolyteai.site';
 const canonical = html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1];
 assert.equal(canonical, origin + '/', 'canonical homepage URL differs from configured domain');
 assert.match(html, /<main\b/i, 'homepage must include crawler-readable HTML');
