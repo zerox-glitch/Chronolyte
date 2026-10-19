@@ -3,6 +3,8 @@
  * Full-fidelity content — costs, tables, FAQs — rendered for the light-themed blog template.
  */
 
+import { growthGuides } from './growth-guides.js';
+
 const T = (headers, rows) => `<table style="width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:0.95rem;">
 <thead><tr>${headers.map((h) => `<th style="border:1px solid #e5e7eb;padding:0.6rem 0.75rem;text-align:left;background:#f9fafb;color:#111827;">${h}</th>`).join('')}</tr></thead>
 <tbody>${rows.map((r) => `<tr>${r.map((c) => `<td style="border:1px solid #e5e7eb;padding:0.6rem 0.75rem;color:#374151;">${c}</td>`).join('')}</tr>`).join('')}</tbody>
@@ -26,6 +28,7 @@ export function guidePosts() {
     ['How can I tell whether a web design review is genuine?', 'Look for permissioned, specific feedback that can be traced to a real customer or project. Treat unverified metrics and anonymous claims cautiously, and ask for relevant references when appropriate.']
   ];
   return [
+    ...growthGuides(),
     {
       slug: 'how-much-does-a-website-cost',
       title: 'How Much Does a Website Cost in 2026? Real Price Ranges',
