@@ -212,7 +212,7 @@ async function main() {
       jsonLd.push({
         '@context': 'https://schema.org',
         '@type': 'PriceSpecification',
-        description: 'Landing pages $500-$2,500. Business websites $2,000-$8,000. E-commerce $2,500-$15,000. Mobile apps from $15,000. SaaS MVPs $20,000-$75,000. Developers $25-$150+/hr. Fixed-price quotes within one business day.'
+        description: 'Chronolyte starting quotes: landing pages from $199, business websites from $499, starter stores from $999, focused app prototypes from $1,499 and SaaS prototypes from $1,999. Scope, timelines and final quotes vary.'
       });
     }
 
