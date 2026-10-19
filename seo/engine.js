@@ -327,8 +327,9 @@ export function injectSeo(html, opts) {
   if (ssrContent) {
     // Visible semantic fallback; React replaces this when mounting the application.
     const start = out.indexOf('<div id="root">');
-    const end = out.indexOf('</div>\n    <script type="module"', start);
-    if (start >= 0 && end > start) out = out.slice(0, start) + `<div id="root">${ssrContent}` + out.slice(end);
+    const script = out.indexOf('<script type="module"', start);
+    const end = script >= 0 ? out.lastIndexOf('</div>', script) : -1;
+    if (start >= 0 && end > start) out = out.slice(0, start) + `<div id="root">${ssrContent}</div>` + out.slice(end + 6);
   }
 
   return out;
