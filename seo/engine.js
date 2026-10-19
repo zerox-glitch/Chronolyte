@@ -36,7 +36,7 @@ export function routeMeta(pathname) {
     },
     '/pricing': {
       title: 'Website, E-commerce & App Development Pricing | Chronolyte',
-      description: 'See typical project ranges for landing pages, business websites, online stores, mobile apps, SaaS MVPs, and developer support. Request a scoped fixed-price quote.',
+      description: 'Chronolyte landing pages from $199, small-business sites from $499. Qualifying websites can target 48-hour to 7-day delivery; custom builds quoted separately.',
       keywords: 'website design pricing, e-commerce website cost, SaaS MVP cost, mobile app development cost, fixed-price web development'
     },
     '/industries': {
@@ -168,10 +168,10 @@ export function organizationLd(overrides = {}) {
       '@type': 'OfferCatalog',
       name: 'Development Services',
       itemListElement: [
-        offer('Custom Website Design & Development', 'Custom, responsive websites for business services, content, and lead generation.', '$500 - $8,000'),
-        offer('E-commerce Development', 'Online stores, product catalogs, checkout flows, and integrations scoped to the business.', '$2,500 - $15,000'),
-        offer('SaaS Product Development', 'Product planning and software development for SaaS MVPs and established products.', '$20,000 - $75,000'),
-        offer('Mobile App Development', 'iOS, Android, and cross-platform applications, planned to match product scope.', 'from $15,000'),
+        offer('Custom Website Design & Development', 'Custom, responsive websites for business services, content, and lead generation.', 'from $199 for landing pages; from $499 for small-business sites'),
+        offer('E-commerce Development', 'Online stores, product catalogs, checkout flows, and integrations scoped to the business.', 'from $999, scope-dependent'),
+        offer('SaaS Product Development', 'Product planning and software development for SaaS MVPs and established products.', 'from $1,999 for a focused prototype; larger builds quoted separately'),
+        offer('Mobile App Development', 'iOS, Android, and cross-platform applications, planned to match product scope.', 'from $1,499 for a basic prototype; larger apps quoted separately'),
         offer('Workflow Automation', 'Business process automation and integrations, scoped to existing systems.', undefined)
       ]
     }
