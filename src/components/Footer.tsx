@@ -71,6 +71,13 @@ export function Footer() {
   return (
     <footer className="relative py-10 md:py-16 border-t border-white/5 bg-[#050508]">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <nav aria-label="Explore development services" className="mb-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-white/65">
+          <Link className="hover:text-cyan-300" to="/website-design">Website design</Link>
+          <Link className="hover:text-cyan-300" to="/affordable-web-design">Affordable web design</Link>
+          <Link className="hover:text-cyan-300" to="/website-redesign">Website redesign</Link>
+          <Link className="hover:text-cyan-300" to="/ai-automation">AI automation</Link>
+          <Link className="hover:text-cyan-300" to="/custom-software">Custom software</Link>
+        </nav>
         {/* Contact Info Row */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-8 text-sm text-white/60">
           <a href={`mailto:${siteSettings.contact_email}`} className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
