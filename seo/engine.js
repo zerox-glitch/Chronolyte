@@ -12,7 +12,9 @@ import { CONTACT_PHONE_E164, CONTACT_PHONE_DISPLAY } from '../src/constants/site
 import US_SERVICE_AREAS from '../src/data/usServiceAreas.json' with { type: 'json' };
 import BUSINESS_TYPES from '../src/data/businessTypes.json' with { type: 'json' };
 
-export const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.chronolyteai.site').replace(/\/$/, '');
+// Official public canonical host. Do not derive SEO URLs from a Vercel preview
+// domain or a stale SITE_URL deployment variable.
+export const SITE_URL = 'https://www.chronolyteai.site';
 export const SITE_NAME = 'Chronolyte';
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
