@@ -60,6 +60,26 @@ export function routeMeta(pathname) {
       description: 'Expert guides on hiring web developers, Fiverr vs agency trade-offs, SaaS development costs, MVP budgets, and AI automation — written by the team that ships these products daily.',
       keywords: 'web development blog, hire developer guide, saas cost guide, ai automation blog'
     },
+    '/website-design': {
+      title: 'Custom Website Design for Small Businesses | Chronolyte',
+      description: 'Professional custom website design for small businesses, startups and service providers. Responsive websites, accessible pages, lead forms and SEO foundations.'
+    },
+    '/affordable-web-design': {
+      title: 'Affordable Web Design for Small Businesses | Chronolyte',
+      description: 'Plan a small-business website around your priorities. Explore responsive design, contact forms, clear scope and project-specific quotes.'
+    },
+    '/website-redesign': {
+      title: 'Website Redesign and Modernization Services | Chronolyte',
+      description: 'Modernize your existing business website with responsive layouts, user-experience improvements and SEO-conscious migration planning.'
+    },
+    '/ai-automation': {
+      title: 'Business AI Automation and Workflow Integrations | Chronolyte',
+      description: 'Explore AI workflow automation, custom chatbots, lead routing and business integrations with human review and security considerations.'
+    },
+    '/custom-software': {
+      title: 'Custom Software and SaaS MVP Development | Chronolyte',
+      description: 'Custom web applications, SaaS MVPs and business dashboards. Prioritize features, plan integrations and scope an initial release.'
+    },
     '/terms': { title: 'Terms of Service | Chronolyte', description: 'Terms of service for Chronolyte web development, SaaS, and AI automation services — payment terms, scope, ownership, and liabilities.' },
     '/privacy': { title: 'Privacy Policy | Chronolyte', description: 'How Chronolyte collects, uses, and protects your data — lead information, cookies, analytics, and your rights.' },
     '/refunds': { title: 'Refund Policy | Chronolyte', description: 'Transparent refund policy: full refund before work begins, milestone-based refunds, and clear terms for every project.' }
