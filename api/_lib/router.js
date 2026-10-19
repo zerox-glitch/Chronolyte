@@ -14,6 +14,7 @@ import {
   nowIso, isValidEmail, sanitizeText, clientIp, rateLimit
 } from './util.js';
 import { seedStore } from './seed.js';
+import { growthGuides } from './growth-guides.js';
 import { SITE_URL, routeMeta, injectSeo, noIndexHtml, organizationLd, websiteLd, faqLd, breadcrumbsLd, blogPostingLd, itemListLd, serviceLd, stripHtml } from '../../seo/engine.js';
 
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -903,14 +904,23 @@ async function handleBlogs({ req, res, method, url, store, admin, pathname }) {
     .end(JSON.stringify({ success: true, ...obj, ...extra }));
 
   if (method === 'GET') {
-    const all = (await store.records.list('blogs')).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const stored = await store.records.list('blogs');
+    // Editorial articles are bundled with the deployed code so they remain
+    // available in the public API even when an older database is already seeded.
+    const slugs = new Set(stored.map((post) => post.slug));
+    const editorial = growthGuides().filter((post) => !slugs.has(post.slug)).map((post, i) => ({
+      ...post, id: 'editorial-' + i, author: 'Chronolyte',
+      created_at: post._updated + 'T09:00:00.000Z',
+      updated_at: post._updated + 'T09:00:00.000Z', views: 0
+    }));
+    const all = [...stored, ...editorial].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     const published = all.filter((b) => b.status === 'published');
 
     if (action === 'get' || (id && !/^\d+$/.test(String(id)))) {
       const key = id || url.searchParams.get('slug');
       const blog = all.find((b) => b.slug === key || String(b.id) === String(key));
       if (!blog) return failMsg(res, 404, 'Blog post not found');
-      await store.records.update('blogs', blog.id, { views: (blog.views || 0) + 1 });
+      if (!String(blog.id).startsWith('editorial-')) await store.records.update('blogs', blog.id, { views: (blog.views || 0) + 1 });
       return ok(res, blog);
     }
     if (action === 'featured') {
