@@ -79,6 +79,11 @@ export function routeMeta(pathname) {
       description: 'Practical guides on website and app costs, hiring developers, SaaS MVP planning, e-commerce, and building digital products with clearer scope and budgets.',
       keywords: 'website development guides, web design cost, app development guide, SaaS MVP guide, e-commerce development advice'
     },
+    '/website-design': { title: 'Custom Website Design for Small Businesses | Chronolyte', description: 'Custom responsive websites for small businesses, founders and service providers. Get a project-specific proposal from Chronolyte.' },
+    '/affordable-web-design': { title: 'Affordable Website Design for Small Businesses | Chronolyte', description: 'Explore practical small-business websites with responsive design, lead forms and clear project scoping.' },
+    '/website-redesign': { title: 'Website Redesign and Modernization | Chronolyte', description: 'Improve an outdated business website with modern responsive design, navigation and SEO-conscious migration planning.' },
+    '/ai-automation': { title: 'Business AI Automation and Workflow Integrations | Chronolyte', description: 'Custom AI workflows, business automation and chatbot integrations scoped to your systems and operational needs.' },
+    '/custom-software': { title: 'Custom Software and SaaS MVP Development | Chronolyte', description: 'Custom web applications, business dashboards and SaaS MVPs with prioritized features and tailored estimates.' },
     '/terms': { title: 'Terms of Service | Chronolyte', description: 'Terms of service for Chronolyte web development, SaaS, and AI automation services — payment terms, scope, ownership, and liabilities.' },
     '/privacy': { title: 'Privacy Policy | Chronolyte', description: 'How Chronolyte collects, uses, and protects your data — lead information, cookies, analytics, and your rights.' },
     '/refunds': { title: 'Refund Policy | Chronolyte', description: 'Transparent refund policy: full refund before work begins, milestone-based refunds, and clear terms for every project.' }
