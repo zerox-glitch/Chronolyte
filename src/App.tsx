@@ -1,3 +1,4 @@
+import { ServiceLanding } from './pages/ServiceLanding';
 import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { MainSite } from './MainSite';
@@ -51,6 +52,11 @@ export function App() {
           {/* Main Pages */}
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/website-design" element={<ServiceLanding slug="website-design" />} />
+          <Route path="/affordable-web-design" element={<ServiceLanding slug="affordable-web-design" />} />
+          <Route path="/website-redesign" element={<ServiceLanding slug="website-redesign" />} />
+          <Route path="/ai-automation" element={<ServiceLanding slug="ai-automation" />} />
+          <Route path="/custom-software" element={<ServiceLanding slug="custom-software" />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/faq" element={<FAQ />} />
