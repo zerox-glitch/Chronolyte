@@ -7,10 +7,11 @@
     "dev": "vite --host 0.0.0.0",
     "dev:server": "node server/index.js",
     "dev:all": "node server/index.js & vite --host 0.0.0.0",
-    "build": "vite build && node scripts/build-seo.mjs",
+    "build": "vite build && node scripts/build-seo.mjs && npm run test:seo",
     "smoke": "node scripts/smoke-api.mjs",
     "start": "node server/index.js",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "test:seo": "node scripts/test-seo.mjs"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.4.0",
