@@ -385,7 +385,7 @@ export function injectSeo(html, opts) {
     // Visible crawlable fallback. React's createRoot replaces this markup on the
     // client; without JavaScript, the page still exposes readable page content.
     // Replace the full loading fallback; Vite embeds application JS in the head.
-    const rootPattern = /<div id="root">\\s*<div id="loading-fallback"[\\s\\S]*?<\\/div>\\s*<\\/div>/i;
+    const rootPattern = /<div id="root">\s*<div id="loading-fallback"[\s\S]*?<\/div>\s*<\/div>/i;
     if (!rootPattern.test(out)) throw new Error('SEO prerender root loading fallback not found');
     out = out.replace(rootPattern, () => `<div id="root">${ssrContent}</div>`);
   }
