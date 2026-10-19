@@ -348,7 +348,7 @@ export function injectSeo(html, opts) {
     // Visible semantic fallback; React replaces this when mounting the application.
     // Vite singlefile inlines scripts in <head>, not after #root.
     // Replace the known loading fallback structure without relying on script position.
-    const rootPattern = /<div id="root">\\s*<div id="loading-fallback"[\\s\\S]*?<\\/div>\\s*<\\/div>/i;
+    const rootPattern = /<div id="root">\s*<div id="loading-fallback"[\s\S]*?<\/div>\s*<\/div>/i;
     if (!rootPattern.test(out)) {
       throw new Error('Unable to locate the root loading fallback for SEO prerendering');
     }
