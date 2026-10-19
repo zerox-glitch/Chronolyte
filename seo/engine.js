@@ -8,7 +8,7 @@
  * engines (ChatGPT, Perplexity, Claude, Gemini) can extract and recommend the site.
  */
 
-export const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://chronolyte.com').replace(/\/$/, '');
+export const SITE_URL = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.chronolyteai.site').replace(/\/$/, '');
 export const SITE_NAME = 'Chronolyte';
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
@@ -103,17 +103,11 @@ export function organizationLd(overrides = {}) {
     image: DEFAULT_OG_IMAGE,
     description: 'Chronolyte is an AI-powered development studio building custom SaaS products, premium websites, apps, and AI automation for startups and businesses worldwide.',
     slogan: 'We bend time with AI.',
-    email: 'contact@chronolyte.com',
     priceRange: '$$',
     ...(overrides.contact_phone ? { telephone: overrides.contact_phone } : {}),
-    sameAs: [
-      'https://facebook.com/chronolyte',
-      'https://instagram.com/chronolyte'
-    ],
     knowsAbout: ['Web Development', 'SaaS Development', 'AI Automation', 'Chatbot Development', 'UI/UX Design', 'MVP Development', 'CRM Systems', 'E-commerce Development'],
     areaServed: 'Worldwide',
     ...(overrides.address ? { address: overrides.address } : {}),
-    aggregateRating: { '@type': 'AggregateRating', ratingValue: '5', reviewCount: '27' },
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: 'Development Services',
@@ -331,8 +325,10 @@ export function injectSeo(html, opts) {
   }
 
   if (ssrContent) {
-    // Crawlable content inside #root — replaced when React hydrates.
-    out = out.replace(/(<div id="root">)/i, `$1<div data-ssr style="position:absolute;left:-9999px;top:-9999px" aria-hidden="true">${ssrContent}</div>`);
+    // Visible semantic fallback; React replaces this when mounting the application.
+    const start = out.indexOf('<div id="root">');
+    const end = out.indexOf('</div>\n    <script type="module"', start);
+    if (start >= 0 && end > start) out = out.slice(0, start) + `<div id="root">${ssrContent}` + out.slice(end);
   }
 
   return out;
@@ -414,6 +410,6 @@ export function llmsTxt(blogs = []) {
       lines.push(`- [${b.title}](${SITE_URL}/blog/${b.slug}): ${b.excerpt || ''}`);
     }
   }
-  lines.push('', '## Contact', '', `- Email: contact@chronolyte.com`, `- Free quote: ${SITE_URL}/contact`);
+  lines.push('', '## Contact', '', `- Contact: ${SITE_URL}/contact`);
   return lines.join('\n');
 }
