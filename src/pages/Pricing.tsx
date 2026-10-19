@@ -171,6 +171,15 @@ function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
   );
 }
 
+const launchPackages: Record<string, { price: number; price_display: string; timeline: string; description: string }> = {
+  'Landing Page': { price: 199, price_display: 'From $199', timeline: '48 hours–7 days*', description: 'A focused one-page launch with client-supplied content.' },
+  'Business Website': { price: 499, price_display: 'From $499', timeline: 'Up to 7 days*', description: 'A responsive small-business brochure site with an agreed page count.' },
+  'E-commerce Store': { price: 999, price_display: 'From $999', timeline: 'Quoted by scope', description: 'Starter online store with configured catalogue and checkout.' },
+  'Mobile App': { price: 1499, price_display: 'From $1,499', timeline: 'Quoted by scope', description: 'A clearly scoped mobile app prototype or simple MVP.' },
+  'SaaS MVP': { price: 1999, price_display: 'From $1,999', timeline: 'Quoted by scope', description: 'A focused SaaS prototype or minimal first release.' },
+  'Hire a Developer': { price: 15, price_display: 'From $15/hour', timeline: 'By arrangement', description: 'Flexible developer support based on availability and scope.' }
+};
+
 export function Pricing() {
   const [openFAQs, setOpenFAQs] = useState<Record<number, boolean>>({});
   const [pricingData, setPricingData] = useState<Record<string, any[]>>({});
@@ -198,10 +207,12 @@ export function Pricing() {
           };
           
           json.data.forEach((plan: any) => {
-            if (plan.category === 'websites') grouped.websites.push(plan);
-            else if (plan.category === 'ai-tools') grouped.aitools.push(plan);
-            else if (plan.category === 'saas') grouped.saas.push(plan);
-            else if (plan.category === 'automation') grouped.automation.push(plan);
+            const launch = launchPackages[plan.name];
+             const displayedPlan = launch ? { ...plan, ...launch } : plan;
+             if (plan.category === 'websites') grouped.websites.push(displayedPlan);
+            else if (plan.category === 'ai-tools') grouped.aitools.push(displayedPlan);
+            else if (plan.category === 'saas') grouped.saas.push(displayedPlan);
+            else if (plan.category === 'automation') grouped.automation.push(displayedPlan);
           });
           
           setPricingData(grouped);
@@ -226,7 +237,7 @@ export function Pricing() {
   const faqs = [
     {
       question: "How long does it take to complete my project?",
-      answer: "Timeline varies by project complexity. Website projects typically take 2-4 weeks, AI tools 3-6 weeks, and SaaS platforms 6-12 weeks. We provide a detailed timeline during the discovery phase."
+      answer: "Timeline varies by project complexity. Simple, pre-scoped landing pages may be delivered in 48 hours and eligible brochure websites within 7 days once materials and approvals are complete. Complex stores, AI tools, apps, and SaaS require an individual timeline. We provide a detailed timeline during the discovery phase."
     },
     {
       question: "Do you offer revisions after launch?",
@@ -267,7 +278,7 @@ export function Pricing() {
               Simple, <span className="gradient-text">Honest</span> Pricing
             </h1>
             <p className="text-white/60 text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              Choose the perfect plan for your project. All plans include 14 days of free post-launch support.
+              Affordable launch packages from $199. A 48-hour to 7-day delivery target applies only to qualifying website scopes after client content and approvals are received. All plans include 14 days of free post-launch support.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <CallNowButton className="text-center" />
