@@ -41,6 +41,15 @@ Disallow: /setup/
 Disallow: /api/
 Disallow: /backend/
 
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: Claude-User
+Allow: /
+
 User-agent: Claude-Web
 Allow: /
 Disallow: /admin
@@ -81,4 +90,4 @@ Disallow: /setup/
 Disallow: /api/
 Disallow: /backend/
 
-Sitemap: https://chronolyte.com/sitemap.xml
+Sitemap: https://www.chronolyteai.site/sitemap.xml
