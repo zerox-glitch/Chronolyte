@@ -17,12 +17,14 @@ import {
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 
-const STATIC_ROUTES = ['/', '/services', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/terms', '/privacy', '/refunds'];
+const STATIC_ROUTES = ['/', '/services', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/website-design', '/affordable-web-design', '/website-redesign', '/ai-automation', '/custom-software', '/terms', '/privacy', '/refunds'];
 
 const BREADCRUMB_NAMES = {
   '/services': 'Services', '/pricing': 'Pricing', '/portfolio': 'Portfolio',
   '/about': 'About', '/contact': 'Contact', '/faq': 'FAQ', '/blog': 'Blog',
-  '/terms': 'Terms', '/privacy': 'Privacy', '/refunds': 'Refunds'
+  '/website-design': 'Website Design', '/affordable-web-design': 'Affordable Web Design',
+  '/website-redesign': 'Website Redesign', '/ai-automation': 'AI Automation',
+  '/custom-software': 'Custom Software', '/terms': 'Terms', '/privacy': 'Privacy', '/refunds': 'Refunds'
 };
 
 async function loadFaqs() {
@@ -167,6 +169,7 @@ async function main() {
   pushUrl('/contact', { freq: 'monthly', priority: '0.8' });
   pushUrl('/faq', { priority: '0.7' });
   pushUrl('/blog', { freq: 'weekly', priority: '0.8' });
+  for (const p of ['/website-design', '/affordable-web-design', '/website-redesign', '/ai-automation', '/custom-software']) pushUrl(p, { priority: '0.8' });
   pushUrl('/terms', { priority: '0.3' });
   pushUrl('/privacy', { priority: '0.3' });
   pushUrl('/refunds', { priority: '0.3' });
@@ -246,6 +249,11 @@ function renderFallback(route, meta) {
   const friendly = {
     '/': 'Custom website design, web development, SaaS MVPs and AI automation for businesses and founders.',
     '/services': 'Explore website design, software development, SaaS products, AI workflows and app development.',
+    '/website-design': 'Custom website design and development for small businesses, with mobile-responsive layouts, lead forms and SEO foundations.',
+    '/affordable-web-design': 'Plan an affordable small-business website with a clear scope, mobile-responsive layouts and a project-specific quote.',
+    '/website-redesign': 'Redesign existing business websites, improve usability and plan URL migrations carefully.',
+    '/ai-automation': 'Explore AI chatbots, workflow integrations, and business automation services with human oversight.',
+    '/custom-software': 'Build SaaS MVPs, web applications and business software with focused features and planned integrations.',
     '/pricing': 'See project budget ranges and request a detailed quotation for your website or application.',
     '/portfolio': 'Explore Chronolyte project work and examples; contact us for relevant samples and references.',
     '/about': 'Learn about the Chronolyte development studio, process and services.',
