@@ -17,6 +17,14 @@ const FAQ = (pairs) => pairs.map(([q, a]) => `<div style="margin:1rem 0;"><h3 st
 
 export function guidePosts() {
   const UPDATED = '2026-09-30';
+  const affordableWebsiteFaqs = [
+    ['Can I get a high-quality website on a small budget?', 'Yes, if you match the scope to your budget. Start with the pages and features that support your main goal, keep the first release focused, and make sure mobile usability, clear content, security, and ownership are not overlooked.'],
+    ['How much does an affordable small-business website cost?', 'Chronolyte currently publishes a $2,000–$8,000 planning range for a business website and $500–$2,500 for a landing page. These are planning ranges, not guaranteed prices; the final scope and quote depend on requirements.'],
+    ['Can I build a personal website for less than a business website?', 'A simple portfolio or résumé site can need fewer pages and features than a business website, so a builder or focused landing-page scope may fit. A custom portfolio, blog, booking flow, or store can change the estimate.'],
+    ['What should I include in a free website assessment request?', 'Share your goal, audience, current site if any, must-have pages or features, examples you like, budget range, and target timing. This helps a provider propose a relevant scope and quote.'],
+    ['Does an affordable website guarantee more customers or search rankings?', 'No. A well-planned website supports credibility and customer journeys, but traffic and sales also depend on demand, competition, marketing, offer, and follow-up. No provider can guarantee search rankings or AI recommendations.'],
+    ['How can I tell whether a web design review is genuine?', 'Look for permissioned, specific feedback that can be traced to a real customer or project. Treat unverified metrics and anonymous claims cautiously, and ask for relevant references when appropriate.']
+  ];
   return [
     {
       slug: 'how-much-does-a-website-cost',
@@ -331,6 +339,86 @@ export function guidePosts() {
           ['Can Chronolyte handle small tasks too?', 'Yes. Small fixes and features can be quoted as fixed-price tasks. Start with the free form and tell us what you need.']
         ]),
       _updated: UPDATED
+    },
+    {
+      slug: 'affordable-website-design-for-small-businesses-and-personal-projects',
+      title: 'Affordable Website Design for Small Businesses and Personal Projects',
+      excerpt: 'Need a polished website on a limited budget? Compare DIY, freelance and studio options, see Chronolyte’s published planning ranges, learn what quality includes, and request a free project assessment.',
+      category: 'Website Planning',
+      tags: JSON.stringify(['affordable website design', 'small business website', 'low budget website', 'personal website design', 'website cost', 'free website assessment', 'website development']),
+      cover_image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=630&fit=crop',
+      featured: 1, read_time: 9, status: 'published',
+      seo_title: 'Affordable Website Design: Business & Personal Sites (2026)',
+      seo_description: 'Affordable website design for business or personal use: compare options, protect quality, and request a free project assessment from Chronolyte.',
+      faqs: affordableWebsiteFaqs.map(([question, answer]) => ({ question, answer })),
+      content:
+        P('<strong>Quick answer:</strong> You can get a professional website on a limited budget by deciding what the site must accomplish, launching the essential pages first, and choosing tools and help that fit the scope. A one-page personal portfolio, a local-service business site, and an online store have different needs—and should not all get the same package. Chronolyte offers a free initial project assessment, proposed scope, timeline, and quote; the estimate is tailored to the brief and does not obligate you to proceed.') +
+        H2('Start with the job your website needs to do') +
+        P('Before comparing designers or website builders, write one sentence describing the result you need. A business website might help a customer understand a service and request a quote. A personal site might present a portfolio, biography, writing, or contact details. An online store must help shoppers discover products and complete checkout. Clear goals make it easier to spend on useful features and postpone extras.') +
+        T(['Website type', 'A practical first version', 'Budget question to answer'], [
+          ['Local service business', 'Home, service, about, proof or portfolio, and contact pages', 'Which service and location information helps a qualified customer decide?'],
+          ['Consultant or professional', 'Positioning, services, background, useful insights, and an inquiry path', 'Can a visitor understand your offer and next step quickly?'],
+          ['Personal portfolio or résumé', 'Short introduction, selected work, skills, and contact details', 'Which examples best demonstrate the work you want to be hired for?'],
+          ['Creator, community, or personal blog', 'About page, a small set of strong posts or projects, and subscription/contact option', 'Do you need a publishing workflow, or is a simple portfolio enough?'],
+          ['Online store', 'Product categories, product pages, checkout, policies, and support information', 'Which products, shipping rules, payments, and integrations are needed at launch?']
+        ]) +
+        P('A focused first release is not a low-quality shortcut. It is a way to put the most useful content and customer journey first, then add features when real needs justify them.') +
+        H2('What does affordable website design cost?') +
+        P('There is no single price for “a website.” Pages, copy, custom design, booking or payment functions, migrations, integrations, and support all affect the scope. For context, these are Chronolyte’s currently published planning ranges—not an industry-wide average or a guaranteed quote:') +
+        T(['Project type', 'Published planning range', 'Published typical timeline'], [
+          ['Landing page', '$500–$2,500', '1–2 weeks'],
+          ['Business website', '$2,000–$8,000', '3–6 weeks'],
+          ['E-commerce store', '$2,500–$15,000', '3–8 weeks'],
+          ['SaaS MVP', '$20,000–$75,000', '2–4 months']
+        ]) +
+        P('A small personal portfolio may fit a focused landing-page scope, while a site with a content system, booking flow, member accounts, or custom integrations can need a different estimate. See the <a href="/pricing">current pricing page</a> and request a scope based on your actual requirements. Hosting, domain registration, paid plugins, payment processing, and ongoing content or maintenance can be separate costs; ask what is and is not included.') +
+        H2('Choose the right way to build it') +
+        T(['Approach', 'Often works well when', 'Trade-off to consider'], [
+          ['Website builder or template', 'You need a simple personal site or a standard brochure site and can do the setup yourself', 'Your time, content, accessibility, SEO setup, and future editing remain your responsibility'],
+          ['Freelancer', 'The brief is narrow, such as a page design, a specific fix, or one well-defined feature', 'You select and coordinate the person, check the handoff, and may need another specialist for other work'],
+          ['Managed studio', 'The project needs connected planning, design, development, content structure, and testing', 'A managed team may cost more than a single small gig and is not necessary for every simple task']
+        ]) +
+        P('No option is automatically best. A builder can be excellent when the requirements are simple and you want to own the work. A specialist may be right for one clearly scoped task. A coordinated team can help when several disciplines and deliverables need to fit together. Compare the total scope and the time you will spend managing it—not just the headline price.') +
+        H2('What high quality looks like, even on a modest budget') +
+        UL([
+          '<strong>Clear purpose:</strong> visitors can tell who the site is for, what is offered, and what to do next.',
+          '<strong>Mobile usability:</strong> text, navigation, buttons, and forms work on a phone as well as a desktop.',
+          '<strong>Useful content:</strong> original, accurate answers to customer questions rather than filler written to repeat keywords.',
+          '<strong>Accessible basics:</strong> readable contrast, descriptive links, meaningful headings, keyboard-friendly controls, and alternative text where images convey information.',
+          '<strong>Technical foundations:</strong> secure hosting, sensible page speed, working forms, page titles, canonical URLs, and a sitemap where appropriate.',
+          '<strong>Ownership and handoff:</strong> you know who controls the domain, hosting, source files, accounts, and future changes.',
+          '<strong>Room to improve:</strong> analytics or another agreed measurement plan helps you learn what to update after launch.'
+        ]) +
+        P('A polished visual design matters, but it cannot replace clear messaging, a usable mobile experience, trustworthy information, or a functioning contact path. “High quality” should describe what the site does and how it works—not an unsupported promise of search rankings or sales.') +
+        H2('Seven ways to keep the project within budget') +
+        OL([
+          '<strong>Set one main goal.</strong> Choose the primary action—call, request a quote, book, subscribe, or buy—and make the first release support it.',
+          '<strong>Separate essentials from later ideas.</strong> Keep launch requirements short; record nice-to-haves for a later phase.',
+          '<strong>Reuse patterns where they make sense.</strong> Standard page sections and established platform features can save time; reserve custom work for a real differentiator.',
+          '<strong>Prepare content early.</strong> Gather your service details, biography, product information, images, and answers to common questions before development is blocked.',
+          '<strong>Keep integrations lean.</strong> Add booking, payments, CRM, or email tools when they solve a defined need, and include their subscription fees in your budget.',
+          '<strong>Ask for a written scope.</strong> Confirm deliverables, exclusions, revision rounds, timeline assumptions, payment milestones, and who supplies content.',
+          '<strong>Protect the handoff.</strong> Confirm account ownership, backups, training, documentation, and any post-launch support before approving the final plan.'
+        ]) +
+        H2('What to expect from a free website assessment') +
+        P('A useful initial assessment starts with your goals and constraints. Share the current website if you have one, who you want to reach, the pages or features you need, your preferred launch window, and a comfortable budget range. You can also include examples of sites you like and explain what you like about them.') +
+        UL([
+          'A discussion of the goal, audience, and most important user journey.',
+          'A proposed project scope and a clear list of assumptions or open questions.',
+          'A suggested sequence and timeline based on the brief.',
+          'A quote to review before deciding whether to continue.'
+        ]) +
+        P('Chronolyte’s <a href="/contact">free initial project plan and quote</a> are a starting point for scoping, not a promise that every project fits a particular budget. A full technical audit, usability study, or detailed specification should only be assumed if it is explicitly included in the agreed scope. Chronolyte works remotely with businesses across all 50 U.S. states; it does not claim a local office in every city.') +
+        H2('How to assess portfolios, reviews, and results') +
+        P('Look for relevant examples and ask what the provider actually contributed. A trustworthy portfolio distinguishes client work from personal projects and design concepts. For example, <a href="https://qrwho.online/" rel="noopener noreferrer">QRWho</a> is a personal project built by Chronolyte’s founder, not a client case study. Other concept explorations in the <a href="/portfolio">portfolio</a> are labeled as concepts; they should not be read as completed client engagements or evidence of customer revenue growth.') +
+        P('When you review a client quote or case study, look for permission to publish, enough context to understand the project, and a clear distinction between opinion and measured outcomes. Business-growth claims should identify what was measured and over what period, and should only be used when the client and supporting evidence can substantiate them. A real review is more useful than a made-up testimonial or an unverified promise that a website will “boom” a business.') +
+        H2('Can a website help search engines and AI answer engines find you?') +
+        P('A website can make your services and expertise easier to understand, but no design, keyword, schema markup, or AI file guarantees rankings or citations. Build a durable foundation: publish original answers to real questions, use clear page titles and descriptive headings, keep business details accurate, link related pages, provide crawlable text, and avoid blocking the public pages you want indexed. Use structured data only when it accurately describes visible content. Then monitor search and inquiry data and improve pages based on what people need.') +
+        H2('Frequently asked questions') +
+        FAQ(affordableWebsiteFaqs) +
+        BOX('Have a business website, personal portfolio, or online store in mind? <a href="/contact">Request a free, no-obligation project assessment</a> to discuss scope, timing, and cost.') +
+        P('Related reading: <a href="/blog/how-much-does-a-website-cost">website cost ranges</a>, <a href="/blog/how-to-hire-a-web-developer">how to hire a web developer</a>, and <a href="/services">Chronolyte’s website and software services</a>.') ,
+      _updated: '2026-10-19'
     }
   ];
 }

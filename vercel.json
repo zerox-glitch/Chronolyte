@@ -12,8 +12,6 @@
   "redirects": [
     { "source": "/guides", "destination": "/blog", "permanent": true },
     { "source": "/guides/:slug", "destination": "/blog/:slug", "permanent": true },
-    { "source": "/fiverr-upwork-alternative", "destination": "/blog/fiverr-upwork-alternative", "permanent": true },
-    { "source": "/fiverr-upwork-alternative/", "destination": "/blog/fiverr-upwork-alternative", "permanent": true },
     { "source": "/services/:slug", "destination": "/services", "permanent": false },
     { "source": "/start", "destination": "/", "permanent": false }
   ],
@@ -23,8 +21,9 @@
     { "source": "/backend/api/:__orig(.*)", "destination": "/api/handler" },
     { "source": "/uploads/:__orig(.*)", "destination": "/api/handler?__ns=files" },
     { "source": "/blog", "destination": "/api/handler?__ns=page/blog" },
+    { "source": "/blog/category/:category", "destination": "/api/handler?__ns=page/blog/category&__orig=:category" },
     { "source": "/blog/:__orig([^/]+)", "destination": "/api/handler?__ns=page/blog" },
-    { "source": "/((?!api/|uploads/|assets/|favicon\\.svg|favicon\\.ico|og-image\\.png|robots\\.txt|sitemap\\.xml|llms\\.txt|site\\.webmanifest|browserconfig\\.xml).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|uploads/|assets/|favicon\\.svg|favicon\\.ico|og-image\\.png|robots\\.txt|sitemap\\.xml|llms\\.txt|llms-full\\.txt|site\\.webmanifest|browserconfig\\.xml).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

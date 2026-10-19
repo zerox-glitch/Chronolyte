@@ -422,12 +422,14 @@ export function Leads() {
       const res = await fetch(apiUrl({ limit: '200' }), {
         headers: authHeaders()
       });
-      if (!res.ok) {
-        const errBody = await res.text().catch(() => '');
-        throw new Error(errBody || `HTTP ${res.status}`);
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.success) {
+        throw new Error(json?.error || json?.message || `Failed to load leads (HTTP ${res.status})`);
       }
-      const json = await res.json();
-      setLeads(json.data?.leads || []);
+      if (!Array.isArray(json.data?.leads)) {
+        throw new Error('The server returned an invalid leads response. Please retry.');
+      }
+      setLeads(json.data.leads);
     } catch (err: any) {
       setError(err.message || 'Failed to load leads');
     } finally {

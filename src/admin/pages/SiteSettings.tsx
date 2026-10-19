@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { CONTACT_PHONE_DISPLAY, CONTACT_WHATSAPP_URL } from '../../constants/siteContact.js';
 import {
   Settings,
   Mail,
@@ -65,7 +66,7 @@ const defaultSettings: SiteSettingsData = {
   favicon: '',
   
   contact_email: 'contact@chronolyte.com',
-  contact_phone: '+1 (555) 000-0000',
+  contact_phone: CONTACT_PHONE_DISPLAY,
   contact_phone_secondary: '',
   contact_address: '123 Business Street',
   contact_city: 'New York',
@@ -80,7 +81,7 @@ const defaultSettings: SiteSettingsData = {
   social_facebook: 'https://facebook.com/chronolyte',
   social_instagram: 'https://instagram.com/chronolyte',
   social_youtube: '',
-  social_whatsapp: '',
+  social_whatsapp: CONTACT_WHATSAPP_URL,
   
   footer_copyright: '© 2025 Chronolyte. All rights reserved.',
   footer_tagline: 'We bend time with AI.',

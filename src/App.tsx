@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { MainSite } from './MainSite';
 import { AdminLayout } from './admin/AdminLayout';
 import { AdminLogin } from './admin/pages/Login';
@@ -27,7 +28,12 @@ import { ProjectsManager } from './admin/pages/ProjectsManager';
 import { BlogsAdmin } from './admin/pages/Blogs';
 
 // Import page components
-import { TermsOfService, PrivacyPolicy, RefundPolicy, About, Services, Contact, Portfolio, FAQ, Pricing, BlogListing, BlogPost } from './pages';
+import { TermsOfService, PrivacyPolicy, RefundPolicy, About, Services, Contact, Portfolio, FAQ, Pricing, BlogListing, BlogPost, Industries, Locations, FiverrAlternative } from './pages';
+
+function LegacyGuidesRedirect() {
+  const { slug } = useParams<{ slug?: string }>();
+  return <Navigate to={slug ? `/blog/${slug}` : '/blog'} replace />;
+}
 
 export function App() {
   return (
@@ -49,7 +55,14 @@ export function App() {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/industries" element={<Industries />} />
+          <Route path="/locations" element={<Locations />} />
+          <Route path="/fiverr-upwork-alternative" element={<FiverrAlternative />} />
           
+          {/* Legacy guide URLs mirror the current /blog routes outside Vercel too */}
+          <Route path="/guides" element={<Navigate to="/blog" replace />} />
+          <Route path="/guides/:slug" element={<LegacyGuidesRedirect />} />
+
           {/* Blog Pages */}
           <Route path="/blog" element={<BlogListing />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
@@ -83,6 +96,7 @@ export function App() {
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
+        <Analytics />
       </AuthProvider>
     </BrowserRouter>
   );

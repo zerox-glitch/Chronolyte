@@ -1,211 +1,107 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { ArrowRight, BookOpen, Clock3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-interface Blog {
-    id: number;
-    title: string;
-    slug: string;
-    excerpt: string;
-    featured_image: string;
-    featured_image_alt: string;
-    author_name: string;
-    category: string;
-    reading_time: number;
-    published_at: string;
-}
+import { BlogRecord, formatBlogDate, normalizeBlog } from '../utils/blog';
 
 interface FeaturedBlogsProps {
-    limit?: number;
+  limit?: number;
 }
 
-export const FeaturedBlogs: React.FC<FeaturedBlogsProps> = ({ limit = 3 }) => {
-    const [blogs, setBlogs] = useState<Blog[]>([]);
-    const [loading, setLoading] = useState(true);
+export function FeaturedBlogs({ limit = 3 }: FeaturedBlogsProps) {
+  const [blogs, setBlogs] = useState<BlogRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchFeaturedBlogs();
-    }, []);
-
-    const fetchFeaturedBlogs = async () => {
-        try {
-            const response = await fetch(`/api/blogs.php?action=featured&limit=${limit}`);
-            const data = await response.json();
-
-            if (data.success) {
-                setBlogs(data.data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch featured blogs:', error);
-        } finally {
-            setLoading(false);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/blogs.php?action=featured&limit=${limit}`)
+      .then((response) => response.json())
+      .then((data: { success?: boolean; data?: unknown[] }) => {
+        if (!cancelled && data.success && Array.isArray(data.data)) {
+          setBlogs(data.data.map(normalizeBlog));
         }
-    };
+      })
+      .catch((error: unknown) => console.error('Failed to fetch featured guides:', error))
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [limit]);
 
-    if (loading) {
-        return <div>Loading blogs...</div>;
-    }
+  if (!loading && blogs.length === 0) return null;
 
-    if (blogs.length === 0) {
-        return null;
-    }
+  return (
+    <section className="relative overflow-hidden bg-[#070a12] px-4 py-16 md:px-6 md:py-24">
+      <div className="pointer-events-none absolute -left-32 top-10 h-72 w-72 rounded-full bg-cyan-500/10 blur-[110px]" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-72 w-72 rounded-full bg-blue-500/10 blur-[110px]" />
+      <div className="relative mx-auto max-w-7xl">
+        <div className="mb-9 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between md:mb-12">
+          <div className="max-w-2xl">
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
+              <BookOpen className="h-4 w-4" /> The Chronolyte guides
+            </p>
+            <h2 className="font-display text-3xl font-bold text-white md:text-5xl">
+              Straight answers for <span className="gradient-text">what you’re building</span>
+            </h2>
+            <p className="mt-4 max-w-xl text-sm leading-7 text-white/55 md:text-base">
+              Plain-English advice on project costs, timelines and hiring — based on the work we build every day.
+            </p>
+          </div>
+          <Link
+            to="/blog"
+            className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-5 py-3 text-sm font-semibold text-cyan-200 transition hover:border-cyan-300/60 hover:bg-cyan-500/15"
+          >
+            All guides <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
 
-    return (
-        <section style={{
-            padding: '3rem 1rem',
-            backgroundColor: '#fafafa'
-        }}>
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                {/* Section Header */}
-                <div style={{
-                    textAlign: 'center',
-                    marginBottom: '2rem'
-                }}>
-                    <h2 style={{
-                        fontSize: '2rem',
-                        marginBottom: '0.5rem',
-                        color: '#333'
-                    }}>
-                        Latest Blog Posts
-                    </h2>
-                    <p style={{
-                        fontSize: '1.1rem',
-                        color: '#666',
-                        marginBottom: '1rem'
-                    }}>
-                        Tips, insights, and best practices for your digital success
-                    </p>
-                    <Link
-                        to="/blog"
-                        style={{
-                            display: 'inline-block',
-                            color: '#1976d2',
-                            textDecoration: 'none',
-                            fontWeight: '500',
-                            fontSize: '1rem'
-                        }}
-                    >
-                        View All Blog Posts →
-                    </Link>
+        {loading ? (
+          <div className="grid gap-5 md:grid-cols-3">
+            {[0, 1, 2].map((item) => (
+              <div key={item} className="glass h-[340px] animate-pulse rounded-3xl" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {blogs.map((blog) => (
+              <Link
+                key={blog.id}
+                to={`/blog/${blog.slug}`}
+                className="group glass overflow-hidden rounded-3xl transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:shadow-[0_18px_55px_rgba(0,200,255,0.12)]"
+              >
+                <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-cyan-950 via-[#101a2a] to-blue-950">
+                  {blog.featured_image ? (
+                    <img
+                      src={blog.featured_image}
+                      alt={blog.featured_image_alt}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-cyan-300/60">
+                      <BookOpen className="h-12 w-12" />
+                    </div>
+                  )}
+                  <span className="absolute left-4 top-4 rounded-full border border-cyan-300/25 bg-[#07101e]/85 px-3 py-1 text-xs font-semibold text-cyan-200 backdrop-blur">
+                    {blog.category}
+                  </span>
                 </div>
-
-                {/* Blogs Grid */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                    gap: '2rem'
-                }}>
-                    {blogs.map((blog) => {
-                        const publishedDate = new Date(blog.published_at);
-                        const formattedDate = publishedDate.toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                        });
-
-                        return (
-                            <Link
-                                key={blog.id}
-                                to={`/blog/${blog.slug}`}
-                                style={{
-                                    textDecoration: 'none',
-                                    backgroundColor: 'white',
-                                    borderRadius: '8px',
-                                    overflow: 'hidden',
-                                    transition: 'all 0.3s ease',
-                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    height: '100%'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-8px)';
-                                    e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.15)';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-                                }}
-                            >
-                                {/* Featured Image */}
-                                {blog.featured_image && (
-                                    <div style={{
-                                        height: '200px',
-                                        backgroundImage: `url(${blog.featured_image})`,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center',
-                                        position: 'relative'
-                                    }}>
-                                        {blog.category && (
-                                            <div style={{
-                                                position: 'absolute',
-                                                top: '1rem',
-                                                left: '1rem',
-                                                backgroundColor: 'rgba(25, 118, 210, 0.9)',
-                                                color: 'white',
-                                                padding: '0.35rem 0.75rem',
-                                                borderRadius: '12px',
-                                                fontSize: '0.75rem',
-                                                fontWeight: '600'
-                                            }}>
-                                                {blog.category}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {/* Content */}
-                                <div style={{
-                                    padding: '1.5rem',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    flex: 1
-                                }}>
-                                    {/* Title */}
-                                    <h3 style={{
-                                        margin: '0 0 0.75rem 0',
-                                        color: '#1976d2',
-                                        fontSize: '1.25rem',
-                                        fontWeight: '600',
-                                        lineHeight: '1.4'
-                                    }}>
-                                        {blog.title}
-                                    </h3>
-
-                                    {/* Excerpt */}
-                                    <p style={{
-                                        margin: '0 0 1rem 0',
-                                        color: '#666',
-                                        fontSize: '0.95rem',
-                                        lineHeight: '1.6',
-                                        flex: 1
-                                    }}>
-                                        {blog.excerpt.substring(0, 120)}...
-                                    </p>
-
-                                    {/* Meta Info */}
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        fontSize: '0.85rem',
-                                        color: '#999',
-                                        paddingTop: '1rem',
-                                        borderTop: '1px solid #eee'
-                                    }}>
-                                        <div>
-                                            <span>{formattedDate}</span>
-                                            {blog.reading_time && (
-                                                <span> · {blog.reading_time} min</span>
-                                            )}
-                                        </div>
-                                        <div>{blog.author_name}</div>
-                                    </div>
-                                </div>
-                            </Link>
-                        );
-                    })}
+                <div className="p-5 md:p-6">
+                  <h3 className="font-display text-lg font-bold leading-snug text-white transition-colors group-hover:text-cyan-200 md:text-xl">
+                    {blog.title}
+                  </h3>
+                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-white/55">{blog.excerpt}</p>
+                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-4 text-xs text-white/40">
+                    <span>{formatBlogDate(blog.published_at)}</span>
+                    {blog.reading_time > 0 && (
+                      <span className="inline-flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" /> {blog.reading_time} min read</span>
+                    )}
+                  </div>
                 </div>
-            </div>
-        </section>
-    );
-};
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

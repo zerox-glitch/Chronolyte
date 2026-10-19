@@ -30,7 +30,11 @@ const BUDGET_OPTIONS = ['Under $1,000', '$1,000 - $5,000', '$5,000 - $15,000', '
 const TIMELINE_OPTIONS = ['As soon as possible', 'Within 1 month', '1 - 3 months', '3+ months', 'Flexible / just exploring'];
 const CONTACT_METHODS = ['Email', 'Phone call', 'WhatsApp'] as const;
 
-export function LeadCaptureForm() {
+interface LeadCaptureFormProps {
+  source?: string;
+}
+
+export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProps) {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [services, setServices] = useState<string[]>([]);
@@ -80,7 +84,7 @@ export function LeadCaptureForm() {
           budget: budget || 'Not specified',
           timeline: timeline || 'Flexible / just exploring',
           notes: projectBrief.trim() ? `What they're trying to achieve: ${projectBrief.trim()}` : 'No project brief provided',
-          source: 'homepage-cta',
+          source,
           website: honeypot,
           meta: {
             flow: 'free-project-plan-v2',

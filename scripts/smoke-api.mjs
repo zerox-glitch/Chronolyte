@@ -33,6 +33,8 @@ async function req(method, path, body = null) {
   return { status: res.status, ct: res.headers.get('content-type') || '', json, text };
 }
 
+let submittedLeadId = null;
+
 const cases = [
   ['GET  /api/diag', () => req('GET', '/api/diag'), (r) => r.status === 200 && r.json?.success === true],
   ['GET  /api/health', () => req('GET', '/api/health'), (r) => r.status === 200 && r.json?.success === true],
@@ -42,7 +44,10 @@ const cases = [
   ['POST /api/auth/login (2 segments, valid seed creds)', () => req('POST', '/api/auth/login', { username: 'admin', password: 'admin123' }), (r) => r.status === 200 && Boolean(r.json?.data?.token)],
   ['GET  /api/blogs/1001 (2 segments)', () => req('GET', '/api/blogs/1001'), (r) => (r.status === 200 || r.status === 404) && r.ct.includes('json')],
   ['GET  /api/stats/dashboard (2 segments, unauth)', () => req('GET', '/api/stats/dashboard'), (r) => r.status === 401 && r.ct.includes('json')],
-  ['POST /api/leads (public lead, 2 segments)', () => req('POST', '/api/leads', { name: 'Smoke Test', email: 'smoke@test.local', message: 'ping' }), (r) => r.status === 201 && r.ct.includes('json')],
+  ['POST /api/leads (public lead, 2 segments)', () => req('POST', '/api/leads', { name: 'Smoke Test', email: 'smoke@test.local', message: 'ping' }), (r) => {
+    submittedLeadId = r.json?.data?.id ?? null;
+    return r.status === 201 && r.ct.includes('json') && submittedLeadId !== null;
+  }],
 
   // --- vercel.json rewrite funnel: every multi-segment path arrives at the
   // literal /api/handler target with the original path in ?__orig (+ ?__ns). ---
@@ -68,6 +73,53 @@ for (const [name, run, expect] of cases) {
   }
   console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${note}`);
   if (!ok) failed++;
+}
+
+// A public submission must be readable by the authenticated admin list, not
+// merely return a success response to the form.
+try {
+  const login = await req('POST', '/api/auth/login', { username: 'admin', password: 'admin123' });
+  const token = login.json?.data?.token;
+  const list = token
+    ? await req('GET', `/api/leads?limit=500&token=${encodeURIComponent(token)}`)
+    : null;
+  const visibleLead = list?.json?.data?.leads?.find((lead) => String(lead.id) === String(submittedLeadId));
+  const flowOk = Boolean(token && list?.status === 200 && visibleLead?.email === 'smoke@test.local');
+  console.log(`${flowOk ? 'PASS' : 'FAIL'}  lead submission is visible in the authenticated admin list${flowOk ? '' : ` → got status=${list?.status ?? 'no list'} lead=${Boolean(visibleLead)}`}`);
+  if (!flowOk) failed++;
+} catch (err) {
+  console.log(`FAIL  lead submission is visible in the authenticated admin list → threw: ${err.message}`);
+  failed++;
+}
+
+// Verify a Vercel deployment cannot falsely acknowledge a lead when it has
+// fallen back to the per-instance JSON store. Local development remains valid.
+const originalVercel = process.env.VERCEL;
+try {
+  const diag = await req('GET', '/api/diag');
+  if (diag.json?.data?.store === 'json') {
+    let deployDiag;
+    let blocked;
+    try {
+      process.env.VERCEL = '1';
+      deployDiag = await req('GET', '/api/diag');
+      blocked = await req('POST', '/api/leads', { name: 'Ephemeral Test', email: 'ephemeral@test.local' });
+    } finally {
+      if (originalVercel === undefined) delete process.env.VERCEL;
+      else process.env.VERCEL = originalVercel;
+    }
+    const guardOk = deployDiag.json?.data?.lead_storage_ready === false &&
+      blocked.status === 503 && /DATABASE_URL/.test(blocked.json?.error || '');
+    console.log(`${guardOk ? 'PASS' : 'FAIL'}  Vercel does not acknowledge leads in temporary JSON storage${guardOk ? '' : ` → got status=${blocked.status} body=${blocked.text.slice(0, 160)}`}`);
+    if (!guardOk) failed++;
+  } else {
+    console.log('SKIP  Vercel JSON-store guard (this smoke run uses a persistent database)');
+  }
+} catch (err) {
+  if (originalVercel === undefined) delete process.env.VERCEL;
+  else process.env.VERCEL = originalVercel;
+  console.log(`FAIL  Vercel JSON-store guard → threw: ${err.message}`);
+  failed++;
 }
 
 server.close();

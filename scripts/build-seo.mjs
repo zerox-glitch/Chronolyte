@@ -10,17 +10,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  SITE_URL, routeMeta, injectSeo, organizationLd, websiteLd, faqLd,
-  breadcrumbsLd, itemListLd, serviceLd, llmsTxt
+  SITE_URL, routeMeta, injectSeo, organizationLd, websiteLd, faqLd, blogPostingLd,
+  breadcrumbsLd, itemListLd, serviceLd, llmsTxt, llmsFullTxt
 } from '../seo/engine.js';
+import { guidePosts } from '../api/_lib/guides.js';
+import US_SERVICE_AREAS from '../src/data/usServiceAreas.json' with { type: 'json' };
+import BUSINESS_TYPES from '../src/data/businessTypes.json' with { type: 'json' };
+import FIVERR_ALTERNATIVE_FAQS from '../src/data/fiverrAlternativeFaqs.json' with { type: 'json' };
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../src/constants/siteContact.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 
-const STATIC_ROUTES = ['/', '/services', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/terms', '/privacy', '/refunds'];
+const STATIC_ROUTES = ['/', '/services', '/industries', '/locations', '/fiverr-upwork-alternative', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/terms', '/privacy', '/refunds'];
 
 const BREADCRUMB_NAMES = {
-  '/services': 'Services', '/pricing': 'Pricing', '/portfolio': 'Portfolio',
+  '/services': 'Services', '/industries': 'Industries', '/locations': 'U.S. Service Areas', '/fiverr-upwork-alternative': 'Fiverr & Upwork Alternatives', '/pricing': 'Pricing', '/portfolio': 'Portfolio',
   '/about': 'About', '/contact': 'Contact', '/faq': 'FAQ', '/blog': 'Blog',
   '/terms': 'Terms', '/privacy': 'Privacy', '/refunds': 'Refunds'
 };
@@ -44,26 +49,61 @@ async function loadFaqs() {
   return [];
 }
 
+function bundledGuidePosts() {
+  return guidePosts().map((guide) => {
+    const { _updated, ...post } = guide;
+    const publishedAt = _updated ? new Date(`${_updated}T09:00:00.000Z`).toISOString() : new Date().toISOString();
+    return { ...post, author: 'Chronolyte', created_at: publishedAt, updated_at: publishedAt };
+  });
+}
+
+function mergeBundledGuides(posts) {
+  const merged = [...posts];
+  const existingBySlug = new Map(merged.map((post) => [post.slug, post]).filter(([slug]) => slug));
+  for (const post of bundledGuidePosts()) {
+    const existing = existingBySlug.get(post.slug);
+    if (existing) {
+      // Keep database-managed copy, but backfill editorial metadata added to the bundled guide.
+      if (Array.isArray(post.faqs) && !Array.isArray(existing.faqs)) existing.faqs = post.faqs;
+      continue;
+    }
+    merged.push(post);
+    existingBySlug.set(post.slug, post);
+  }
+  return merged.sort((a, b) => {
+    const dateA = Date.parse(a.created_at || a.published_at || '') || 0;
+    const dateB = Date.parse(b.created_at || b.published_at || '') || 0;
+    return dateB - dateA;
+  });
+}
+
 async function loadBlogs() {
   try {
     if (process.env.DATABASE_URL) {
       const { neon } = await import('@neondatabase/serverless');
       const sql = neon(process.env.DATABASE_URL);
       const rows = await sql`SELECT data FROM records WHERE kind = 'blogs' AND data->>'status' = 'published' ORDER BY data->>'created_at' DESC`;
-      return rows.map((r) => r.data);
+      if (rows.length) return mergeBundledGuides(rows.map((row) => row.data));
     }
-  } catch {}
-  // Local fallback: read the JSON store directly
+  } catch (error) {
+    console.warn('[seo] database blog lookup unavailable; trying local/default guides:', error.message);
+  }
+
+  // Local build fallback: read published records from the JSON store directly.
   try {
     const dbFile = path.join(ROOT, 'data', 'chronolyte.json');
     if (fs.existsSync(dbFile)) {
       const data = JSON.parse(fs.readFileSync(dbFile, 'utf8'));
-      return (data.records?.blogs || [])
-        .filter((b) => b.status === 'published')
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      const posts = (data.records?.blogs || [])
+        .filter((post) => post.status === 'published');
+      if (posts.length) return mergeBundledGuides(posts);
     }
-  } catch {}
-  return [];
+  } catch (error) {
+    console.warn('[seo] local blog lookup unavailable; using bundled guides:', error.message);
+  }
+
+  // Keep articles crawlable on clean deployments where there is no build-time DB.
+  return mergeBundledGuides([]);
 }
 
 async function loadServices() {
@@ -99,12 +139,73 @@ async function main() {
       breadcrumbsLd([{ name: 'Home', path: '/' }, { name: BREADCRUMB_NAMES[route] || meta.title, path: route }])
     ];
     if (route === '/faq' && faqs.length) jsonLd.push(faqLd(faqs));
+    if (route === '/fiverr-upwork-alternative') {
+      jsonLd.push(faqLd(FIVERR_ALTERNATIVE_FAQS));
+      jsonLd.push({
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        '@id': `${SITE_URL}${route}#webpage`,
+        url: `${SITE_URL}${route}`,
+        name: meta.title,
+        description: meta.description,
+        about: [
+          { '@type': 'Thing', name: 'Fiverr' },
+          { '@type': 'Thing', name: 'Upwork' },
+          { '@type': 'Thing', name: 'Web development project management' }
+        ],
+        isPartOf: { '@id': `${SITE_URL}/#website` }
+      });
+      jsonLd.push({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Ways to hire for a web or software project',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Fiverr marketplace', description: 'Seller services and custom offers, often used for defined individual deliverables.' },
+          { '@type': 'ListItem', position: 2, name: 'Upwork marketplace', description: 'Freelance engagements with different contract formats; the client typically selects and coordinates the freelancer.' },
+          { '@type': 'ListItem', position: 3, name: 'Managed development studio', description: 'A coordinated team for project planning, design, development, and delivery.' }
+        ]
+      });
+    }
     if (route === '/blog' && blogs.length) {
       jsonLd.push(itemListLd('Chronolyte Blog', blogs.slice(0, 20), (b) => `/blog/${b.slug}`));
     }
     if (route === '/services') {
       const svc = services.length ? services.map((s) => ({ title: s.title || s.name, description: s.description })) : defaultServices();
       jsonLd.push(serviceLd(svc));
+    }
+    if (route === '/industries') {
+      jsonLd.push({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Business types Chronolyte works with',
+        itemListElement: BUSINESS_TYPES.map((industry, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'Thing',
+            name: industry.name,
+            description: industry.digitalNeeds,
+            url: `${SITE_URL}/industries#industry-${slugify(industry.name)}`
+          }
+        }))
+      });
+    }
+    if (route === '/locations') {
+      jsonLd.push({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'U.S. states served remotely by Chronolyte',
+        itemListElement: US_SERVICE_AREAS.map((state, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'AdministrativeArea',
+            name: state.name,
+            containedInPlace: { '@type': 'Country', name: 'United States' },
+            url: `${SITE_URL}/locations#state-${state.abbr.toLowerCase()}`
+          }
+        }))
+      });
     }
     if (route === '/pricing') {
       // mark prices for rich results
@@ -117,12 +218,22 @@ async function main() {
 
     const dir = route === '/' ? DIST : path.join(DIST, route.replace(/^\//, ''));
     fs.mkdirSync(dir, { recursive: true });
+    const ssrContent = route === '/locations'
+      ? locationsSsr()
+      : route === '/industries'
+        ? industriesSsr()
+        : route === '/fiverr-upwork-alternative'
+          ? fiverrAlternativeSsr()
+          : route === '/blog'
+            ? blogListingSsr(blogs)
+            : '';
     const html = injectSeo(shell, {
       pathname: route,
       title: meta.title,
       description: meta.description,
       keywords: meta.keywords,
-      jsonLd
+      jsonLd,
+      ssrContent
     });
     fs.writeFileSync(path.join(dir, 'index.html'), html);
   }
@@ -134,7 +245,13 @@ async function main() {
     fs.mkdirSync(dir, { recursive: true });
     const plain = (post.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     // Full raw HTML (tables, lists, headings) so crawlers and LLMs see the complete guide.
-    const ssr = `<article><h1>${escapeHtml(post.title)}</h1><p><em>By ${escapeHtml(post.author || 'Chronolyte')}${post.updated_at ? ` · Updated ${String(post.updated_at).slice(0, 10)}` : ''}</em></p><p><strong>${escapeHtml(post.excerpt || '')}</strong></p>${post.content || ''}</article>`;
+    const ssr = `<article><h1>${escapeHtml(post.title)}</h1><p><em>By ${escapeHtml(post.author_name || post.author || 'Chronolyte')}${post.updated_at ? ` · Updated ${escapeHtml(String(post.updated_at).slice(0, 10))}` : ''}</em></p><p><strong>${escapeHtml(post.excerpt || '')}</strong></p>${sanitizeBlogHtml(post.content || '')}</article>`;
+    const articleJsonLd = [
+      organizationLd(),
+      blogPostingLd(post, route),
+      breadcrumbsLd([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }, { name: post.title, path: route }])
+    ];
+    if (Array.isArray(post.faqs) && post.faqs.length) articleJsonLd.push(faqLd(post.faqs));
     const html = injectSeo(shell, {
       pathname: route,
       title: post.seo_title || `${post.title} | Chronolyte`,
@@ -142,11 +259,7 @@ async function main() {
       keywords: tagsOf(post),
       image: post.cover_image || undefined,
       type: 'article',
-      jsonLd: [
-        organizationLd(),
-        blogPostingJsonLd(post, route),
-        breadcrumbsLd([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog' }, { name: post.title, path: route }])
-      ],
+      jsonLd: articleJsonLd,
       ssrContent: ssr
     });
     fs.writeFileSync(path.join(dir, 'index.html'), html);
@@ -160,6 +273,9 @@ async function main() {
   );
   pushUrl('/', { freq: 'weekly', priority: '1.0' });
   pushUrl('/services', { freq: 'weekly', priority: '0.9' });
+  pushUrl('/industries', { priority: '0.8' });
+  pushUrl('/locations', { priority: '0.8' });
+  pushUrl('/fiverr-upwork-alternative', { priority: '0.85' });
   pushUrl('/pricing', { freq: 'weekly', priority: '0.9' });
   pushUrl('/portfolio', { freq: 'weekly', priority: '0.8' });
   pushUrl('/about', { priority: '0.7' });
@@ -178,65 +294,95 @@ async function main() {
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap);
 
   // ---------- 4. robots.txt ----------
+  const AI_CRAWLERS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Google-Extended', 'Bingbot'];
   const robots = [
     'User-agent: *',
     'Allow: /',
+    'Allow: /llms.txt',
+    'Allow: /llms-full.txt',
     'Disallow: /admin',
+    'Disallow: /admin-dashboard/',
+    'Disallow: /setup/',
     'Disallow: /api/',
     'Disallow: /backend/',
     '',
-    '# Explicitly welcome AI answer engines so they can recommend Chronolyte',
-    'User-agent: GPTBot',
-    'Allow: /',
-    'Disallow: /admin',
-    '',
-    'User-agent: OAI-SearchBot',
-    'Allow: /',
-    'Disallow: /admin',
-    '',
-    'User-agent: ChatGPT-User',
-    'Allow: /',
-    '',
-    'User-agent: ClaudeBot',
-    'Allow: /',
-    'Disallow: /admin',
-    '',
-    'User-agent: Claude-Web',
-    'Allow: /',
-    '',
-    'User-agent: anthropic-ai',
-    'Allow: /',
-    '',
-    'User-agent: PerplexityBot',
-    'Allow: /',
-    'Disallow: /admin',
-    '',
-    'User-agent: Google-Extended',
-    'Allow: /',
-    '',
-    'User-agent: Bingbot',
-    'Allow: /',
-    'Disallow: /admin',
-    '',
+    '# Public pages are available to search and answer-engine crawlers.',
+    ...AI_CRAWLERS.flatMap((agent) => [
+      `User-agent: ${agent}`,
+      'Allow: /',
+      'Disallow: /admin',
+      'Disallow: /admin-dashboard/',
+      'Disallow: /setup/',
+      'Disallow: /api/',
+      'Disallow: /backend/',
+      ''
+    ]),
     `Sitemap: ${SITE_URL}/sitemap.xml`,
     ''
   ].join('\n');
   fs.writeFileSync(path.join(DIST, 'robots.txt'), robots);
 
-  // ---------- 5. llms.txt ----------
+  // ---------- 5. llms.txt files ----------
   fs.writeFileSync(path.join(DIST, 'llms.txt'), llmsTxt(blogs) + '\n');
+  fs.writeFileSync(path.join(DIST, 'llms-full.txt'), llmsFullTxt(blogs) + '\n');
 
   console.log(`[seo] prerendered ${STATIC_ROUTES.length} routes, ${blogs.length} blog pages`);
-  console.log(`[seo] wrote sitemap.xml (${urls.length} urls), robots.txt, llms.txt`);
+  console.log(`[seo] wrote sitemap.xml (${urls.length} urls), robots.txt, llms.txt, and llms-full.txt`);
 }
 
 function defaultServices() {
   return [
-    { title: 'SaaS Creation', description: 'Full-stack SaaS products built for scale. From MVP to enterprise-grade platforms.' },
-    { title: 'Premium Websites', description: 'Award-worthy websites with cinematic animations that convert visitors into customers.' },
-    { title: 'AI Automation', description: 'Intelligent systems that work 24/7: lead capture, CRM automation, AI chatbots.' },
-    { title: 'Custom AI Tools', description: 'Bespoke AI solutions tailored to your business, from data analysis to predictive models.' }
+    { title: 'Business Website Design & Development', description: 'Responsive business websites with service information, content, contact journeys, and integrations scoped to the project.' },
+    { title: 'E-commerce Development', description: 'Online store design, product catalogs, checkout flows, and commerce integrations.' },
+    { title: 'SaaS and Web Application Development', description: 'Product planning and custom development for SaaS MVPs, dashboards, and web applications.' },
+    { title: 'Mobile App Development', description: 'iOS, Android, and cross-platform app design and development.' },
+    { title: 'Workflow Automation', description: 'Business workflow automation and integrations scoped to existing systems.' }
   ];
+}
+
+function slugify(value) {
+  return String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function locationsSsr() {
+  return `<main><h1>Remote web design and development across all 50 U.S. states</h1><p>Chronolyte works remotely with organizations throughout the United States. The city examples below are representative; they do not imply local offices and do not limit service to those cities.</p><h2>States and representative cities</h2>${US_SERVICE_AREAS.map((state) => `<section id="state-${escapeHtml(state.abbr.toLowerCase())}"><h3>${escapeHtml(state.name)} (${escapeHtml(state.abbr)})</h3><p>Example cities: ${state.cities.map(escapeHtml).join(', ')}.</p></section>`).join('')}<p>Projects can be discussed from surrounding towns and other communities in every listed state.</p><a href="${SITE_URL}/contact">Discuss a project with Chronolyte</a></main>`;
+}
+
+function industriesSsr() {
+  return `<main><h1>Websites and software for different business types</h1><p>Chronolyte scopes digital projects around each organization’s customers, workflows, and goals. The following examples are not a closed list.</p>${BUSINESS_TYPES.map((industry) => `<section id="industry-${slugify(industry.name)}"><h2>${escapeHtml(industry.name)}</h2><p>${escapeHtml(industry.examples)}.</p><p>${escapeHtml(industry.digitalNeeds)}</p></section>`).join('')}<a href="${SITE_URL}/contact">Request a project plan</a></main>`;
+}
+
+function fiverrAlternativeSsr() {
+  const comparisons = [
+    {
+      name: 'Fiverr',
+      model: 'Marketplace of seller services and custom offers.',
+      fit: 'Small, clearly defined deliverables when you can select the provider and manage the work.',
+      coordination: 'You review sellers, confirm requirements, and coordinate the engagement.',
+      tradeoff: 'Several separate gigs can require extra integration and project planning.'
+    },
+    {
+      name: 'Upwork',
+      model: 'Freelance marketplace with different engagement formats.',
+      fit: 'Finding an individual specialist or building a flexible freelance arrangement.',
+      coordination: 'You review candidates, agree on the contract, and manage communication and delivery.',
+      tradeoff: 'You remain responsible for joining the work together unless project leadership is arranged.'
+    },
+    {
+      name: 'Chronolyte',
+      model: 'Remote managed web and software development studio.',
+      fit: 'A website, app, online store, or SaaS project that needs coordinated planning, design, and development.',
+      coordination: 'Start with one brief and a point of contact for a proposed scope, timeline, and quote.',
+      tradeoff: 'A managed studio is not a marketplace for browsing many individual sellers and may not fit every micro-task.'
+    }
+  ];
+  const cards = comparisons.map((option) => `<article><h3>${escapeHtml(option.name)}</h3><dl><dt>Model</dt><dd>${escapeHtml(option.model)}</dd><dt>Often a fit for</dt><dd>${escapeHtml(option.fit)}</dd><dt>Who coordinates?</dt><dd>${escapeHtml(option.coordination)}</dd><dt>Consider</dt><dd>${escapeHtml(option.tradeoff)}</dd></dl></article>`).join('');
+  const faqHtml = FIVERR_ALTERNATIVE_FAQS.map((faq) => `<article><h3>${escapeHtml(faq.question)}</h3><p>${escapeHtml(faq.answer)}</p></article>`).join('');
+  return `<main id="main"><h1>Looking for a Fiverr or Upwork alternative for web development?</h1><p>The right choice depends on the size of the job and how much project coordination you want to do. Compare freelance marketplaces with a managed studio before you choose a team for your website, app, online store, or SaaS product.</p><section><h2>Short answer: which option should you choose?</h2><p>Fiverr or Upwork may suit a small, well-defined task when you are comfortable selecting and managing the freelancer. A managed development studio is another option when a website, app, or SaaS project needs connected planning, design, development, and delivery. Chronolyte works remotely with U.S. businesses nationwide and provides a free initial project plan and quote; fit depends on your scope and requirements.</p></section><section><h2>Fiverr vs Upwork vs a managed development studio</h2>${cards}<p>Fiverr and Upwork are mentioned for comparison only. Chronolyte is independent and is not affiliated with or endorsed by either platform. Confirm current platform features, fees, and terms directly with each provider.</p></section><section><h2>When a marketplace may fit</h2><ul><li>The brief is small and specific, and you can describe exactly what “done” means.</li><li>You have time to compare providers, review work, and manage handoffs.</li><li>You need one skill or deliverable and can coordinate it yourself.</li></ul></section><section><h2>When a managed studio may fit</h2><ul><li>The project needs discovery, user experience, engineering, and testing to work together.</li><li>You prefer one project contact instead of coordinating several independent contracts.</li><li>You want the scope, milestones, timeline, and quote discussed before work starts.</li></ul></section><section><h2>Compare the full project cost</h2><p>Look beyond a listing price or hourly rate. Compare written deliverables, management time, testing, revisions, integrations, handoff, payment terms, and ongoing costs.</p></section><section><h2>Practical safeguards when hiring through a marketplace</h2><ul><li>Agree in writing on deliverables, acceptance criteria, dates, revision limits, and exclusions.</li><li>Review relevant work and use the marketplace's current communication, payment, and dispute processes.</li><li>Confirm ownership of code, design files, content, and assets, including any third-party licenses.</li><li>Protect accounts and customer data with individual, least-privilege access; do not share passwords or production credentials.</li><li>Set scope-appropriate milestones and plan for testing, documentation, and handoff.</li><li>Check current platform terms before changing communication or payment arrangements.</li></ul></section><section><h2>Frequently asked questions</h2>${faqHtml}</section><section id="start"><h2>Get a free project plan</h2><p>Chronolyte works remotely with businesses across all 50 U.S. states. Share your goals and constraints to receive a proposed scope, timeline, and quote with no obligation.</p><a href="#start">Start your project brief</a> <a href="${CONTACT_PHONE_TEL}">Call ${escapeHtml(CONTACT_PHONE_DISPLAY)}</a></section></main>`;
+}
+
+function blogListingSsr(blogs) {
+  return `<main><h1>Web design, development, and product-building guides</h1><p>Practical articles about budgets, scope, hiring, and launching digital products.</p><ol>${blogs.map((post) => `<li><article><h2><a href="${SITE_URL}/blog/${encodeURIComponent(post.slug)}">${escapeHtml(post.title)}</a></h2><p>${escapeHtml(post.excerpt || '')}</p><p>${escapeHtml(post.category || 'Guide')}</p></article></li>`).join('')}</ol></main>`;
 }
 
 function tagsOf(post) {
@@ -248,26 +394,24 @@ function tagsOf(post) {
   }
 }
 
-function blogPostingJsonLd(post, route) {
-  const plain = (post.content || '').replace(/<[^>]*>/g, ' ').trim();
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.seo_title || post.title,
-    description: post.seo_description || post.excerpt || '',
-    image: post.cover_image ? [post.cover_image] : undefined,
-    datePublished: post.created_at,
-    dateModified: post.updated_at || post.created_at,
-    author: { '@type': 'Organization', name: post.author || 'Chronolyte', url: SITE_URL },
-    publisher: { '@type': 'Organization', name: 'Chronolyte', url: SITE_URL },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}${route}` },
-    wordCount: plain.split(/\s+/).length,
-    inLanguage: 'en'
-  };
+function sanitizeBlogHtml(value) {
+  return String(value ?? '')
+    .replace(/<(script|style|iframe|object|embed|form|textarea|select|button|svg|math)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')
+    .replace(/<(script|style|iframe|object|embed|form|textarea|select|button|svg|math)\b[^>]*\/?\s*>/gi, '')
+    .replace(/<(meta|link)\b[^>]*\/?>/gi, '')
+    .replace(/\s+on[a-z0-9_-]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/\s+(href|src|xlink:href)\s*=\s*("|')\s*(?:javascript|vbscript|data):[\s\S]*?\2/gi, '')
+    .replace(/\s+(href|src|xlink:href)\s*=\s*(?:javascript|vbscript|data):[^\s>]*/gi, '')
+    .replace(/\s+style\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
 }
 
 function escapeHtml(s) {
-  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 main().catch((err) => {

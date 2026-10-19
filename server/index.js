@@ -145,15 +145,22 @@ const server = http.createServer(async (req, res) => {
       return send(res, 404, 'Not found');
     }
 
-    // ---------- Static assets from dist ----------
-    const staticPath = path.join(DIST, pathname);
-    if (pathname !== '/' && fs.existsSync(staticPath) && fs.statSync(staticPath).isFile()) {
-      const ext = path.extname(staticPath).toLowerCase();
-      const isHtml = ext === '.html';
-      return send(res, 200, fs.readFileSync(staticPath), {
-        'Content-Type': MIME[ext] || 'application/octet-stream',
-        'Cache-Control': isHtml ? 'no-cache' : 'public, max-age=86400'
-      });
+    // ---------- Static assets and prerendered routes from dist ----------
+    const distRoot = path.resolve(DIST);
+    const staticPath = path.resolve(DIST, `.${pathname}`);
+    if (pathname !== '/' && staticPath.startsWith(`${distRoot}${path.sep}`) && !pathname.startsWith('/blog')) {
+      let filePath = staticPath;
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+        filePath = path.join(filePath, 'index.html');
+      }
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+        const ext = path.extname(filePath).toLowerCase();
+        const isHtml = ext === '.html';
+        return send(res, 200, fs.readFileSync(filePath), {
+          'Content-Type': MIME[ext] || 'application/octet-stream',
+          'Cache-Control': isHtml ? 'no-cache' : 'public, max-age=86400'
+        });
+      }
     }
 
     // ---------- SPA with SEO injection ----------

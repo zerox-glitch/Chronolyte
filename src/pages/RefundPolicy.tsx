@@ -1,24 +1,11 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { Footer } from '../components/Footer';
+import { SiteNavigation } from '../components/SiteNavigation';
 
 export function RefundPolicy() {
   return (
     <div className="min-h-screen bg-dark-900 text-white">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-dark-900/70 border-b border-white/10 py-4">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <span className="font-display font-bold text-xl text-white">CHRONOLYTE</span>
-          </Link>
-          <Link 
-            to="/"
-            className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-sm font-semibold text-black hover:shadow-lg hover:shadow-cyan-500/30 transition-shadow"
-          >
-            Back to Home
-          </Link>
-        </div>
-      </header>
+      <SiteNavigation />
 
       {/* Content */}
       <main className="pt-24 pb-16 px-4 md:px-6">

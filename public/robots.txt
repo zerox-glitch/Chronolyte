@@ -1,30 +1,84 @@
 User-agent: *
 Allow: /
-Disallow: /backend/
-Disallow: /admin/
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin
 Disallow: /admin-dashboard/
 Disallow: /setup/
-Disallow: *.pdf
-Disallow: *.txt
+Disallow: /api/
+Disallow: /backend/
 
-# Specific search engines
-User-agent: Googlebot
+# Public pages are available to search and answer-engine crawlers.
+User-agent: GPTBot
 Allow: /
-Disallow: /backend/
-Disallow: /admin/
+Disallow: /admin
 Disallow: /admin-dashboard/
 Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: Bingbot
 Allow: /
-Disallow: /backend/
-Disallow: /admin/
+Disallow: /admin
 Disallow: /admin-dashboard/
 Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
-# Sitemap location
-Sitemap: https://chronolyte.com/public/sitemap.xml
 Sitemap: https://chronolyte.com/sitemap.xml
-
-# Crawl delay (optional, in seconds)
-Crawl-delay: 1

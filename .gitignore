@@ -1,5 +1,8 @@
 # Runtime data (local JSON store, uploads)
 data/
+# Keep checked-in static lookup data available to the client build.
+!src/data/
+!src/data/**
 
 # Dependencies
 node_modules/
