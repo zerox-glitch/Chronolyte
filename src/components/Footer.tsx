@@ -79,6 +79,11 @@ export function Footer() {
           <Link to="/ai-automation" className="hover:text-cyan-300">AI automation</Link>
           <Link to="/custom-software" className="hover:text-cyan-300">Custom software</Link>
         </nav>
+        <nav aria-label="Website buying guides" className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/55">
+          <Link to="/blog/best-website-development-service-for-small-business-on-a-budget" className="hover:text-cyan-300">Choose a web designer</Link>
+          <Link to="/blog/what-does-a-499-dollar-business-website-include" className="hover:text-cyan-300">What a $499 website includes</Link>
+          <Link to="/blog/how-to-compare-fast-web-design-agencies" className="hover:text-cyan-300">Compare fast web design</Link>
+        </nav>
         {/* Contact Info Row */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-8 text-sm text-white/60">
           <a href={`mailto:${siteSettings.contact_email}`} className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
