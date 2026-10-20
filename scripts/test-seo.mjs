@@ -42,4 +42,16 @@ for (const slug of [
   assert.ok(article.includes(origin + '/blog/' + slug), 'wrong guide canonical: ' + slug);
   assert.ok(sitemap.includes(origin + '/blog/' + slug + '</loc>'), 'guide not listed in sitemap: ' + slug);
 }
+
+for (const cover of ['agency-freelancer-diy','48-hours-vs-7-days','chronolyte-vs-builders','choose-web-developer','499-website','compare-fast-agencies']) {
+  const asset = read('images/blog/' + cover + '.svg');
+  assert.match(asset, /<svg\b/, 'cover art is not SVG: ' + cover);
+}
+for (const [slug, cover] of [
+  ['what-does-a-499-dollar-business-website-include','499-website'],
+  ['48-hour-website-vs-7-day-website-what-you-get','48-hours-vs-7-days']
+]) {
+  assert.ok(read('blog/' + slug + '/index.html').includes('/images/blog/' + cover + '.svg'), 'cover missing from SEO HTML: ' + slug);
+}
+
 console.log('[seo] canonical, visible HTML, commercial pages, sitemap and AI-crawler policies verified');
