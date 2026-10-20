@@ -171,50 +171,13 @@ function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
   );
 }
 
-const launchPackages: Record<string, { price: number; price_display: string; timeline: string; description: string; features: string[] }> = {
-  'Landing Page': {
-    price: 199, price_display: 'From $199', timeline: 'As fast as 48 hours*',
-    description: 'Best for promoting one service, collecting leads or launching a campaign.',
-    features: ['1 professionally designed responsive page', 'Clear call-to-action and contact form', 'Basic search metadata and mobile checks', 'Domain publishing assistance', 'One consolidated revision round']
-  },
-  'Business Website': {
-    price: 499, price_display: 'From $499', timeline: 'Target: 3–7 days*',
-    description: 'A complete starter website for a small business — not just a landing page.',
-    features: ['Up to 5 essential pages (Home, About, Services, Contact + one more)', 'Responsive design for desktop and mobile', 'Lead/contact form and direct inquiry links', 'On-page SEO basics and performance checks', 'Social links, maps or simple embeds', 'Domain connection and deployment', 'One consolidated revision round']
-  },
-  'E-commerce Store': {
-    price: 999, price_display: 'From $999', timeline: 'Schedule after scoping',
-    description: 'A starter online store for a limited catalogue; advanced integrations quoted separately.',
-    features: ['Storefront and core product pages', 'Initial product and category setup within agreed limits', 'Standard checkout configuration', 'Mobile-friendly shopping experience', 'Basic search metadata and launch testing']
-  },
-  'Mobile App': {
-    price: 1499, price_display: 'From $1,499', timeline: 'Schedule after scoping',
-    description: 'An early app prototype or narrowly scoped MVP — not an unlimited full-featured app.',
-    features: ['Feature and screen scope review', 'Basic navigation and UI', 'A focused primary user journey', 'Demo or test build as agreed', 'Handover and next-phase recommendations']
-  },
-  'SaaS MVP': {
-    price: 1999, price_display: 'From $1,999', timeline: 'Schedule after scoping',
-    description: 'Validate one core SaaS workflow with a small first release.',
-    features: ['MVP feature planning', 'Core user workflow and responsive UI', 'Basic backend and data model as scoped', 'Test and deployment guidance', 'Future roadmap and handover']
-  },
-  'Hire a Developer': {
-    price: 15, price_display: 'From $15/hour', timeline: 'By arrangement',
-    description: 'Pay for focused development tasks and technical support.',
-    features: ['Defined deliverables and hourly reporting', 'Front-end or backend tasks as agreed', 'Bug fixes and updates within the scope', 'Clear handover of completed work', 'Optional longer-term collaboration']
-  }
-};
-
-const defaultPackages: Record<string, any[]> = {
-  websites: ['Landing Page','Business Website','E-commerce Store'].map(name => ({ name, ...launchPackages[name], period: 'one-time', category: 'websites', is_popular: name === 'Business Website' })),
-  aitools: [{ name: 'Mobile App', ...launchPackages['Mobile App'], period: 'one-time', category: 'ai-tools' }],
-  saas: [{ name: 'SaaS MVP', ...launchPackages['SaaS MVP'], period: 'one-time', category: 'saas' }],
-  automation: [{ name: 'Hire a Developer', ...launchPackages['Hire a Developer'], period: 'per hour', category: 'automation' }]
-};
+const pricingGroups = ['websites','ai-tools','saas','automation'];
+const formatStartingPrice = (plan: any) => plan.price_display || 'From $' + Number(plan.price || 0).toLocaleString('en-US');
 
 export function Pricing() {
   const [openFAQs, setOpenFAQs] = useState<Record<number, boolean>>({});
-  const [pricingData, setPricingData] = useState<Record<string, any[]>>(defaultPackages);
-  const [loading, setLoading] = useState(false);
+  const [pricingData, setPricingData] = useState<Record<string, any[]>>({ websites: [], aitools: [], saas: [], automation: [] });
+  const [loading, setLoading] = useState(true);
   const [intakeFormOpen, setIntakeFormOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<{ name: string; price: number; category: string } | undefined>(undefined);
 
@@ -226,34 +189,17 @@ export function Pricing() {
   useEffect(() => {
     const loadPricing = async () => {
       try {
-        const res = await fetch('/backend/api/pricing.php?action=list');
+        const res = await fetch('/api/pricing?action=list', { cache: 'no-store' });
         const json = await res.json();
         
-        if (json.success) {
-          const grouped: Record<string, any[]> = {
-            websites: [],
-            aitools: [],
-            saas: [],
-            automation: []
-          };
-          
-          json.data.forEach((plan: any) => {
-            const launch = launchPackages[plan.name];
-             const displayedPlan = launch ? { ...plan, ...launch } : plan;
-             if (plan.category === 'websites') grouped.websites.push(displayedPlan);
-            else if (plan.category === 'ai-tools') grouped.aitools.push(displayedPlan);
-            else if (plan.category === 'saas') grouped.saas.push(displayedPlan);
-            else if (plan.category === 'automation') grouped.automation.push(displayedPlan);
+        if (res.ok && json.success) {
+          const grouped: Record<string, any[]> = { websites: [], aitools: [], saas: [], automation: [] };
+          (Array.isArray(json.data) ? json.data : []).forEach((plan: any) => {
+            if (Number(plan.active) === 0) return;
+            const category = plan.category === 'ai-tools' ? 'aitools' : plan.category;
+            if (Array.isArray(grouped[category])) grouped[category].push(plan);
           });
-          
-          // Keep the new transparent launch packages authoritative; old seeded DB
-          // offers may contain outdated prices and features.
-          setPricingData({ ...defaultPackages, ...Object.fromEntries(Object.entries(grouped).map(([category, plans]) => [category, plans.length ? plans.filter(plan => !launchPackages[plan.name]) : []])) ,
-            websites: [...defaultPackages.websites, ...grouped.websites.filter(plan => !launchPackages[plan.name])],
-            aitools: [...defaultPackages.aitools, ...grouped.aitools.filter(plan => !launchPackages[plan.name])],
-            saas: [...defaultPackages.saas, ...grouped.saas.filter(plan => !launchPackages[plan.name])],
-            automation: [...defaultPackages.automation, ...grouped.automation.filter(plan => !launchPackages[plan.name])]
-          });
+          setPricingData(grouped);
         }
       } catch (error) {
         console.error('Failed to load pricing:', error);
@@ -273,7 +219,7 @@ export function Pricing() {
   };
 
   const faqs = [
-    { question: 'Is $499 really enough for a complete website?', answer: 'Yes, for a clearly scoped small-business brochure website of up to five pages using supplied content and standard functionality. Extra pages and advanced integrations receive a separate written quote.' },
+    { question: 'What is included in the starting price?', answer: 'Each package card above lists its current included features and delivery guidance. Additional requirements receive a written quote before work begins.' },
     { question: 'Will I own my website?', answer: 'Ownership, access to domain, hosting and deliverables should be specified in your project agreement. Ask us to include the source-code and account-handover details in your quote.' },
     { question: 'Will Google rank my website automatically?', answer: 'No agency can guarantee rankings. Our starter website includes foundational on-page SEO; ongoing content, competition, backlinks and indexing also affect search visibility.' },
     { question: 'What do you need from me to launch quickly?', answer: 'Your logo, text, service details, images, contact details, domain/hosting access and one person available to provide feedback. Deadlines begin once the agreed materials and approvals are ready.' },
@@ -320,7 +266,7 @@ export function Pricing() {
               Simple, <span className="gradient-text">Honest</span> Pricing
             </h1>
             <p className="text-white/60 text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              A full starter business website from $499, with up to 5 pages, mobile-ready design, a contact form and essential SEO. Simple landing pages start at $199. See exactly what is included before requesting a quote.
+              Explore up-to-date packages managed directly by Chronolyte. Compare features, delivery timelines and prices before requesting a tailored quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <CallNowButton className="text-center" />
@@ -335,47 +281,28 @@ export function Pricing() {
         </div>
       </section>
 
-      {/* Clear package guide and trust signals */}
-      <section className="px-4 md:px-6 pb-16" aria-label="Pricing explained">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-5">
-          <div className="lg:col-span-2 rounded-3xl bg-gradient-to-br from-cyan-500/15 to-blue-700/10 border border-cyan-400/30 p-7 md:p-10">
-            <p className="text-cyan-300 text-sm font-semibold uppercase tracking-widest mb-3">Best choice for most small businesses</p>
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">Your full business website starts at $499</h2>
-            <p className="text-white/75 mb-6 max-w-2xl">A real website with up to five essential pages — designed to explain what you do, build confidence and help visitors contact you. No need to pay thousands for a straightforward brochure website.</p>
-            <div className="grid sm:grid-cols-2 gap-3 text-sm mb-7">
-              {['Up to five agreed pages', 'Mobile-friendly design', 'Contact or quote-request form', 'Basic on-page SEO', 'Domain and launch assistance', 'One consolidated revision round'].map(item => (
-                <div key={item} className="flex gap-2 items-start text-white/85"><CheckCircle2 className="w-5 h-5 text-cyan-300 shrink-0" />{item}</div>
-              ))}
-            </div>
-            <button onClick={() => handleStartProject({ name: 'Business Website', price: 499, category: 'Website' })} className="px-7 py-3 rounded-xl bg-cyan-400 text-black font-bold hover:bg-cyan-300 transition-colors">Get my $499 website quote</button>
-            <p className="mt-4 text-xs text-white/50">Starting price, not an automatic checkout total. Additional pages, custom systems and extra revision rounds are quoted before work begins.</p>
+      {/* Featured offer uses the same admin-managed data as the pricing cards. */}
+      {pricingData.websites.find((plan: any) => plan.is_popular || plan.highlighted) && (() => {
+        const plan = pricingData.websites.find((p: any) => p.is_popular || p.highlighted);
+        const features = typeof plan.features === 'string' ? (() => { try { return JSON.parse(plan.features); } catch { return []; } })() : (plan.features || []);
+        return <section className="px-4 md:px-6 pb-16">
+          <div className="max-w-6xl mx-auto rounded-3xl border border-cyan-400/30 bg-cyan-500/10 p-7 md:p-10">
+            <p className="text-cyan-300 uppercase tracking-widest text-sm mb-3">Featured website package</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">{plan.name} — {formatStartingPrice(plan)}</h2>
+            <p className="text-white/75 mb-3">{plan.description}</p>
+            {plan.timeline && <p className="text-cyan-300 mb-6">Delivery: {plan.timeline}</p>}
+            <ul className="grid sm:grid-cols-2 gap-3 mb-7">
+              {features.map((feature: string, index: number) => <li key={index} className="flex gap-2 text-white/80"><CheckCircle2 className="shrink-0 h-5 w-5 text-cyan-300"/>{feature}</li>)}
+            </ul>
+            <button onClick={() => handleStartProject({ name: plan.name, price: Number(plan.price), category: plan.category })} className="bg-cyan-400 text-black rounded-xl px-7 py-3 font-bold">Get a quote for {plan.name}</button>
           </div>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-7 md:p-8 space-y-5">
-            <h2 className="text-2xl font-bold">How our pricing works</h2>
-            <div><p className="font-semibold text-white">01 · Pick your starting package</p><p className="text-white/60 text-sm mt-1">Compare the inclusions, then tell us about your business.</p></div>
-            <div><p className="font-semibold text-white">02 · Agree on the scope</p><p className="text-white/60 text-sm mt-1">We clarify pages, design, content, integrations, timeline and exact cost.</p></div>
-            <div><p className="font-semibold text-white">03 · Review and launch</p><p className="text-white/60 text-sm mt-1">You receive a review opportunity before publishing and a documented handover.</p></div>
-            <p className="pt-3 border-t border-white/10 text-sm text-white/60">Need a custom portal, store, booking platform or SaaS? We quote those separately instead of hiding them inside a cheap starter package.</p>
-          </div>
-        </div>
-      </section>
+        </section>;
+      })()}
       <section className="px-4 md:px-6 pb-16">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8">What is included — and what costs extra?</h2>
-          <div className="grid md:grid-cols-2 gap-5">
-            <div className="rounded-2xl bg-white/5 border border-white/10 p-7">
-              <h3 className="text-xl font-bold text-emerald-300 mb-4">Included in a $499 starter website</h3>
-              <ul className="space-y-3 text-white/75 text-sm list-disc pl-5"><li>Up to five pages using your supplied content and assets</li><li>Responsive website styling and contact functionality</li><li>Page titles, meta descriptions and sensible headings</li><li>Basic mobile and browser checks before launch</li><li>Deployment guidance and one agreed round of revisions</li></ul>
-            </div>
-            <div className="rounded-2xl bg-white/5 border border-white/10 p-7">
-              <h3 className="text-xl font-bold text-cyan-300 mb-4">Quoted separately when required</h3>
-              <ul className="space-y-3 text-white/75 text-sm list-disc pl-5"><li>Domain purchases, hosting subscriptions and third-party fees</li><li>Professional copywriting, photography and brand identity</li><li>Booking engines, advanced CMS, accounts and custom databases</li><li>Complex stores, payment or CRM integrations</li><li>Additional pages, major redesigns and ongoing maintenance</li></ul>
-            </div>
-          </div>
-          <p className="text-sm text-center mt-6 text-white/55">*48-hour delivery is a possible target for eligible one-page projects; eligible small business sites target 3–7 days after scope approval, complete materials and timely feedback. Third-party approvals and complex development are not included in those targets.</p>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-5">
+          {[['01','Choose a package','Review the current prices and features above.'],['02','Agree on scope','Confirm pages, integrations, timeline and a written final quote.'],['03','Launch and hand over','Review, approve and receive your agreed deliverables.']].map(([step,title,description]) => <div key={step} className="rounded-2xl bg-white/5 border border-white/10 p-6"><p className="text-cyan-300 mb-2">{step}</p><h3 className="font-bold text-xl mb-2">{title}</h3><p className="text-white/65">{description}</p></div>)}
         </div>
       </section>
-
       {/* Payment Terms */}
       <section className="py-16 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
