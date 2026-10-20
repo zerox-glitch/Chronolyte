@@ -38,7 +38,7 @@ export function routeMeta(pathname) {
     },
     '/pricing': {
       title: 'Website, E-commerce & App Development Pricing | Chronolyte',
-      description: 'Explore Chronolyte's current admin-managed pricing for websites, online stores, mobile apps, software and automation. Compare package features and request a tailored quote.',
+      description: 'Explore current admin-managed Chronolyte pricing for websites, online stores, mobile apps, software and automation. Compare package features and request a tailored quote.',
       keywords: 'website design pricing, e-commerce website cost, SaaS MVP cost, mobile app development cost, fixed-price web development'
     },
     '/industries': {
