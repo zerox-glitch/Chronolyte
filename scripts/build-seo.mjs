@@ -213,14 +213,6 @@ async function main() {
         }))
       });
     }
-    if (route === '/pricing') {
-      // mark prices for rich results
-      jsonLd.push({
-        '@context': 'https://schema.org',
-        '@type': 'PriceSpecification',
-        description: 'Chronolyte starting quotes: landing pages from $199, business websites from $499, starter stores from $999, focused app prototypes from $1,499 and SaaS prototypes from $1,999. Scope, timelines and final quotes vary.'
-      });
-    }
 
     const dir = route === '/' ? DIST : path.join(DIST, route.replace(/^\//, ''));
     fs.mkdirSync(dir, { recursive: true });
@@ -373,7 +365,7 @@ function slugify(value) {
 
 function internationalSsr() {
   const countries = ['United States', 'United Kingdom', 'Pakistan', 'Canada', 'Australia', 'New Zealand', 'Ireland'];
-  return '<main><h1>Website design and software development for businesses worldwide</h1><p>Chronolyte provides remote website development, e-commerce, software MVPs and automation for clients internationally. These are remote service areas, not physical offices.</p><h2>Countries we welcome projects from</h2><ul>' + countries.map(country => '<li>' + country + '</li>').join('') + '</ul><h2>How international projects work</h2><p>Send a brief, agree on project scope and currency, collaborate remotely and approve delivery. Pricing begins at $199 for eligible landing pages and $499 for small-business websites; final quotes and timelines depend on requirements.</p><p><a href="/pricing">See pricing</a> · <a href="/services">Explore services</a> · <a href="/contact">Request a quote</a></p></main>';
+  return '<main><h1>Website design and software development for businesses worldwide</h1><p>Chronolyte provides remote website development, e-commerce, software MVPs and automation for clients internationally. These are remote service areas, not physical offices.</p><h2>Countries we welcome projects from</h2><ul>' + countries.map(country => '<li>' + country + '</li>').join('') + '</ul><h2>How international projects work</h2><p>Send a brief, agree on project scope and currency, collaborate remotely and approve delivery. Visit the pricing page for current packages and starting prices. Final quotes and timelines depend on project requirements.</p><p><a href="/pricing">See pricing</a> · <a href="/services">Explore services</a> · <a href="/contact">Request a quote</a></p></main>';
 }
 
 function locationsSsr() {
