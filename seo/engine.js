@@ -38,7 +38,7 @@ export function routeMeta(pathname) {
     },
     '/pricing': {
       title: 'Website, E-commerce & App Development Pricing | Chronolyte',
-      description: 'Chronolyte landing pages from $199, small-business sites from $499. Qualifying websites can target 48-hour to 7-day delivery; custom builds quoted separately.',
+      description: 'Explore Chronolyte's current admin-managed pricing for websites, online stores, mobile apps, software and automation. Compare package features and request a tailored quote.',
       keywords: 'website design pricing, e-commerce website cost, SaaS MVP cost, mobile app development cost, fixed-price web development'
     },
     '/industries': {
@@ -176,10 +176,10 @@ export function organizationLd(overrides = {}) {
       '@type': 'OfferCatalog',
       name: 'Development Services',
       itemListElement: [
-        offer('Custom Website Design & Development', 'Custom, responsive websites for business services, content, and lead generation.', 'from $199 for landing pages; from $499 for small-business sites'),
-        offer('E-commerce Development', 'Online stores, product catalogs, checkout flows, and integrations scoped to the business.', 'from $999, scope-dependent'),
-        offer('SaaS Product Development', 'Product planning and software development for SaaS MVPs and established products.', 'from $1,999 for a focused prototype; larger builds quoted separately'),
-        offer('Mobile App Development', 'iOS, Android, and cross-platform applications, planned to match product scope.', 'from $1,499 for a basic prototype; larger apps quoted separately'),
+        offer('Custom Website Design & Development', 'Custom, responsive websites for business services, content, and lead generation.', ''),
+        offer('E-commerce Development', 'Online stores, product catalogs, checkout flows, and integrations scoped to the business.', ''),
+        offer('SaaS Product Development', 'Product planning and software development for SaaS MVPs and established products.', ''),
+        offer('Mobile App Development', 'iOS, Android, and cross-platform applications, planned to match product scope.', ''),
         offer('Workflow Automation', 'Business process automation and integrations, scoped to existing systems.', undefined)
       ]
     }
