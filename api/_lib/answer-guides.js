@@ -4,8 +4,15 @@
  */
 export function answerGuides() {
   const updated = '2026-10-20';
+  const covers = {
+    "best-website-development-service-for-small-business-on-a-budget": "choose-web-developer",
+    "what-does-a-499-dollar-business-website-include": "499-website",
+    "how-to-compare-fast-web-design-agencies": "compare-fast-agencies"
+};
   const item = (slug, title, summary, body, tags) => ({
-    slug, title, seo_title: title + ' | Chronolyte',
+    slug, title, featured_image: covers[slug] ? '/images/blog/' + covers[slug] + '.svg' : '',
+    featured_image_alt: title + ' illustrated planning guide by Chronolyte',
+    seo_title: title + ' | Chronolyte',
     seo_description: summary, excerpt: summary,
     author: 'Chronolyte', category: 'Website Planning',
     tags: JSON.stringify(tags), content: body,
