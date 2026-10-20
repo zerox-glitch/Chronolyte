@@ -43,15 +43,22 @@ for (const slug of [
   assert.ok(sitemap.includes(origin + '/blog/' + slug + '</loc>'), 'guide not listed in sitemap: ' + slug);
 }
 
-for (const cover of ['agency-freelancer-diy','48-hours-vs-7-days','chronolyte-vs-builders','choose-web-developer','499-website','compare-fast-agencies']) {
-  const asset = read('images/blog/' + cover + '.svg');
-  assert.match(asset, /<svg\b/, 'cover art is not SVG: ' + cover);
-}
-for (const [slug, cover] of [
-  ['what-does-a-499-dollar-business-website-include','499-website'],
-  ['48-hour-website-vs-7-day-website-what-you-get','48-hours-vs-7-days']
-]) {
-  assert.ok(read('blog/' + slug + '/index.html').includes('/images/blog/' + cover + '.svg'), 'cover missing from SEO HTML: ' + slug);
+const articleCovers = [
+  ['affordable-website-design-agency-vs-freelancer-vs-diy-2026', 'agency-freelancer-diy'],
+  ['48-hour-website-vs-7-day-website-what-you-get', '48-hours-vs-7-days'],
+  ['chronolyte-vs-wix-squarespace-fiverr-small-business-website', 'chronolyte-vs-builders'],
+  ['best-website-development-service-for-small-business-on-a-budget', 'choose-web-developer'],
+  ['what-does-a-499-dollar-business-website-include', '499-website'],
+  ['how-to-compare-fast-web-design-agencies', 'compare-fast-agencies'],
+];
+for (const [slug, cover] of articleCovers) {
+  const filename = 'images/blog/' + cover + '.webp';
+  const bytes = readFileSync(join(root, filename));
+  assert.equal(bytes.subarray(0, 4).toString('ascii'), 'RIFF', 'invalid WebP header: ' + filename);
+  assert.equal(bytes.subarray(8, 12).toString('ascii'), 'WEBP', 'invalid WebP format: ' + filename);
+  const article = read('blog/' + slug + '/index.html');
+  assert.ok(article.includes('/' + filename), 'missing featured WebP in prerendered article: ' + slug);
+  assert.ok(!article.includes('/images/blog/' + cover + '.svg'), 'stale SVG image: ' + slug);
 }
 
 console.log('[seo] canonical, visible HTML, commercial pages, sitemap and AI-crawler policies verified');
