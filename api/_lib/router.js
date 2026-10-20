@@ -1391,6 +1391,46 @@ async function serveSeoPage({ req, res, url, store, pathname }) {
   const hasBlogFilterQuery = sub === '/blog' && ['page', 'search', 'category', 'q'].some((key) => url.searchParams.has(key));
   const noIndex = sub === '/admin' || sub.startsWith('/admin/') || sub === '/blog/search' || sub.startsWith('/blog/search/') || sub === '/blog/category' || sub.startsWith('/blog/category/') || hasBlogFilterQuery;
 
+  if (sub === '/pricing' && !noIndex) {
+    const plans = (await store.records.list('pricing'))
+      .filter(plan => Number(plan.active) === 1)
+      .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+    const meta = routeMeta('/pricing');
+    const items = plans.map(plan => {
+      const price = Number(plan.price);
+      const description = escapeHtml(plan.description || '');
+      const title = escapeHtml(plan.name || 'Development package');
+      const display = escapeHtml(plan.price_display || (price > 0 ? 'From USD ' + price.toLocaleString('en-US') : 'Request a quote'));
+      const timeline = escapeHtml(plan.timeline || 'Quoted by scope');
+      let features = [];
+      try { features = Array.isArray(plan.features) ? plan.features : JSON.parse(plan.features || '[]'); } catch {}
+      return '<li><article><h2>' + title + '</h2><p><strong>' + display + '</strong> · Delivery: ' + timeline + '</p><p>' + description + '</p><ul>' + features.map(feature => '<li>' + escapeHtml(String(feature)) + '</li>').join('') + '</ul></article></li>';
+    }).join('');
+    const ssr = '<main><h1>Chronolyte development packages and starting prices</h1><p>Current packages published by Chronolyte. Actual scope and final quotes are agreed before the project begins.</p><ol>' + items + '</ol><p><a href="/contact">Get a custom quote</a></p></main>';
+    const serviceOffers = plans.map(plan => ({
+      '@type': 'Offer',
+      name: plan.name,
+      description: plan.description || '',
+      url: SITE_URL + '/pricing',
+      ...(Number(plan.price) > 0 ? { price: Number(plan.price), priceCurrency: 'USD' } : {})
+    }));
+    const html = injectSeo(shell, {
+      pathname: '/pricing',
+      title: meta.title,
+      description: meta.description,
+      keywords: meta.keywords,
+      jsonLd: [
+        organizationLd(),
+        websiteLd(),
+        breadcrumbsLd([{ name: 'Home', path: '/' }, { name: 'Pricing', path: '/pricing' }]),
+        { '@type': 'OfferCatalog', name: 'Current Chronolyte Packages', itemListElement: serviceOffers }
+      ],
+      ssrContent: ssr
+    });
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'index, follow' });
+    return res.end(html);
+  }
+
   if (sub === '/blog' && !noIndex) {
     const posts = (await store.records.list('blogs'))
       .filter((post) => post.status === 'published')
