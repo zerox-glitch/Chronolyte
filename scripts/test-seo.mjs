@@ -10,7 +10,7 @@ assert.equal(canonical, origin + '/', 'canonical homepage URL differs from confi
 assert.match(html, /<main\b/i, 'homepage must include crawler-readable HTML');
 assert.match(html, /<h1\b/i, 'homepage requires a meaningful heading');
 assert.doesNotMatch(html, /<div id="loading-fallback"/, 'static build should replace the spinner with visible content');
-for (const route of ['services','pricing','portfolio','contact','website-design','affordable-web-design','website-redesign','ai-automation','custom-software']) {
+for (const route of ['international-web-development','services','pricing','portfolio','contact','website-design','affordable-web-design','website-redesign','ai-automation','custom-software']) {
   const file = route + '/index.html';
   assert.ok(existsSync(join(root,file)), 'missing indexable route: ' + route);
   const page = read(file);
@@ -28,6 +28,8 @@ for(const route of ['website-design','affordable-web-design','website-redesign',
   assert.ok(sitemap.includes(origin + '/' + route + '</loc>'), 'missing sitemap service route: '+route);
 }
 assert.ok(read('llms.txt').includes(origin));
+assert.ok(read('llms.txt').includes('United Kingdom'), 'worldwide area must appear in LLM context');
+assert.ok(sitemap.includes(origin + '/international-web-development</loc>'), 'international page missing from sitemap');
 
 // Answer-focused editorial content must be directly retrievable and discoverable.
 for (const slug of [
