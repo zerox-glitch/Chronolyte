@@ -72,6 +72,6 @@ assert.ok(!publicPricingSource.includes('launchPackages') && !publicPricingSourc
 assert.ok(managerSource.includes('price_display') && managerSource.includes('sort_order') && managerSource.includes('category'), 'admin editor must retain plan fields');
 assert.ok(managerSource.includes('action=admin'), 'admin editor must be able to view inactive plans');
 assert.ok(serverSource.includes("sub === '/pricing'"), 'search-facing pricing must be rendered dynamically');
-assert.ok(rewrites.includes('"source": "/pricing"'), 'pricing route must use dynamic renderer');
+assert.ok(JSON.parse(rewrites).rewrites.some(rule => rule.source === '/pricing' && rule.destination.includes('page/pricing')), 'pricing route must use dynamic renderer');
 
 console.log('[seo] canonical, visible HTML, commercial pages, sitemap and AI-crawler policies verified');
