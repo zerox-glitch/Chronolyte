@@ -908,13 +908,20 @@ async function handleBlogs({ req, res, method, url, store, admin, pathname }) {
     const stored = await store.records.list('blogs');
     // Editorial articles are bundled with the deployed code so they remain
     // available in the public API even when an older database is already seeded.
+    const authored = [...growthGuides(), ...answerGuides()];
+    const bySlug = new Map(authored.map((post) => [post.slug, post]));
     const slugs = new Set(stored.map((post) => post.slug));
-    const editorial = [...growthGuides(), ...answerGuides()].filter((post) => !slugs.has(post.slug)).map((post, i) => ({
+    const editorial = authored.filter((post) => !slugs.has(post.slug)).map((post, i) => ({
       ...post, id: 'editorial-' + i, author: 'Chronolyte',
       created_at: post._updated + 'T09:00:00.000Z',
       updated_at: post._updated + 'T09:00:00.000Z', views: 0
     }));
-    const all = [...stored, ...editorial].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    // Preserve stored copy and identifiers, but backfill first-party cover assets.
+    const hydrated = stored.map((post) => {
+      const guide = bySlug.get(post.slug);
+      return guide ? { ...post, featured_image: guide.featured_image, featured_image_alt: guide.featured_image_alt, cover_image: guide.featured_image } : post;
+    });
+    const all = [...hydrated, ...editorial].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     const published = all.filter((b) => b.status === 'published');
 
     if (action === 'get' || (id && !/^\d+$/.test(String(id)))) {
