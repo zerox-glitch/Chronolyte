@@ -15,6 +15,7 @@ import {
 } from './util.js';
 import { seedStore } from './seed.js';
 import { growthGuides } from './growth-guides.js';
+import { answerGuides } from './answer-guides.js';
 import { SITE_URL, routeMeta, injectSeo, noIndexHtml, organizationLd, websiteLd, faqLd, breadcrumbsLd, blogPostingLd, itemListLd, serviceLd, stripHtml } from '../../seo/engine.js';
 
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -908,7 +909,7 @@ async function handleBlogs({ req, res, method, url, store, admin, pathname }) {
     // Editorial articles are bundled with the deployed code so they remain
     // available in the public API even when an older database is already seeded.
     const slugs = new Set(stored.map((post) => post.slug));
-    const editorial = growthGuides().filter((post) => !slugs.has(post.slug)).map((post, i) => ({
+    const editorial = [...growthGuides(), ...answerGuides()].filter((post) => !slugs.has(post.slug)).map((post, i) => ({
       ...post, id: 'editorial-' + i, author: 'Chronolyte',
       created_at: post._updated + 'T09:00:00.000Z',
       updated_at: post._updated + 'T09:00:00.000Z', views: 0
