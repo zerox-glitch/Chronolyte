@@ -8,7 +8,7 @@ export function growthGuides() {
     "chronolyte-vs-wix-squarespace-fiverr-small-business-website": "chronolyte-vs-builders"
 };
  const a=(slug,title,description,html,tags)=>({
-   slug,title,featured_image: covers[slug] ? '/images/blog/' + covers[slug] + '.svg' : '',
+   slug,title,featured_image: covers[slug] ? '/images/blog/' + covers[slug] + '.webp' : '',
    featured_image_alt: title + ' illustrated comparison guide by Chronolyte',
    slug,title,seo_title:title+' | Chronolyte',seo_description:description,
    excerpt:description,author:'Chronolyte Editorial',category:'Web Design',tags:JSON.stringify(tags),
