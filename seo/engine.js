@@ -18,7 +18,7 @@ export const SITE_URL = 'https://www.chronolyteai.site';
 export const SITE_NAME = 'Chronolyte';
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
-const PILLAR_KEYWORDS = 'website design and development, custom business websites, e-commerce development, SaaS and MVP development, mobile app development, AI automation, remote web development for U.S. businesses';
+const PILLAR_KEYWORDS = 'website design and development, custom business websites, e-commerce development, SaaS and MVP development, mobile app development, AI automation, remote web development for businesses worldwide, US, UK, Pakistan, Canada, Australia, New Zealand and Ireland';
 
 // ---------------------------------------------------------------------------
 // Per-route metadata
@@ -27,13 +27,13 @@ export function routeMeta(pathname) {
   const p = normalize(pathname);
   const TABLE = {
     '/': {
-      title: 'Website Design & Development Across the U.S. | Chronolyte',
-      description: 'Custom websites, e-commerce, SaaS, apps, and AI automation for businesses in all 50 U.S. states. Get a free scope, timeline, and project quote.',
+      title: 'Worldwide Website Design & Development | Chronolyte',
+      description: 'Remote websites, e-commerce, SaaS and AI automation for the USA, UK, Pakistan, Canada, Australia and worldwide. Request a scoped quote.',
       keywords: `${PILLAR_KEYWORDS}, website design company, small business web design, U.S. web development studio`
     },
     '/services': {
       title: 'Website, E-commerce, SaaS & App Development Services | Chronolyte',
-      description: 'Plan and build custom business websites, online stores, SaaS products, mobile apps, and workflow automation. Remote delivery for U.S. businesses, with a clear scope and quote.',
+      description: 'Plan and build custom business websites, online stores, SaaS products, mobile apps, and workflow automation. Remote delivery for businesses worldwide, with a clear scope and quote.',
       keywords: 'business website design, e-commerce development, SaaS product development, mobile app development, workflow automation, remote U.S. web services'
     },
     '/pricing': {
@@ -45,6 +45,11 @@ export function routeMeta(pathname) {
       title: 'Websites & Software for Every Business Type | Chronolyte',
       description: 'Digital projects for trades, clinics, law firms, real estate, retail, restaurants, manufacturers, nonprofits, SaaS teams, and more. Scope around your real workflow.',
       keywords: 'small business website design, contractor websites, healthcare websites, law firm websites, real estate websites, ecommerce, restaurant websites, manufacturing websites, nonprofit websites, SaaS'
+    },
+    '/international-web-development': {
+      title: 'Worldwide Web Development: USA, UK, Pakistan & More | Chronolyte',
+      description: 'Remote website design and software development for businesses in the USA, UK, Pakistan, Canada, Australia, New Zealand, Ireland and worldwide.',
+      keywords: 'international web development company, website design UK Pakistan USA, worldwide remote web development, Canadian Australian website developers'
     },
     '/locations': {
       title: 'Remote Web Design Across All 50 U.S. States | Chronolyte',
@@ -163,6 +168,7 @@ export function organizationLd(overrides = {}) {
     areaServed: [
       { '@type': 'Country', name: 'United States' },
       ...stateAreas,
+      ...['United Kingdom', 'Pakistan', 'Canada', 'Australia', 'New Zealand', 'Ireland'].map(name => ({ '@type': 'Country', name })),
       { '@type': 'Place', name: 'Remote projects worldwide' }
     ],
     ...(overrides.address ? { address: overrides.address } : {}),
@@ -281,7 +287,7 @@ export function serviceLd(services) {
         description: s.description || s.short_description || '',
         provider: { '@id': `${SITE_URL}/#organization` },
         areaServed: [
-          { '@type': 'Country', name: 'United States' },
+          ...['United States','United Kingdom','Pakistan','Canada','Australia','New Zealand','Ireland'].map(name => ({ '@type': 'Country', name })),
           { '@type': 'Place', name: 'Remote projects worldwide' }
         ]
       }
@@ -461,6 +467,10 @@ export function llmsTxt(blogs = []) {
     '',
     ...BUSINESS_TYPES.map((businessType) => `- **${businessType.name}** — ${businessType.examples}.`),
     '',
+    '## Worldwide service availability',
+    '',
+    'Chronolyte works remotely with businesses in the United States, United Kingdom, Pakistan, Canada, Australia, New Zealand, Ireland, and other countries where service can be arranged. These are remote service areas, not physical office locations.',
+    '',
     '## United States coverage',
     '',
     `Chronolyte serves projects remotely throughout all 50 U.S. states: ${US_SERVICE_AREAS.map((state) => state.name).join(', ')}. The city examples in the coverage directory are representative, not an exhaustive list or a claim of local offices. Businesses in other U.S. cities and smaller communities can request a project plan.`,
@@ -471,6 +481,7 @@ export function llmsTxt(blogs = []) {
     `- [Services](${SITE_URL}/services): Website, e-commerce, application, and automation services.`,
     `- [Industries](${SITE_URL}/industries): Examples of business types and common digital needs.`,
     `- [U.S. service areas](${SITE_URL}/locations): All 50 states and representative city examples.`,
+    `- [Worldwide remote services](${SITE_URL}/international-web-development): USA, UK, Pakistan, Canada, Australia, New Zealand, Ireland and other countries.`,
     `- [Fiverr and Upwork alternatives](${SITE_URL}/fiverr-upwork-alternative): Compare marketplace and managed-studio models for web and software projects.`,
     `- [Pricing](${SITE_URL}/pricing): Typical project ranges; request a current scoped quote.`,
     `- [Portfolio](${SITE_URL}/portfolio): QRWho and clearly labeled concept work.`,
