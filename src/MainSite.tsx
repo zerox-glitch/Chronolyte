@@ -955,29 +955,3 @@ export function MainSite() {
     </>
   );
 }
- + lowestPrice.toLocaleString('en-US'));
-      })
-      .catch(() => setWebsiteStartingPrice(null));
-  }, []);
-
-  return (
-    <>
-      <SiteNavigation />
-      <div className="relative min-h-screen bg-dark-900 text-white overflow-x-hidden">
-        <GlowOrbs />
-        <NoiseOverlay />
-        <GridBackground />
-        <main>
-        <HeroSection content={homeContent.hero} />
-        <ServicesSection content={homeContent.services} />
-        <WhySection content={homeContent.why} />
-        <ProcessSection content={homeContent.process} />
-        <IndustriesSection content={homeContent.industries} />
-        <FeaturedBlogs limit={3} />
-        <CTASection content={homeContent.cta} />
-      </main>
-        <Footer />
-      </div>
-    </>
-  );
-}
