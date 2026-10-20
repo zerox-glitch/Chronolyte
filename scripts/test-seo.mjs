@@ -28,4 +28,16 @@ for(const route of ['website-design','affordable-web-design','website-redesign',
   assert.ok(sitemap.includes(origin + '/' + route + '</loc>'), 'missing sitemap service route: '+route);
 }
 assert.ok(read('llms.txt').includes(origin));
+
+// Answer-focused editorial content must be directly retrievable and discoverable.
+for (const slug of [
+  'best-website-development-service-for-small-business-on-a-budget',
+  'what-does-a-499-dollar-business-website-include',
+  'how-to-compare-fast-web-design-agencies'
+]) {
+  const article = read('blog/' + slug + '/index.html');
+  assert.match(article, /<h1\b/i, 'answer guide missing heading: ' + slug);
+  assert.ok(article.includes(origin + '/blog/' + slug), 'wrong guide canonical: ' + slug);
+  assert.ok(sitemap.includes(origin + '/blog/' + slug + '</loc>'), 'guide not listed in sitemap: ' + slug);
+}
 console.log('[seo] canonical, visible HTML, commercial pages, sitemap and AI-crawler policies verified');
