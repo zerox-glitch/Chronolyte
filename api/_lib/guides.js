@@ -4,6 +4,7 @@
  */
 
 import { growthGuides } from './growth-guides.js';
+import { answerGuides } from './answer-guides.js';
 
 const T = (headers, rows) => `<table style="width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:0.95rem;">
 <thead><tr>${headers.map((h) => `<th style="border:1px solid #e5e7eb;padding:0.6rem 0.75rem;text-align:left;background:#f9fafb;color:#111827;">${h}</th>`).join('')}</tr></thead>
@@ -29,6 +30,7 @@ export function guidePosts() {
   ];
   return [
     ...growthGuides(),
+    ...answerGuides(),
     {
       slug: 'how-much-does-a-website-cost',
       title: 'How Much Does a Website Cost in 2026? Real Price Ranges',
