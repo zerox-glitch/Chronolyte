@@ -65,6 +65,12 @@ function mergeBundledGuides(posts) {
     if (existing) {
       // Keep database-managed copy, but backfill editorial metadata added to the bundled guide.
       if (Array.isArray(post.faqs) && !Array.isArray(existing.faqs)) existing.faqs = post.faqs;
+      // Keep authored guide artwork available even when the database copy predates it.
+      if (post.featured_image) {
+        existing.featured_image = post.featured_image;
+        existing.featured_image_alt = post.featured_image_alt || post.title;
+        existing.cover_image = post.featured_image;
+      }
       continue;
     }
     merged.push(post);
