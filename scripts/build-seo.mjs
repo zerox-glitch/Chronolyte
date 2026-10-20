@@ -144,7 +144,15 @@ async function main() {
       websiteLd(),
       breadcrumbsLd([{ name: 'Home', path: '/' }, { name: BREADCRUMB_NAMES[route] || meta.title, path: route }])
     ];
-    if (route === '/faq' && faqs.length) jsonLd.push(faqLd(faqs));
+    if (route === '/faq' && faqs.length) {
+      jsonLd.push(faqLd(faqs.map(faq => {
+        const question = faq.question || faq.q || '';
+        if (/how much|pricing|prices|cost of|what does.*cost/i.test(question)) {
+          return { ...faq, answer: 'Current prices, package features and delivery estimates are published on the Chronolyte pricing page. Ask for a scoped quote.' };
+        }
+        return faq;
+      })));
+    }
     if (route === '/fiverr-upwork-alternative') {
       jsonLd.push(faqLd(FIVERR_ALTERNATIVE_FAQS));
       jsonLd.push({
