@@ -248,6 +248,10 @@ async function main() {
     const plain = (post.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     // Full raw HTML (tables, lists, headings) so crawlers and LLMs see the complete guide.
     const ssr = `<article><h1>${escapeHtml(post.title)}</h1><p><em>By ${escapeHtml(post.author_name || post.author || 'Chronolyte')}${post.updated_at ? ` · Updated ${escapeHtml(String(post.updated_at).slice(0, 10))}` : ''}</em></p><p><strong>${escapeHtml(post.excerpt || '')}</strong></p>${sanitizeBlogHtml(post.content || '')}</article>`;
+    const articleImage = post.featured_image || post.cover_image || '';
+    const articleHero = articleImage
+      ? '<figure><img src="' + escapeHtml(articleImage) + '" alt="' + escapeHtml(post.featured_image_alt || post.title) + '" width="1280" height="720" loading="eager" decoding="async" style="display:block;width:100%;height:auto;max-width:100%;border-radius:16px;margin:1rem 0 2rem"/><figcaption>Chronolyte editorial illustration</figcaption></figure>'
+      : '';
     const articleJsonLd = [
       organizationLd(),
       blogPostingLd(post, route),
@@ -259,10 +263,10 @@ async function main() {
       title: post.seo_title || `${post.title} | Chronolyte`,
       description: post.seo_description || post.excerpt || plain.slice(0, 155),
       keywords: tagsOf(post),
-      image: post.cover_image || undefined,
+      image: articleImage || undefined,
       type: 'article',
       jsonLd: articleJsonLd,
-      ssrContent: ssr
+      ssrContent: articleHero ? ssr.replace('</h1>', '</h1>' + articleHero) : ssr
     });
     fs.writeFileSync(path.join(dir, 'index.html'), html);
   }
