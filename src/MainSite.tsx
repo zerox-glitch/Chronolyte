@@ -929,7 +929,10 @@ export function MainSite() {
         const plans = (Array.isArray(result.data) ? result.data : []).filter((plan: any) => plan.category === 'websites' && Number(plan.active) !== 0 && Number(plan.price) > 0);
         if (!plans.length) return;
         const lowestPrice = Math.min(...plans.map((plan: any) => Number(plan.price)));
-        setWebsiteStartingPrice('From 
+        setWebsiteStartingPrice('From ' + String.fromCharCode(36) + lowestPrice.toLocaleString('en-US'));
+      })
+      .catch(() => setWebsiteStartingPrice(null));
+  }, []);
 
   return (
     <>
