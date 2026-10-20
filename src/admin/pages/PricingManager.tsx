@@ -9,6 +9,11 @@ interface PricingTier {
   description: string;
   features: string[];
   highlighted?: boolean;
+  category?: string;
+  price_display?: string;
+  timeline?: string;
+  active?: number;
+  sort_order?: number;
 }
 
 export function PricingManager() {
@@ -41,22 +46,22 @@ export function PricingManager() {
           period: p.period || 'one-time',
           description: p.description || '',
           features: typeof p.features === 'string' ? JSON.parse(p.features || '[]') : (p.features || []),
-          highlighted: !!Number(p.highlighted)
+          highlighted: !!Number(p.highlighted),
+          category: p.category || 'websites',
+          price_display: p.price_display || '', timeline: p.timeline || '',
+          active: Number(p.active), sort_order: Number(p.sort_order) || 0
         })));
         return;
       }
     } catch (err) {
       console.error('Failed to load pricing:', err);
     }
-    setTiers([
-      { id: '1', name: 'Starter', price: 999, period: 'month', description: 'Perfect for small projects', features: ['5 Projects', '10GB Storage', 'Basic Support'], highlighted: false },
-      { id: '2', name: 'Professional', price: 2999, period: 'month', description: 'For growing businesses', features: ['Unlimited Projects', '100GB Storage', 'Priority Support', 'Analytics'], highlighted: true },
-      { id: '3', name: 'Enterprise', price: 9999, period: 'month', description: 'Custom solutions', features: ['Everything in Pro', 'Dedicated Manager', '24/7 Support', 'Custom Integrations'], highlighted: false }
-    ]);
+    setMessage({ type: 'error', text: 'Could not load the saved plans. Please retry.' });
+
   };
 
   const startAdd = () => {
-    setFormData({ features: [], period: 'month', highlighted: false });
+    setFormData({ features: [], period: 'one-time', highlighted: false, category: 'websites', active: 1, price_display: '', timeline: '' });
     setEditingId('new');
     setShowForm(true);
   };
@@ -93,21 +98,26 @@ export function PricingManager() {
         description: formData.description || '',
         features: formData.features || [],
         highlighted: formData.highlighted ? 1 : 0,
-        category: 'websites',
-        active: 1
+        category: formData.category || 'websites',
+        price_display: formData.price_display || '',
+        timeline: formData.timeline || '',
+        active: formData.active ?? 1,
+        sort_order: formData.sort_order || 0
       };
       if (editingId === 'new') {
-        await fetch('/api/pricing', {
+        const response = await fetch('/api/pricing', {
           method: 'POST',
           headers: authHeaders(),
           body: JSON.stringify(payload)
         });
+        if (!response.ok || !(await response.json()).success) throw new Error('Save failed');
       } else {
-        await fetch(`/api/pricing/${editingId}`, {
+        const response = await fetch(`/api/pricing/${editingId}`, {
           method: 'PUT',
           headers: authHeaders(),
           body: JSON.stringify(payload)
         });
+        if (!response.ok || !(await response.json()).success) throw new Error('Save failed');
       }
       setMessage({ type: 'success', text: editingId === 'new' ? 'Pricing tier added!' : 'Tier updated!' });
       setEditingId(null);
@@ -123,10 +133,11 @@ export function PricingManager() {
   const deleteTier = async (id: string) => {
     if (!confirm('Delete this pricing tier?')) return;
     try {
-      await fetch(`/api/pricing/${id}`, {
+      const response = await fetch(`/api/pricing/${id}`, {
         method: 'DELETE',
         headers: authHeaders()
       });
+      if (!response.ok || !(await response.json()).success) throw new Error('Delete failed');
       setMessage({ type: 'success', text: 'Tier deleted' });
       loadTiers();
       setTimeout(() => setMessage(null), 2000);
@@ -252,6 +263,19 @@ export function PricingManager() {
               </div>
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className="block text-sm font-medium mb-2">Category</label>
+                <select value={formData.category || 'websites'} onChange={e=>setFormData({...formData,category:e.target.value})} className="w-full px-4 py-3 bg-[#15151f] border border-white/10 rounded-lg text-white">
+                  <option value="websites">Websites / Stores</option><option value="ai-tools">Apps / AI Tools</option><option value="saas">SaaS / Software</option><option value="automation">Automation / Developers</option>
+                </select></div>
+              <div><label className="block text-sm font-medium mb-2">Price shown publicly</label>
+                <input value={formData.price_display || ''} onChange={e=>setFormData({...formData,price_display:e.target.value})} placeholder="From $499" className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white"/></div>
+              <div><label className="block text-sm font-medium mb-2">Delivery timeline</label>
+                <input value={formData.timeline || ''} onChange={e=>setFormData({...formData,timeline:e.target.value})} placeholder="3–7 days, subject to scope" className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white"/></div>
+              <div><label className="block text-sm font-medium mb-2">Display order</label>
+                <input type="number" value={formData.sort_order ?? 0} onChange={e=>setFormData({...formData,sort_order:Number(e.target.value)})} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white"/></div>
+              <label className="flex items-center gap-2"><input type="checkbox" checked={formData.active !== 0} onChange={e=>setFormData({...formData,active:e.target.checked?1:0})}/> Published on website</label>
+            </div>
             {/* Features */}
             <div>
               <label className="block text-sm font-medium text-white mb-2">Features</label>
