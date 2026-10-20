@@ -2,7 +2,14 @@
 // not industry averages. Fast delivery applies only to clearly scoped website work.
 export function growthGuides() {
  const date='2026-10-19';
+ const covers = {
+    "affordable-website-design-agency-vs-freelancer-vs-diy-2026": "agency-freelancer-diy",
+    "48-hour-website-vs-7-day-website-what-you-get": "48-hours-vs-7-days",
+    "chronolyte-vs-wix-squarespace-fiverr-small-business-website": "chronolyte-vs-builders"
+};
  const a=(slug,title,description,html,tags)=>({
+   slug,title,featured_image: covers[slug] ? '/images/blog/' + covers[slug] + '.svg' : '',
+   featured_image_alt: title + ' illustrated comparison guide by Chronolyte',
    slug,title,seo_title:title+' | Chronolyte',seo_description:description,
    excerpt:description,author:'Chronolyte Editorial',category:'Web Design',tags:JSON.stringify(tags),
    content:html,featured:0,read_time:6,status:'published',_updated:date
