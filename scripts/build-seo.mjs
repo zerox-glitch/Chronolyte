@@ -22,10 +22,10 @@ import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../src/constants/siteC
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 
-const STATIC_ROUTES = ['/', '/services', '/industries', '/locations', '/fiverr-upwork-alternative', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/website-design', '/affordable-web-design', '/website-redesign', '/ai-automation', '/custom-software', '/terms', '/privacy', '/refunds'];
+const STATIC_ROUTES = ['/', '/services', '/industries', '/locations', '/international-web-development', '/fiverr-upwork-alternative', '/pricing', '/portfolio', '/about', '/contact', '/faq', '/blog', '/website-design', '/affordable-web-design', '/website-redesign', '/ai-automation', '/custom-software', '/terms', '/privacy', '/refunds'];
 
 const BREADCRUMB_NAMES = {
-  '/services': 'Services', '/industries': 'Industries', '/locations': 'U.S. Service Areas', '/fiverr-upwork-alternative': 'Fiverr & Upwork Alternatives', '/pricing': 'Pricing', '/portfolio': 'Portfolio',
+  '/services': 'Services', '/industries': 'Industries', '/locations': 'U.S. Service Areas', '/international-web-development': 'Worldwide Services', '/fiverr-upwork-alternative': 'Fiverr & Upwork Alternatives', '/pricing': 'Pricing', '/portfolio': 'Portfolio',
   '/about': 'About', '/contact': 'Contact', '/faq': 'FAQ', '/blog': 'Blog',
   '/terms': 'Terms', '/privacy': 'Privacy', '/refunds': 'Refunds'
 };
@@ -218,7 +218,9 @@ async function main() {
 
     const dir = route === '/' ? DIST : path.join(DIST, route.replace(/^\//, ''));
     fs.mkdirSync(dir, { recursive: true });
-    const ssrContent = route === '/locations'
+    const ssrContent = route === '/international-web-development'
+      ? internationalSsr()
+      : route === '/locations'
       ? locationsSsr()
       : route === '/industries'
         ? industriesSsr()
@@ -275,6 +277,7 @@ async function main() {
   pushUrl('/services', { freq: 'weekly', priority: '0.9' });
   pushUrl('/industries', { priority: '0.8' });
   pushUrl('/locations', { priority: '0.8' });
+  pushUrl('/international-web-development', { priority: '0.9' });
   pushUrl('/fiverr-upwork-alternative', { priority: '0.85' });
   pushUrl('/pricing', { freq: 'weekly', priority: '0.9' });
   pushUrl('/portfolio', { freq: 'weekly', priority: '0.8' });
@@ -356,6 +359,11 @@ function defaultServices() {
 
 function slugify(value) {
   return String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function internationalSsr() {
+  const countries = ['United States', 'United Kingdom', 'Pakistan', 'Canada', 'Australia', 'New Zealand', 'Ireland'];
+  return '<main><h1>Website design and software development for businesses worldwide</h1><p>Chronolyte provides remote website development, e-commerce, software MVPs and automation for clients internationally. These are remote service areas, not physical offices.</p><h2>Countries we welcome projects from</h2><ul>' + countries.map(country => '<li>' + country + '</li>').join('') + '</ul><h2>How international projects work</h2><p>Send a brief, agree on project scope and currency, collaborate remotely and approve delivery. Pricing begins at $199 for eligible landing pages and $499 for small-business websites; final quotes and timelines depend on requirements.</p><p><a href="/pricing">See pricing</a> · <a href="/services">Explore services</a> · <a href="/contact">Request a quote</a></p></main>';
 }
 
 function locationsSsr() {
