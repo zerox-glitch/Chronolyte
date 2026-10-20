@@ -88,7 +88,7 @@ const defaultContent: FAQContent = {
       title: "General Questions",
       faqs: [
         { question: "What services does Chronolyte offer?", answer: "We specialize in four core areas: SaaS product development, premium website design, AI automation solutions, and custom AI tool development." },
-        { question: "How long does a typical project take?", answer: "Project timelines vary: Websites 2-4 weeks, Automation 1-3 weeks, SaaS 6-12 weeks, AI tools 4-8 weeks." },
+        { question: "How long does a typical project take?", answer: "Timelines depend on the exact features and scope. Review the current delivery estimate beside each package on our pricing page." },
         { question: "Do you work with clients worldwide?", answer: "Yes! We work with clients globally through video calls, email, and project management tools." },
         { question: "What makes Chronolyte different?", answer: "We leverage AI to deliver projects up to 10x faster without sacrificing quality. Everything is custom-built." }
       ]
@@ -96,7 +96,7 @@ const defaultContent: FAQContent = {
     {
       title: "Pricing & Payments",
       faqs: [
-        { question: "How much do your services cost?", answer: "Pricing starts at $3,000 for automation, $5,000 for websites, $10,000 for AI tools, and $15,000 for SaaS products." },
+        { question: "How much do your services cost?", answer: "Current website, software and automation packages are listed on our pricing page. Request a written quote for your project." },
         { question: "What payment methods do you accept?", answer: "We accept all major credit cards, PayPal, and other payment methods through our secure payment processor." },
         { question: "Do you offer payment plans?", answer: "Yes, for larger projects we offer milestone-based payment plans." },
         { question: "Can I get a refund?", answer: "We offer a 14-day satisfaction guarantee for new purchases. Please review our Refund Policy for details." }
@@ -114,6 +114,7 @@ const defaultContent: FAQContent = {
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [content, setContent] = useState<FAQContent>(defaultContent);
+  const [planSummary, setPlanSummary] = useState('See the latest service packages, prices and inclusions on our pricing page.');
   
   useEffect(() => {
     fetch('/backend/api/settings.php?action=get&key=faq_content')
@@ -125,9 +126,27 @@ export function FAQ() {
         }
       })
       .catch(err => console.error('Failed to load FAQ content:', err));
+    fetch('/api/pricing?action=list', { cache: 'no-store' })
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Pricing API unavailable')))
+      .then(result => {
+        const plans = (Array.isArray(result.data) ? result.data : []).filter((plan: any) => Number(plan.active) !== 0);
+        if (!plans.length) return;
+        const summary = plans.map((plan: any) => {
+          const price = plan.price_display || ('From ' + String.fromCharCode(36) + Number(plan.price || 0).toLocaleString('en-US'));
+          return plan.name + ': ' + price;
+        }).join('; ');
+        setPlanSummary('Our current published starting prices are ' + summary + '. Final quotes depend on the agreed scope. See the pricing page for features and delivery estimates.');
+      })
+      .catch(() => {});
   }, []);
 
-  const categories = content.categories;
+  const categories = content.categories.map(category => ({
+    ...category,
+    faqs: category.faqs.map(faq => {
+      const pricingQuestion = /how much|pricing|prices|how much do.*cost|what does.*cost|cost of/i.test(faq.question);
+      return pricingQuestion ? { ...faq, answer: planSummary } : faq;
+    })
+  }));
 
   // Flatten FAQs with category info for tracking open state
   const allFaqs = categories.flatMap((cat, catIndex) => 
