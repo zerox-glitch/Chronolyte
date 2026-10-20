@@ -20,6 +20,7 @@
     { "source": "/api/:__orig(.*)", "destination": "/api/handler" },
     { "source": "/backend/api/:__orig(.*)", "destination": "/api/handler" },
     { "source": "/uploads/:__orig(.*)", "destination": "/api/handler?__ns=files" },
+    { "source": "/pricing", "destination": "/api/handler?__ns=page/pricing" },
     { "source": "/blog", "destination": "/api/handler?__ns=page/blog" },
     { "source": "/blog/category/:category", "destination": "/api/handler?__ns=page/blog/category&__orig=:category" },
     { "source": "/blog/:__orig([^/]+)", "destination": "/api/handler?__ns=page/blog" },
