@@ -1,3 +1,4 @@
+import { InternationalServices } from './pages/InternationalServices';
 import { ServiceLanding } from './pages/ServiceLanding';
 import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
@@ -63,6 +64,7 @@ export function App() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/industries" element={<Industries />} />
           <Route path="/locations" element={<Locations />} />
+          <Route path="/international-web-development" element={<InternationalServices />} />
           <Route path="/fiverr-upwork-alternative" element={<FiverrAlternative />} />
           
           {/* Legacy guide URLs mirror the current /blog routes outside Vercel too */}
