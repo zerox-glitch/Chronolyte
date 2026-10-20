@@ -337,7 +337,7 @@ function ServicesSection({ content }: { content: HomePageContent['services'] }) 
 
 const defaultBenefits = [
   { metric: "1 Day", label: "Reply Time", description: "A real person replies within one business day with questions or a plan." },
-  { metric: "View pricing", label: "Websites From", description: "See current packages and request a scoped quote." },
+  { metric: "See pricing", label: "Websites From", description: "Compare the current website packages and request a project quote." },
   { metric: "2-4 mo", label: "SaaS MVPs", description: "Idea to launched, revenue-ready subscription product." },
   { metric: "100%", label: "Code Ownership", description: "Code, designs and accounts transfer to you on final payment." },
   { metric: "1 Team", label: "Fully Managed", description: "Design, development and project management under one roof." }
@@ -924,12 +924,12 @@ export function MainSite() {
     };
     fetchContent();
     fetch('/api/pricing?action=list', { cache: 'no-store' })
-      .then(res => res.ok ? res.json() : Promise.reject(new Error('Pricing unavailable')))
-      .then(json => {
-        const websites = (Array.isArray(json.data) ? json.data : []).filter((plan: any) => plan.category === 'websites' && Number(plan.active) !== 0 && Number(plan.price) > 0);
-        if (websites.length) {
-          const least = websites.reduce((a: any, b: any) => Number(a.price) < Number(b.price) ? a : b);
-          setWebsiteStartingPrice('From 
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Pricing request failed')))
+      .then(result => {
+        const plans = (Array.isArray(result.data) ? result.data : []).filter((plan: any) => plan.category === 'websites' && Number(plan.active) !== 0 && Number(plan.price) > 0);
+        if (!plans.length) return;
+        const lowestPrice = Math.min(...plans.map((plan: any) => Number(plan.price)));
+        setWebsiteStartingPrice('From 
 
   return (
     <>
@@ -941,7 +941,7 @@ export function MainSite() {
         <main>
         <HeroSection content={homeContent.hero} />
         <ServicesSection content={homeContent.services} />
-        <WhySection content={{ ...homeContent.why, items: homeContent.why.items.map(item => item.label === 'Websites From' ? { ...item, metric: websiteStartingPrice || 'See current prices' } : item) }} />
+        <WhySection content={{ ...homeContent.why, items: homeContent.why.items.map(item => item.label === 'Websites From' ? { ...item, metric: websiteStartingPrice || 'See pricing' } : item) }} />
         <ProcessSection content={homeContent.process} />
         <IndustriesSection content={homeContent.industries} />
         <FeaturedBlogs limit={3} />
@@ -952,8 +952,7 @@ export function MainSite() {
     </>
   );
 }
- + Number(least.price).toLocaleString('en-US'));
-        }
+ + lowestPrice.toLocaleString('en-US'));
       })
       .catch(() => setWebsiteStartingPrice(null));
   }, []);
