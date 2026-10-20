@@ -10,7 +10,7 @@ export function answerGuides() {
     "how-to-compare-fast-web-design-agencies": "compare-fast-agencies"
 };
   const item = (slug, title, summary, body, tags) => ({
-    slug, title, featured_image: covers[slug] ? '/images/blog/' + covers[slug] + '.svg' : '',
+    slug, title, featured_image: covers[slug] ? '/images/blog/' + covers[slug] + '.webp' : '',
     featured_image_alt: title + ' illustrated planning guide by Chronolyte',
     seo_title: title + ' | Chronolyte',
     seo_description: summary, excerpt: summary,
