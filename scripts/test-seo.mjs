@@ -61,4 +61,17 @@ for (const [slug, cover] of articleCovers) {
   assert.ok(!article.includes('/images/blog/' + cover + '.svg'), 'stale SVG image: ' + slug);
 }
 
+
+// Guard the admin-to-public pricing connection.
+const publicPricingSource = readFileSync('src/pages/Pricing.tsx', 'utf8');
+const managerSource = readFileSync('src/admin/pages/PricingManager.tsx', 'utf8');
+const serverSource = readFileSync('api/_lib/router.js', 'utf8');
+const rewrites = readFileSync('vercel.json', 'utf8');
+assert.ok(publicPricingSource.includes('/api/pricing?action=list'), 'public pricing must load the pricing API');
+assert.ok(!publicPricingSource.includes('launchPackages') && !publicPricingSource.includes('defaultPackages'), 'hard-coded prices override admin-managed plans');
+assert.ok(managerSource.includes('price_display') && managerSource.includes('sort_order') && managerSource.includes('category'), 'admin editor must retain plan fields');
+assert.ok(managerSource.includes('action=admin'), 'admin editor must be able to view inactive plans');
+assert.ok(serverSource.includes("sub === '/pricing'"), 'search-facing pricing must be rendered dynamically');
+assert.ok(rewrites.includes('"source": "/pricing"'), 'pricing route must use dynamic renderer');
+
 console.log('[seo] canonical, visible HTML, commercial pages, sitemap and AI-crawler policies verified');
