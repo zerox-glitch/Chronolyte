@@ -31,6 +31,7 @@ interface PricingCardProps {
     period?: string;
     badge?: string;
     is_popular?: boolean;
+    highlighted?: boolean | number;
     description: string;
     features: string | string[];
     timeline: string;
@@ -43,7 +44,7 @@ interface PricingCardProps {
 
 function PricingCard({ tier, isPopular = false, onStartProject }: PricingCardProps) {
   const features = Array.isArray(tier.features) ? tier.features : typeof tier.features === 'string' ? (() => { try { return JSON.parse(tier.features); } catch { return []; } })() : [];
-  const isMostPopular = isPopular || tier.name === 'Business Website';
+  const isMostPopular = Boolean(Number(isPopular) || Number(tier.highlighted));
   const priceDisplay = tier.price_display || `$${tier.price?.toLocaleString()}`;
   
   return (
