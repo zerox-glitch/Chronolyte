@@ -97,6 +97,7 @@ export function PricingManager() {
         description: formData.description || '',
         features: formData.features || [],
         highlighted: formData.highlighted ? 1 : 0,
+        is_popular: formData.highlighted ? 1 : 0,
         category: formData.category || 'websites',
         price_display: formData.price_display || '',
         timeline: formData.timeline || '',
