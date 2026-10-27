@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* Chronolyte / The Paper Sessions — public marketing art direction */
+.chronolyte-editorial {
+  --paper: #f0ebdd; --cherry: #7b182a; --berry: #a8273b;
+  --lime: #c1e18a; --ink: #1c2220; --mist: #dce9e5; --blue-note: #146e86;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper) !important; color:var(--ink) !important;
+  isolation:isolate;
+}
+.chronolyte-editorial .font-display, .chronolyte-editorial h1,
+.chronolyte-editorial h2, .chronolyte-editorial h3 {font-family:'Space Grotesk',sans-serif;letter-spacing:-.045em;}
+.chronolyte-editorial .editorial-paper-grain {
+  position:fixed;inset:0;z-index:30;pointer-events:none;opacity:.22;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.63' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.19'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+.chronolyte-editorial main>section {position:relative;isolation:isolate;transition:background-color .75s ease,color .75s ease;}
+.chronolyte-editorial main>section::before {
+  content:attr(data-paper);position:absolute;top:20px;left:max(20px,calc((100vw - 1240px)/2));color:currentColor;opacity:.27;
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-family:'DM Sans',sans-serif;pointer-events:none;
+}
+.chronolyte-editorial .editorial-hero {background:#f0ebdd !important;color:#21201e !important;}
+.chronolyte-editorial .editorial-hero::after {content:'✳';position:absolute;right:4%;top:12%;font-size:clamp(5rem,15vw,14rem);line-height:1;color:#8a1b2e;opacity:.14;transform:rotate(-15deg);pointer-events:none;}
+.chronolyte-editorial .editorial-hero h1 {font-size:clamp(3.4rem,9vw,9rem);line-height:.91;letter-spacing:-.075em;text-transform:uppercase;font-weight:700;}
+.chronolyte-editorial .editorial-hero h1 span:first-child {color:#761829 !important;}
+.chronolyte-editorial .editorial-hero h1 .gradient-text {background:none!important;-webkit-text-fill-color:#43833c!important;color:#43833c!important;text-shadow:none!important;}
+.chronolyte-editorial .editorial-hero .glass {background:#d9dfbf!important;border:1px solid #84916b!important;box-shadow:none!important;}
+.chronolyte-editorial .editorial-hero [class*="text-white"] {color:#292c25!important;}
+.chronolyte-editorial .editorial-hero [class*="text-cyan"] {color:#781a2d!important;}
+.chronolyte-editorial .editorial-hero [class*="via-cyan"] {opacity:.04!important;}
+.chronolyte-editorial .editorial-hero .rounded-full {border-radius:3px;}
+.chronolyte-editorial .editorial-services {background:#751a2c!important;color:#f7eee1!important;}
+.chronolyte-editorial .editorial-services h2 {color:#f7eee1!important;}
+.chronolyte-editorial .editorial-services h2 .gradient-text {background:none!important;-webkit-text-fill-color:#c6e58b!important;color:#c6e58b!important;text-shadow:none!important;font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;letter-spacing:-.025em;}
+.chronolyte-editorial .editorial-services h3 {color:#f4e6d9!important;}
+.chronolyte-editorial .editorial-services .glass {background:#8a2739!important;border:1px solid #bb6b75!important;box-shadow:9px 9px 0 #53111d!important;}
+.chronolyte-editorial .editorial-services [class*="text-cyan"] {color:#cbeb93!important;}
+.chronolyte-editorial .editorial-services [class*="bg-cyan"] {background-color:#c2df8b!important;}
+.chronolyte-editorial .editorial-services [class*="text-white"] {color:#f8e9dc!important;}
+.chronolyte-editorial .editorial-why {background:#c5de97!important;color:#203020!important;}
+.chronolyte-editorial .editorial-why h2,.chronolyte-editorial .editorial-why h3 {color:#263523!important;}
+.chronolyte-editorial .editorial-why h2 .gradient-text {background:none!important;-webkit-text-fill-color:#762031!important;color:#762031!important;font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;}
+.chronolyte-editorial .editorial-why .gradient-text {background:none!important;-webkit-text-fill-color:#792032!important;color:#792032!important;}
+.chronolyte-editorial .editorial-why .glass {background:#e4eac8!important;border:1px solid #81996c!important;box-shadow:7px 7px 0 #91ad76!important;}
+.chronolyte-editorial .editorial-why [class*="text-white"] {color:#263523!important;}
+.chronolyte-editorial .editorial-why [class*="text-cyan"] {color:#792032!important;}
+.chronolyte-editorial #process {background:#dbe8e5!important;color:#192e34!important;}
+.chronolyte-editorial #industries {background:#efe3d1!important;color:#26221e!important;}
+.chronolyte-editorial main>section:last-of-type {background:#202322!important;color:#f6eee3!important;}
+.chronolyte-editorial #process h2,.chronolyte-editorial #industries h2 {color:#192e34!important;}
+.chronolyte-editorial #process .gradient-text,.chronolyte-editorial #industries .gradient-text {background:none!important;-webkit-text-fill-color:#831b30!important;color:#831b30!important;}
+.chronolyte-editorial #process .glass,.chronolyte-editorial #industries .glass {background:#f5f1e8!important;border:1px solid #90a2a0!important;box-shadow:5px 5px 0 #91a7a1!important;}
+.chronolyte-editorial #process [class*="text-white"],.chronolyte-editorial #industries [class*="text-white"] {color:#26322f!important;}
+.chronolyte-editorial #process [class*="text-cyan"],.chronolyte-editorial #industries [class*="text-cyan"] {color:#7b2031!important;}
+.chronolyte-editorial .glow-box {box-shadow:6px 6px 0 #b2c57c!important;}
+.chronolyte-editorial section a:focus-visible,.chronolyte-editorial button:focus-visible {outline:3px solid #14728c;outline-offset:4px;}
+@media (max-width:640px) {.chronolyte-editorial .editorial-hero h1{font-size:clamp(3rem,13.4vw,5.5rem)}.chronolyte-editorial .editorial-services .glass{box-shadow:4px 4px 0 #53111d!important;}}
+@media (prefers-reduced-motion:reduce) {.chronolyte-editorial main>section{transition:none!important}.chronolyte-editorial .editorial-paper-grain{opacity:.13!important}}
