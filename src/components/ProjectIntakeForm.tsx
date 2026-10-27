@@ -218,7 +218,7 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-[#0d0d14] to-[#141420] rounded-2xl border border-white/10 shadow-2xl"
+            className="chronolyte-intake-dialog relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-[#0d0d14] to-[#141420] rounded-2xl border border-white/10 shadow-2xl"
           >
             {/* Close Button */}
             <button
