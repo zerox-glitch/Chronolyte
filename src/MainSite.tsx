@@ -123,7 +123,7 @@ function HeroSection({ content }: { content: HomePageContent['hero'] }) {
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
   
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 md:pt-24">
+    <section className="editorial-hero relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 md:pt-24">
       {/* Animated Light Streaks */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(5)].map((_, i) => (
@@ -287,7 +287,7 @@ function ServicesSection({ content }: { content: HomePageContent['services'] }) 
   const services = content.items.length > 0 ? content.items : defaultServices;
   
   return (
-    <section id="services" className="relative py-16 md:py-32 overflow-hidden">
+    <section id="services" className="editorial-services relative py-16 md:py-32 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <AnimatedSection className="text-center mb-10 md:mb-20">
           <span className="text-cyan-400 text-xs md:text-sm font-semibold tracking-wider uppercase mb-3 md:mb-4 block">What We Build</span>
@@ -348,7 +348,7 @@ function WhySection({ content }: { content: HomePageContent['why'] }) {
   const benefits = content.items.length > 0 ? content.items : defaultBenefits;
   
   return (
-    <section id="why" className="relative py-16 md:py-32">
+    <section id="why" className="editorial-why relative py-16 md:py-32">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <AnimatedSection className="text-center mb-10 md:mb-20">
           <span className="text-cyan-400 text-xs md:text-sm font-semibold tracking-wider uppercase mb-3 md:mb-4 block">Why Chronolyte</span>
@@ -937,10 +937,8 @@ export function MainSite() {
   return (
     <>
       <SiteNavigation />
-      <div className="relative min-h-screen bg-dark-900 text-white overflow-x-hidden">
-        <GlowOrbs />
-        <NoiseOverlay />
-        <GridBackground />
+      <div className="chronolyte-editorial relative min-h-screen bg-dark-900 text-white overflow-x-hidden">
+        <div className="editorial-paper-grain" aria-hidden="true" />
         <main>
         <HeroSection content={homeContent.hero} />
         <ServicesSection content={homeContent.services} />
