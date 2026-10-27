@@ -55,3 +55,28 @@
 .chronolyte-editorial section a:focus-visible,.chronolyte-editorial button:focus-visible {outline:3px solid #14728c;outline-offset:4px;}
 @media (max-width:640px) {.chronolyte-editorial .editorial-hero h1{font-size:clamp(3rem,13.4vw,5.5rem)}.chronolyte-editorial .editorial-services .glass{box-shadow:4px 4px 0 #53111d!important;}}
 @media (prefers-reduced-motion:reduce) {.chronolyte-editorial main>section{transition:none!important}.chronolyte-editorial .editorial-paper-grain{opacity:.13!important}}
+
+
+/* Paper-edge rhythm, navigation and typographic color accents */
+body:has(.chronolyte-editorial) > #root > header,
+body:has(.chronolyte-editorial) header.fixed {
+  background:rgba(240,235,221,.91)!important;border-bottom:1px solid rgba(93,48,49,.24)!important;
+  box-shadow:0 3px 0 rgba(120,27,45,.05)!important;backdrop-filter:blur(16px)!important;
+}
+body:has(.chronolyte-editorial) header.fixed nav a {color:#52382f!important;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:.01em;}
+body:has(.chronolyte-editorial) header.fixed nav a:hover,
+body:has(.chronolyte-editorial) header.fixed nav a[aria-current="page"] {color:#872238!important;}
+body:has(.chronolyte-editorial) header.fixed button[aria-label*="navigation"] {color:#741c2b!important;background:#dfe8b7!important;border-color:#8c9a65!important;}
+.chronolyte-editorial .editorial-hero::before {content:'CHRONOLYTE  /  INDEPENDENT DIGITAL STUDIO';position:absolute;left:5%;bottom:3%;font-size:11px;letter-spacing:.24em;color:#84263a;}
+.chronolyte-editorial .editorial-services::before {content:'02 / THE CRAFT';position:absolute;left:5%;top:3%;font:700 11px 'DM Sans',sans-serif;letter-spacing:.24em;color:#d5eaa8;}
+.chronolyte-editorial .editorial-why::before {content:'03 / OUR WAY';position:absolute;left:5%;top:3%;font:700 11px 'DM Sans',sans-serif;letter-spacing:.24em;color:#672435;}
+.chronolyte-editorial #process::before {content:'04 / THE PROCESS';position:absolute;left:5%;top:3%;font:700 11px 'DM Sans',sans-serif;letter-spacing:.24em;color:#275f65;}
+.chronolyte-editorial #industries::before {content:'05 / THE POSSIBILITIES';position:absolute;left:5%;top:3%;font:700 11px 'DM Sans',sans-serif;letter-spacing:.24em;color:#7b1d35;}
+.chronolyte-editorial .editorial-services,.chronolyte-editorial .editorial-why,.chronolyte-editorial #process,.chronolyte-editorial #industries {background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0px,rgba(255,255,255,.018) 1px,transparent 1px,transparent 38px)!important;}
+.chronolyte-editorial .editorial-hero h1 .glow-text {text-shadow:none!important;}
+.chronolyte-editorial .editorial-hero [class*="bg-gradient-to-r"].rounded-full,
+.chronolyte-editorial .editorial-hero a[class*="bg-gradient"],
+.chronolyte-editorial .editorial-hero button[class*="bg-gradient"] {background:#802033!important;color:#fff4e7!important;border-radius:4px!important;box-shadow:6px 6px 0 #c6dc93!important;}
+.chronolyte-editorial .editorial-hero a:hover,.chronolyte-editorial .editorial-hero button:hover {filter:saturate(1.1);}
+.chronolyte-editorial section h2 {font-size:clamp(2.5rem,5vw,5.6rem);}
+.chronolyte-editorial .editorial-hero p {max-width:44rem;margin-left:auto;margin-right:auto;}
