@@ -32,6 +32,10 @@ import { BlogsAdmin } from './admin/pages/Blogs';
 // Import page components
 import { TermsOfService, PrivacyPolicy, RefundPolicy, About, Services, Contact, Portfolio, FAQ, Pricing, BlogListing, BlogPost, Industries, Locations, FiverrAlternative } from './pages';
 
+function PublicCanvas({ children }: { children: React.ReactNode }) {
+  return <div className="chronolyte-editorial editorial-inner-page">{children}</div>;
+}
+
 function LegacyGuidesRedirect() {
   const { slug } = useParams<{ slug?: string }>();
   return <Navigate to={slug ? `/blog/${slug}` : '/blog'} replace />;
@@ -46,36 +50,36 @@ export function App() {
           <Route path="/" element={<MainSite />} />
           
           {/* Legal Pages */}
-          <Route path="/terms" element={<TermsOfService />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/refunds" element={<RefundPolicy />} />
+          <Route path="/terms" element={<PublicCanvas><TermsOfService /></PublicCanvas>} />
+          <Route path="/privacy" element={<PublicCanvas><PrivacyPolicy /></PublicCanvas>} />
+          <Route path="/refunds" element={<PublicCanvas><RefundPolicy /></PublicCanvas>} />
           
           {/* Main Pages */}
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/website-design" element={<ServiceLanding slug="website-design" />} />
-          <Route path="/affordable-web-design" element={<ServiceLanding slug="affordable-web-design" />} />
-          <Route path="/website-redesign" element={<ServiceLanding slug="website-redesign" />} />
-          <Route path="/ai-automation" element={<ServiceLanding slug="ai-automation" />} />
-          <Route path="/custom-software" element={<ServiceLanding slug="custom-software" />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/industries" element={<Industries />} />
-          <Route path="/locations" element={<Locations />} />
-          <Route path="/international-web-development" element={<InternationalServices />} />
-          <Route path="/fiverr-upwork-alternative" element={<FiverrAlternative />} />
+          <Route path="/about" element={<PublicCanvas><About /></PublicCanvas>} />
+          <Route path="/services" element={<PublicCanvas><Services /></PublicCanvas>} />
+          <Route path="/website-design" element={<PublicCanvas><ServiceLanding slug="website-design" /></PublicCanvas>} />
+          <Route path="/affordable-web-design" element={<PublicCanvas><ServiceLanding slug="affordable-web-design" /></PublicCanvas>} />
+          <Route path="/website-redesign" element={<PublicCanvas><ServiceLanding slug="website-redesign" /></PublicCanvas>} />
+          <Route path="/ai-automation" element={<PublicCanvas><ServiceLanding slug="ai-automation" /></PublicCanvas>} />
+          <Route path="/custom-software" element={<PublicCanvas><ServiceLanding slug="custom-software" /></PublicCanvas>} />
+          <Route path="/contact" element={<PublicCanvas><Contact /></PublicCanvas>} />
+          <Route path="/portfolio" element={<PublicCanvas><Portfolio /></PublicCanvas>} />
+          <Route path="/faq" element={<PublicCanvas><FAQ /></PublicCanvas>} />
+          <Route path="/pricing" element={<PublicCanvas><Pricing /></PublicCanvas>} />
+          <Route path="/industries" element={<PublicCanvas><Industries /></PublicCanvas>} />
+          <Route path="/locations" element={<PublicCanvas><Locations /></PublicCanvas>} />
+          <Route path="/international-web-development" element={<PublicCanvas><InternationalServices /></PublicCanvas>} />
+          <Route path="/fiverr-upwork-alternative" element={<PublicCanvas><FiverrAlternative /></PublicCanvas>} />
           
           {/* Legacy guide URLs mirror the current /blog routes outside Vercel too */}
           <Route path="/guides" element={<Navigate to="/blog" replace />} />
           <Route path="/guides/:slug" element={<LegacyGuidesRedirect />} />
 
           {/* Blog Pages */}
-          <Route path="/blog" element={<BlogListing />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/blog/category/:category" element={<BlogListing />} />
-          <Route path="/blog/search" element={<BlogListing />} />
+          <Route path="/blog" element={<PublicCanvas><BlogListing /></PublicCanvas>} />
+          <Route path="/blog/:slug" element={<PublicCanvas><BlogPost /></PublicCanvas>} />
+          <Route path="/blog/category/:category" element={<PublicCanvas><BlogListing /></PublicCanvas>} />
+          <Route path="/blog/search" element={<PublicCanvas><BlogListing /></PublicCanvas>} />
           
           {/* Admin Login */}
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -93,13 +97,13 @@ export function App() {
             <Route path="leads" element={<Leads />} />
             <Route path="project-requests" element={<ProjectRequests />} />
             <Route path="projects-manager" element={<ProjectsManager />} />
-            <Route path="services" element={<ServicesManager />} />
-            <Route path="pricing" element={<PricingManager />} />
+            <Route path="services" element={<PublicCanvas><ServicesManager /></PublicCanvas>} />
+            <Route path="pricing" element={<PublicCanvas><PricingManager /></PublicCanvas>} />
             <Route path="videos" element={<ProjectVideoUpload />} />
             <Route path="blogs" element={<BlogsAdmin />} />
             <Route path="content" element={<ContentManager />} />
             <Route path="testimonials" element={<Testimonials />} />
-            <Route path="portfolio" element={<PortfolioManager />} />
+            <Route path="portfolio" element={<PublicCanvas><PortfolioManager /></PublicCanvas>} />
             <Route path="site-settings" element={<SiteSettings />} />
             <Route path="settings" element={<Settings />} />
           </Route>
