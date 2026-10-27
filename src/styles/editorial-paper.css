@@ -80,3 +80,8 @@ body:has(.chronolyte-editorial) header.fixed button[aria-label*="navigation"] {c
 .chronolyte-editorial .editorial-hero a:hover,.chronolyte-editorial .editorial-hero button:hover {filter:saturate(1.1);}
 .chronolyte-editorial section h2 {font-size:clamp(2.5rem,5vw,5.6rem);}
 .chronolyte-editorial .editorial-hero p {max-width:44rem;margin-left:auto;margin-right:auto;}
+
+
+body:has(.chronolyte-editorial) header.fixed .font-display.tracking-wide {color:#751b2c!important;text-shadow:none!important;}
+body:has(.chronolyte-editorial) header.fixed .font-display.tracking-wide [class*="bg-cyan"] {background-color:#9bc16b!important;}
+body:has(.chronolyte-editorial) header.fixed .font-display.tracking-wide [class*="border-cyan"] {border-color:#7a2835!important;}
