@@ -1,8 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Clock3, Search, Sparkles } from 'lucide-react';
-import { Footer } from '../components/Footer';
-import { SiteNavigation } from '../components/SiteNavigation';
+import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Clock3, Search } from 'lucide-react';
+import { CtaBand, PageHero, Sheet } from '../components/editorial/EditorialPage';
 import { BlogRecord, formatBlogDate, normalizeBlog } from '../utils/blog';
 
 interface BlogListResponse {
@@ -151,167 +150,164 @@ export function BlogListing() {
     navigate('/blog');
   };
 
+
+  const heading = searchQuery
+    ? <>Search <em>the guides</em></>
+    : selectedCategory
+      ? <>Browse <em>{selectedCategory}</em></>
+      : <>Build with <em>more confidence.</em></>;
+
   return (
-    <div className="min-h-screen overflow-x-hidden bg-dark-900 text-white">
-      <SiteNavigation />
-      <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -left-40 top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[140px]" />
-        <div className="absolute -right-40 top-[45rem] h-96 w-96 rounded-full bg-blue-600/10 blur-[150px]" />
-      </div>
+    <>
+      <PageHero
+        eyebrow="The Chronolyte guides"
+        title={heading}
+        lede="Clear, practical advice on project costs, timelines and hiring — so you can make your next digital move with confidence."
+        meta={
+          <>
+            <span>{categories.length > 0 ? `${categories.length} topics` : 'Cost guides'}</span>
+            <span>Written by the studio</span>
+            <span>No fluff</span>
+          </>
+        }
+      />
 
-      <main className="relative z-10 px-4 pb-16 pt-28 md:px-6 md:pt-36">
-        <div className="mx-auto max-w-7xl">
-          <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-sm text-white/45">
-            <Link to="/" className="transition-colors hover:text-cyan-300">Home</Link>
-            <span aria-hidden="true">/</span>
-            <span className="text-white/80">Guides</span>
-            {selectedCategory && <><span aria-hidden="true">/</span><span className="text-white/65">{selectedCategory}</span></>}
-          </nav>
+      <Sheet tone="paper">
+        <nav aria-label="Breadcrumb" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.45rem', marginBottom: '1.4rem', fontSize: '0.8rem', color: '#6a746a' }}>
+          <Link to="/" className="ed-link" style={{ textDecoration: 'none' }}>Home</Link>
+          <span aria-hidden="true">/</span>
+          <span style={{ color: '#26312a', fontWeight: 700 }}>Guides</span>
+          {selectedCategory && (
+            <>
+              <span aria-hidden="true">/</span>
+              <span>{selectedCategory}</span>
+            </>
+          )}
+        </nav>
 
-          <section className="relative mb-10 overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#101c2b] via-[#0a101b] to-[#090b13] px-6 py-10 md:px-12 md:py-14">
-            <div className="pointer-events-none absolute -right-12 -top-20 h-72 w-72 rounded-full bg-cyan-400/10 blur-[90px]" />
-            <div className="relative max-w-3xl">
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-400/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
-                <Sparkles className="h-3.5 w-3.5" /> The Chronolyte guides
-              </span>
-              <h1 className="font-display text-4xl font-bold leading-tight text-white md:text-6xl">
-                {searchQuery ? <>Search <span className="gradient-text">the guides</span></> : selectedCategory ? <>Browse <span className="gradient-text">{selectedCategory}</span></> : <>Build with <span className="gradient-text">more confidence.</span></>}
-              </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-white/60 md:text-lg">
-                Clear, practical advice on project costs, timelines and hiring — so you can make your next digital move with confidence.
-              </p>
-            </div>
-          </section>
+        <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '1rem' }}>
+          <label style={{ position: 'relative', flex: '1 1 240px' }}>
+            <span className="sr-only">Search guides</span>
+            <Search style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', width: 18, height: 18, color: '#7b8578' }} />
+            <input
+              type="search"
+              placeholder="Search costs, websites, apps, hiring…"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              className="ed-input"
+              style={{ paddingLeft: 42 }}
+            />
+          </label>
+          <button type="submit" className="ed-btn">Search <ArrowRight className="h-4 w-4" /></button>
+        </form>
 
-          <section aria-label="Search and filter guides" className="glass mb-9 rounded-3xl p-4 md:p-6">
-            <form onSubmit={handleSearch} className="flex flex-col gap-3 sm:flex-row">
-              <label className="relative flex-1">
-                <span className="sr-only">Search guides</span>
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/35" />
-                <input
-                  type="search"
-                  placeholder="Search costs, websites, apps, hiring…"
-                  value={searchInput}
-                  onChange={(event) => setSearchInput(event.target.value)}
-                  className="h-12 w-full rounded-2xl border border-white/10 bg-black/20 pl-12 pr-4 text-sm text-white outline-none placeholder:text-white/35 transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/10"
-                />
-              </label>
-              <button type="submit" className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 font-semibold text-black transition hover:shadow-lg hover:shadow-cyan-500/20">
-                Search <ArrowRight className="h-4 w-4" />
+        {categories.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.4rem', marginBottom: '1.6rem' }}>
+            <span style={{ marginRight: '0.3rem', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7b8578' }}>Explore</span>
+            {categories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => handleCategorySelect(category)}
+                aria-pressed={selectedCategory === category}
+                className={`ed-choice ${selectedCategory === category ? 'ed-choice--active' : ''}`}
+                style={{ padding: '0.36rem 0.8rem', fontSize: '0.78rem', fontWeight: 700 }}
+              >
+                {category}
               </button>
-            </form>
-            {categories.length > 0 && (
-              <div className="mt-5 flex flex-wrap items-center gap-2">
-                <span className="mr-1 text-xs font-medium uppercase tracking-wider text-white/40">Explore</span>
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => handleCategorySelect(category)}
-                    aria-pressed={selectedCategory === category}
-                    className={`rounded-full border px-3.5 py-2 text-xs font-medium transition ${selectedCategory === category ? 'border-cyan-300/50 bg-cyan-400/15 text-cyan-200' : 'border-white/10 bg-white/[0.03] text-white/55 hover:border-white/20 hover:text-white'}`}
-                  >
-                    {category}
-                  </button>
-                ))}
-                {(selectedCategory || searchQuery) && (
-                  <button type="button" onClick={clearFilters} className="ml-auto text-xs text-cyan-300 transition hover:text-white">Clear filters</button>
-                )}
-              </div>
+            ))}
+            {(selectedCategory || searchQuery) && (
+              <button type="button" onClick={clearFilters} className="ed-link" style={{ marginLeft: 'auto', background: 'none', border: 0, cursor: 'pointer', fontSize: '0.8rem' }}>Clear filters</button>
             )}
-          </section>
-
-          <div className="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{selectedCategory || 'Explore'}</p>
-              <h2 className="mt-1 font-display text-2xl font-bold text-white md:text-3xl">
-                {searchQuery ? `Results for “${searchQuery}”` : selectedCategory ? `Latest ${selectedCategory.toLowerCase()}` : 'Ideas worth getting right'}
-              </h2>
-            </div>
-            {!loading && blogs.length > 0 && <span className="text-sm text-white/40">Page {page} of {totalPages}</span>}
           </div>
+        )}
 
-          {error && (
-            <div role="alert" className="mb-6 rounded-2xl border border-red-400/20 bg-red-400/5 px-5 py-4 text-sm text-red-200">
-              {error} <button type="button" onClick={() => window.location.reload()} className="ml-2 underline underline-offset-4">Retry</button>
-            </div>
-          )}
-
-          {loading ? (
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {[0, 1, 2, 3, 4, 5].map((item) => <div key={item} className="glass h-[390px] animate-pulse rounded-3xl" />)}
-            </div>
-          ) : blogs.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {blogs.map((blog) => (
-                <Link
-                  key={blog.id}
-                  to={`/blog/${blog.slug}`}
-                  className="group glass flex h-full flex-col overflow-hidden rounded-3xl transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:shadow-[0_18px_55px_rgba(0,200,255,0.12)]"
-                >
-                  <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-cyan-950 via-[#101a2a] to-blue-950">
-                    {blog.featured_image ? (
-                      <img src={blog.featured_image} alt={blog.featured_image_alt} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-cyan-300/50"><BookOpen className="h-12 w-12" /></div>
-                    )}
-                    <span className="absolute left-4 top-4 rounded-full border border-cyan-300/25 bg-[#07101e]/85 px-3 py-1.5 text-xs font-semibold text-cyan-100 backdrop-blur">
-                      {blog.category}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 flex-col p-5 md:p-6">
-                    <h3 className="font-display text-xl font-bold leading-snug text-white transition-colors group-hover:text-cyan-200">{blog.title}</h3>
-                    <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-white/55">{blog.excerpt}</p>
-                    <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/10 pt-4 text-xs text-white/40">
-                      <span className="inline-flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" /> {formatBlogDate(blog.published_at)}</span>
-                      {blog.reading_time > 0 && <span className="inline-flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" /> {blog.reading_time} min read</span>}
-                    </div>
-                    <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 transition group-hover:gap-3">
-                      Read the guide <ArrowUpRight className="h-4 w-4" />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : !error ? (
-            <div className="glass rounded-3xl px-6 py-14 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 text-cyan-200"><BookOpen className="h-7 w-7" /></div>
-              <h2 className="mt-5 font-display text-2xl font-bold text-white">No guides found</h2>
-              <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-white/50">
-                {searchQuery || selectedCategory ? 'Try another search or clear your filters to see all guides.' : 'We’re preparing more practical guides. Check back soon.'}
-              </p>
-              {(searchQuery || selectedCategory) && <button type="button" onClick={clearFilters} className="mt-5 rounded-full border border-cyan-300/25 px-5 py-2.5 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-400/10">Show all guides</button>}
-            </div>
-          ) : null}
-
-          {!loading && totalPages > 1 && (
-            <nav aria-label="Guide pages" className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <button type="button" disabled={page <= 1} onClick={() => changePage(page - 1)} className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2.5 text-sm text-white/65 transition enabled:hover:border-cyan-300/40 enabled:hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-30">
-                <ArrowRight className="h-4 w-4 rotate-180" /> Previous
-              </button>
-              <span className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2.5 text-sm font-medium text-cyan-100">{page} / {totalPages}</span>
-              <button type="button" disabled={page >= totalPages} onClick={() => changePage(page + 1)} className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2.5 text-sm text-white/65 transition enabled:hover:border-cyan-300/40 enabled:hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-30">
-                Next <ArrowRight className="h-4 w-4" />
-              </button>
-            </nav>
-          )}
-
-          <section className="relative mt-16 overflow-hidden rounded-[2rem] border border-cyan-300/15 bg-gradient-to-r from-cyan-950/50 via-[#0d1523] to-blue-950/40 p-7 md:mt-24 md:p-12">
-            <div className="pointer-events-none absolute -right-10 -top-20 h-64 w-64 rounded-full bg-cyan-400/10 blur-[90px]" />
-            <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-              <div className="max-w-2xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Have something in mind?</p>
-                <h2 className="mt-2 font-display text-3xl font-bold text-white md:text-4xl">Turn the next idea into a real plan.</h2>
-                <p className="mt-3 text-sm leading-6 text-white/55 md:text-base">Tell us what you’re building. We’ll help you map the scope, timeline and budget — free, with no obligation.</p>
-              </div>
-              <Link to="/contact" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3.5 font-semibold text-black transition hover:shadow-lg hover:shadow-cyan-500/25">
-                Start your project free <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </section>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '0.8rem', marginBottom: '1.4rem' }}>
+          <div>
+            <p className="ed-rubric">{selectedCategory || 'Explore'}</p>
+            <h2 className="ed-title ed-title--sm" style={{ textTransform: 'none', letterSpacing: '-0.03em' }}>
+              {searchQuery ? `Results for “${searchQuery}”` : selectedCategory ? `Latest ${selectedCategory.toLowerCase()}` : 'Ideas worth getting right'}
+            </h2>
+          </div>
+          {!loading && blogs.length > 0 && <span style={{ fontSize: '0.8rem', color: '#6a746a' }}>Page {page} of {totalPages}</span>}
         </div>
-      </main>
-      <Footer />
-    </div>
+
+        {error && (
+          <div role="alert" className="ed-alert" style={{ marginBottom: '1.2rem' }}>
+            {error} <button type="button" onClick={() => window.location.reload()} className="ed-link" style={{ background: 'none', border: 0, cursor: 'pointer' }}>Retry</button>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {[0, 1, 2, 3, 4, 5].map((item) => (
+              <div key={item} className="ed-card" style={{ height: 340, alignItems: 'center', justifyContent: 'center' }}>
+                <span className="ed-loading-dot" />
+              </div>
+            ))}
+          </div>
+        ) : blogs.length > 0 ? (
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {blogs.map((blog) => (
+              <Link key={blog.id} to={`/blog/${blog.slug}`} className="ed-card" style={{ padding: 0, overflow: 'hidden', textDecoration: 'none' }}>
+                <div style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: '#e6ddc9', borderBottom: '1px solid rgba(84,72,48,0.3)' }}>
+                  {blog.featured_image ? (
+                    <img src={blog.featured_image} alt={blog.featured_image_alt} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ display: 'grid', placeItems: 'center', height: '100%', color: '#7b182a' }}><BookOpen className="h-10 w-10" /></div>
+                  )}
+                  <span className="ed-chip" style={{ position: 'absolute', left: 12, top: 12, background: '#f0ebdd' }}>{blog.category}</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, padding: 'clamp(16px, 2vw, 22px)' }}>
+                  <h3 className="ed-card__title" style={{ marginTop: 0 }}>{blog.title}</h3>
+                  <p className="ed-card__body" style={{ flexGrow: 1 }}>{blog.excerpt}</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem 0.9rem', marginTop: '0.9rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(84,72,48,0.2)', fontSize: '0.74rem', color: '#6a746a' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><CalendarDays className="h-3.5 w-3.5" /> {formatBlogDate(blog.published_at)}</span>
+                    {blog.reading_time > 0 && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Clock3 className="h-3.5 w-3.5" /> {blog.reading_time} min read</span>}
+                  </div>
+                  <span style={{ marginTop: '0.7rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: '#7b182a' }}>
+                    Read the guide <ArrowUpRight className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : !error ? (
+          <div className="ed-card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
+            <div style={{ margin: '0 auto 1rem', width: 52, height: 52, display: 'grid', placeItems: 'center', borderRadius: 4, background: 'rgba(197,222,151,0.6)', border: '1px solid rgba(123,24,42,0.3)', color: '#7b182a' }}>
+              <BookOpen className="h-6 w-6" />
+            </div>
+            <h2 className="ed-card__title">No guides found</h2>
+            <p className="ed-card__body" style={{ maxWidth: '34rem', margin: '0.4rem auto 0' }}>
+              {searchQuery || selectedCategory ? 'Try another search or clear your filters to see all guides.' : 'We’re preparing more practical guides. Check back soon.'}
+            </p>
+            {(searchQuery || selectedCategory) && <button type="button" onClick={clearFilters} className="ed-btn ed-btn--sm" style={{ marginTop: '1rem' }}>Show all guides</button>}
+          </div>
+        ) : null}
+
+        {!loading && totalPages > 1 && (
+          <nav aria-label="Guide pages" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', marginTop: '2rem' }}>
+            <button type="button" disabled={page <= 1} onClick={() => changePage(page - 1)} className="ed-btn ed-btn--ghost ed-btn--sm" style={{ opacity: page <= 1 ? 0.35 : 1 }}>
+              <ArrowRight className="h-4 w-4 rotate-180" /> Previous
+            </button>
+            <span className="ed-chip">{page} / {totalPages}</span>
+            <button type="button" disabled={page >= totalPages} onClick={() => changePage(page + 1)} className="ed-btn ed-btn--ghost ed-btn--sm" style={{ opacity: page >= totalPages ? 0.35 : 1 }}>
+              Next <ArrowRight className="h-4 w-4" />
+            </button>
+          </nav>
+        )}
+      </Sheet>
+
+      <CtaBand
+        eyebrow="Have something in mind?"
+        title={<>Turn the next idea into a <em>real plan.</em></>}
+        description="Tell us what you’re building. We’ll help you map the scope, timeline and budget — free, with no obligation."
+        primaryTo="/contact"
+        primaryLabel="Start your project free"
+        secondaryTo="/services"
+        secondaryLabel="Explore services"
+        note="One business day reply. No card required."
+      />
+    </>
   );
 }

@@ -1,8 +1,11 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight, Check, PhoneCall } from 'lucide-react';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../constants/siteContact.js';
+import { CtaBand, PageHero, SectionHead, Sheet } from '../components/editorial/EditorialPage';
 
 const offerings = {
   'website-design': {
+    eyebrow: 'Custom website design',
     title: 'Custom Website Design for Small Businesses',
     intro: 'Chronolyte designs and develops business websites, landing pages, and online experiences built around your goals, brand, and customers.',
     suitable: 'Small businesses, consultants, service providers, startups, and founders who want an original, maintainable website.',
@@ -10,6 +13,7 @@ const offerings = {
     questions: [['Can you build a site without a template?', 'Chronolyte offers custom website development. Discuss your preferred design and framework when requesting a quote.'], ['Can you add contact or booking forms?', 'Lead capture, inquiries, and integrations can be scoped to your workflow.']]
   },
   'affordable-web-design': {
+    eyebrow: 'Affordable web design',
     title: 'Affordable Web Design for Small Businesses',
     intro: 'Get a website scoped to what your business actually needs. Chronolyte can help prioritize the essentials before expanding into advanced features.',
     suitable: 'Owners who need a professional online presence and want a clear estimate before development begins.',
@@ -17,6 +21,7 @@ const offerings = {
     questions: [['How much does a small business website cost?', 'Pricing depends on page count, integrations, content, design and maintenance. See the current pricing page and request a project-specific quote.'], ['Can I start small?', 'Yes, you can request an initial scope focused on your highest-priority pages.']]
   },
   'website-redesign': {
+    eyebrow: 'Website redesign',
     title: 'Website Redesign and Modernization',
     intro: 'Refresh an outdated website without losing the content and functionality that already works for your visitors.',
     suitable: 'Businesses with slow, difficult-to-use, dated or underperforming websites.',
@@ -24,6 +29,7 @@ const offerings = {
     questions: [['Will I lose my Google rankings?', 'No redesign can guarantee rankings. We can plan redirect mapping, preserve useful URLs and monitor indexing to reduce migration risk.'], ['Do you have to rebuild everything?', 'Not always. The scope depends on your current site and technology.']]
   },
   'ai-automation': {
+    eyebrow: 'AI automation',
     title: 'AI Automation for Business Workflows',
     intro: 'Explore workflow automation, AI chatbots, lead routing and custom integrations that reduce manual work in your business.',
     suitable: 'Teams that repeatedly copy information between tools, answer common questions, or process customer inquiries.',
@@ -31,6 +37,7 @@ const offerings = {
     questions: [['Can automation work with my current tools?', 'Compatibility depends on the APIs and access provided by those tools.'], ['Will the AI make decisions alone?', 'We can scope human approval for sensitive or high-impact steps.']]
   },
   'custom-software': {
+    eyebrow: 'Custom software',
     title: 'Custom Software and SaaS MVP Development',
     intro: 'Build a focused web application, dashboard, or SaaS MVP around a clearly defined product problem.',
     suitable: 'Founders and businesses with a product idea or internal application requirements.',
@@ -40,30 +47,89 @@ const offerings = {
 } as const;
 
 export type ServiceSlug = keyof typeof offerings;
+
 export function ServiceLanding({ slug }: { slug: ServiceSlug }) {
   const entry = offerings[slug];
-  return <div className="min-h-screen bg-[#050508] text-white">
-    <header className="mx-auto max-w-6xl px-6 py-6 flex flex-wrap gap-6 items-center justify-between border-b border-white/10">
-      <Link to="/" className="text-xl font-bold tracking-wider text-cyan-300">CHRONOLYTE</Link>
-      <nav aria-label="Main navigation" className="flex flex-wrap gap-5 text-sm text-white/80">
-        <Link to="/services">Services</Link><Link to="/pricing">Pricing</Link><Link to="/portfolio">Portfolio</Link><Link to="/about">About</Link><Link to="/contact">Contact</Link>
-      </nav>
-    </header>
-    <main className="mx-auto max-w-5xl px-6 py-16 space-y-12">
-      <section className="space-y-6 max-w-3xl">
-        <p className="uppercase tracking-widest text-cyan-300 text-sm">Chronolyte Development Services</p>
-        <h1 className="text-4xl md:text-6xl font-bold leading-tight">{entry.title}</h1>
-        <p className="text-lg text-white/75 leading-relaxed">{entry.intro}</p>
-        <div className="flex flex-wrap gap-4">
-          <Link className="rounded-full bg-cyan-400 px-6 py-3 font-semibold text-black" to="/contact">Request a project quote</Link>
-          <Link className="rounded-full border border-white/30 px-6 py-3" to="/pricing">Explore pricing</Link>
+
+  return (
+    <>
+      <PageHero
+        eyebrow={entry.eyebrow}
+        title={entry.title.split(' for ')[0]}
+        lede={entry.intro}
+        actions={
+          <>
+            <Link to="/contact" className="ed-btn">Request a project quote <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/pricing" className="ed-btn ed-btn--ghost">Explore pricing</Link>
+          </>
+        }
+        meta={
+          <>
+            <span>Free scoping call</span>
+            <span>Fixed-price quote</span>
+            <span>Worldwide remote delivery</span>
+          </>
+        }
+      />
+
+      <Sheet tone="paper">
+        <SectionHead
+          rubric="Who this is for"
+          number="01 / 03"
+          title={<>Is this a fit for <em>your project?</em></>}
+          lede={entry.suitable}
+        />
+      </Sheet>
+
+      <Sheet tone="lime">
+        <SectionHead
+          rubric="What's included"
+          number="02 / 03"
+          title={<>What your project <em>can include</em></>}
+        />
+        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: '0.55rem' }}>
+          {entry.deliverables.map((item) => (
+            <li key={item} className="ed-card" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '0.7rem', padding: '0.9rem 1.1rem' }}>
+              <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#7b182a' }} />
+              <span style={{ fontSize: '0.92rem', lineHeight: 1.6, color: '#2f422a' }}>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </Sheet>
+
+      <Sheet tone="paper">
+        <SectionHead
+          rubric="Common questions"
+          number="03 / 03"
+          title={<>Straight <em>answers</em></>}
+        />
+        <div style={{ display: 'grid', gap: '0.9rem' }}>
+          {entry.questions.map(([q, a]) => (
+            <article key={q} className="ed-card ed-card--flat">
+              <h3 className="ed-card__title">{q}</h3>
+              <p className="ed-card__body">{a}</p>
+            </article>
+          ))}
         </div>
-      </section>
-      <section className="space-y-3"><h2 className="text-2xl font-semibold">Who this service is for</h2><p className="text-white/70">{entry.suitable}</p></section>
-      <section className="space-y-5"><h2 className="text-2xl font-semibold">What your project can include</h2><ul className="grid md:grid-cols-2 gap-4">{entry.deliverables.map(v=><li key={v} className="rounded-xl bg-white/5 border border-white/10 p-5 text-white/80">{v}</li>)}</ul></section>
-      <section className="space-y-5"><h2 className="text-2xl font-semibold">Common questions</h2>{entry.questions.map(([q,a])=><div key={q} className="border-b border-white/10 pb-5"><h3 className="font-semibold text-lg">{q}</h3><p className="text-white/70 mt-2">{a}</p></div>)}</section>
-      <section className="rounded-2xl border border-cyan-400/25 p-8 space-y-4"><h2 className="text-2xl font-semibold">Tell us what you want to build</h2><p className="text-white/70">Share your requirements and receive a proposal based on your project's actual scope.</p><Link to="/contact" className="inline-block rounded-full bg-cyan-400 px-6 py-3 text-black font-semibold">Discuss your project</Link></section>
-    </main>
-    <footer className="max-w-5xl mx-auto px-6 py-10 text-sm text-white/60 border-t border-white/10"><Link to="/">Chronolyte</Link> · <Link to="/privacy">Privacy</Link> · <Link to="/terms">Terms</Link></footer>
-  </div>;
+        <p className="ed-copy" style={{ marginTop: '1.4rem' }}>
+          Prefer to talk it through? <a href={CONTACT_PHONE_TEL} className="ed-link">Call {CONTACT_PHONE_DISPLAY}</a>.
+        </p>
+      </Sheet>
+
+      <CtaBand
+        eyebrow="Free project plan"
+        title={<>Tell us what you want <em>to build</em></>}
+        description="Share your requirements and receive a proposal based on your project's actual scope — no templates, no vague estimates."
+        primaryTo="/contact"
+        primaryLabel="Discuss your project"
+        secondaryTo="/services"
+        secondaryLabel="See all services"
+        note="Reply within one business day. No card required."
+      >
+        <p style={{ marginTop: '1rem', fontSize: '0.82rem' }}>
+          <a href={CONTACT_PHONE_TEL} className="ed-link"><PhoneCall className="mr-1 inline h-3.5 w-3.5" /> {CONTACT_PHONE_DISPLAY}</a>
+        </p>
+      </CtaBand>
+    </>
+  );
 }

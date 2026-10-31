@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { HourglassLogo } from './HourglassLogo';
+import { BrandMark, BrandWordmark } from './editorial/Brand';
 import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL, CONTACT_WHATSAPP_URL } from '../constants/siteContact.js';
 
 type SocialKey = 'twitter' | 'linkedin' | 'github' | 'facebook' | 'instagram' | 'youtube' | 'whatsapp';
@@ -16,7 +15,7 @@ const socialDefaults: Record<SocialKey, string> = {
   whatsapp: CONTACT_WHATSAPP_URL
 };
 
-const socialIcons: Record<SocialKey, JSX.Element> = {
+const socialIcons: Record<SocialKey, ReactNode> = {
   twitter: <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />,
   linkedin: <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />,
   github: <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />,
@@ -31,7 +30,7 @@ export function Footer() {
   const [siteSettings, setSiteSettings] = useState({
     contact_email: 'contact@chronolyte.com',
     contact_phone: CONTACT_PHONE_DISPLAY,
-    footer_copyright: '© 2025 Chronolyte. All rights reserved.',
+    footer_copyright: '© 2026 Chronolyte. All rights reserved.',
     footer_tagline: 'We bend time with AI.',
     footer_show_social: true
   });
@@ -67,100 +66,96 @@ export function Footer() {
     return () => { mounted = false; };
   }, []);
 
-  const socialEntries = Object.entries(socialLinks).filter(([_, url]) => Boolean(url));
+  const socialEntries = Object.entries(socialLinks).filter(([, url]) => Boolean(url));
 
   return (
-    <footer className="relative py-10 md:py-16 border-t border-white/5 bg-[#050508]">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <nav aria-label="Website development services" className="mb-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-white/65">
-          <Link to="/website-design" className="hover:text-cyan-300">Website design</Link>
-          <Link to="/affordable-web-design" className="hover:text-cyan-300">Affordable web design</Link>
-          <Link to="/website-redesign" className="hover:text-cyan-300">Website redesign</Link>
-          <Link to="/ai-automation" className="hover:text-cyan-300">AI automation</Link>
-          <Link to="/custom-software" className="hover:text-cyan-300">Custom software</Link>
-        </nav>
-        <nav aria-label="Worldwide service availability" className="mb-8 flex flex-wrap justify-center gap-5 text-sm text-white/65">
-          <Link className="hover:text-cyan-300" to="/international-web-development">Worldwide web development: USA, UK, Pakistan, Canada, Australia &amp; more</Link>
-        </nav>
-        <nav aria-label="Website buying guides" className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-white/55">
-          <Link to="/blog/best-website-development-service-for-small-business-on-a-budget" className="hover:text-cyan-300">Choose a web designer</Link>
-          <Link to="/blog/what-does-a-499-dollar-business-website-include" className="hover:text-cyan-300">What a $499 website includes</Link>
-          <Link to="/blog/how-to-compare-fast-web-design-agencies" className="hover:text-cyan-300">Compare fast web design</Link>
-        </nav>
-        {/* Contact Info Row */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-8 text-sm text-white/60">
-          <a href={`mailto:${siteSettings.contact_email}`} className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            {siteSettings.contact_email}
-          </a>
-          <a href={CONTACT_PHONE_TEL} className="flex items-center gap-2 hover:text-cyan-400 transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-            {CONTACT_PHONE_DISPLAY}
-          </a>
-        </div>
-        
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-          <Link to="/" className="flex items-center gap-2 md:gap-3">
-            <HourglassLogo className="w-8 h-8 md:w-10 md:h-10" />
-            <span className="font-display font-bold text-base md:text-lg flex items-center text-white" style={{ textShadow: '0 0 8px rgba(0,229,255,0.3)' }}>
-              CHR
-              <span className="relative inline-flex items-center justify-center w-5 h-5 mx-0.5">
-                <span className="absolute inset-[-2px] rounded-full bg-cyan-400/20 blur-sm"></span>
-                <span className="absolute inset-0 rounded-full border-2 border-cyan-400" style={{ boxShadow: '0 0 8px rgba(0,229,255,0.8), inset 0 0 4px rgba(0,229,255,0.3)' }}></span>
-                <span className="absolute inset-[2px] rounded-full border border-cyan-300/40"></span>
-                <span className="absolute w-6 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent"></span>
-                <span className="absolute h-6 w-[1.5px] bg-gradient-to-b from-transparent via-white/80 to-transparent"></span>
-                <span className="absolute w-1.5 h-1.5 rounded-full bg-white" style={{ boxShadow: '0 0 4px #fff' }}></span>
-              </span>
-              NOLYTE
-            </span>
-          </Link>
-          
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/50 md:gap-x-6 md:text-sm">
-            <Link to="/services" className="hover:text-cyan-400 transition-colors">Services</Link>
-            <Link to="/fiverr-upwork-alternative" className="hover:text-cyan-400 transition-colors">Fiverr alternative</Link>
-            <Link to="/industries" className="hover:text-cyan-400 transition-colors">Industries</Link>
-            <Link to="/locations" className="hover:text-cyan-400 transition-colors">Locations</Link>
-            <Link to="/portfolio" className="hover:text-cyan-400 transition-colors">Portfolio</Link>
-            <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
-            <Link to="/blog" className="hover:text-cyan-400 transition-colors">Guides</Link>
-            <Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
+    <footer className="ed-footer">
+      <div className="ed-footer__top">
+        <div className="ed-footer__brand">
+          <div className="ed-brand" style={{ marginBottom: '0.9rem' }}>
+            <BrandMark />
+            <BrandWordmark />
           </div>
-          
+          <p className="ed-footer__blurb">
+            An independent digital studio building websites, apps and SaaS products on fixed quotes —
+            one team for design, development and launch, working worldwide.
+          </p>
           {siteSettings.footer_show_social && socialEntries.length > 0 && (
-            <div className="flex items-center gap-3 md:gap-4">
+            <div className="ed-footer__social">
               {socialEntries.map(([social, url]) => (
-                <motion.a
-                  key={social}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-cyan-400 hover:border-cyan-400/50 transition-colors"
-                >
-                  <span className="sr-only">{social}</span>
-                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24">
+                <a key={social} href={url} target="_blank" rel="noopener noreferrer" aria-label={social}>
+                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                     {socialIcons[social as SocialKey]}
                   </svg>
-                </motion.a>
+                </a>
               ))}
             </div>
           )}
         </div>
-        
-        <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 text-xs md:text-sm text-white/30">
-          <p>{siteSettings.footer_copyright}</p>
-          <div className="flex items-center gap-4">
-            <Link to="/terms" className="hover:text-cyan-400 transition-colors">Terms</Link>
-            <Link to="/privacy" className="hover:text-cyan-400 transition-colors">Privacy</Link>
-            <Link to="/refunds" className="hover:text-cyan-400 transition-colors">Refunds</Link>
-          </div>
-          <p>{siteSettings.footer_tagline}</p>
+
+        <div>
+          <h2 className="ed-footer__title">Services</h2>
+          <ul className="ed-footer__list">
+            <li><Link className="ed-footer__link" to="/website-design">Website design</Link></li>
+            <li><Link className="ed-footer__link" to="/affordable-web-design">Affordable web design</Link></li>
+            <li><Link className="ed-footer__link" to="/website-redesign">Website redesign</Link></li>
+            <li><Link className="ed-footer__link" to="/ai-automation">AI automation</Link></li>
+            <li><Link className="ed-footer__link" to="/custom-software">Custom software</Link></li>
+            <li><Link className="ed-footer__link" to="/services">All services</Link></li>
+          </ul>
         </div>
+
+        <div>
+          <h2 className="ed-footer__title">Studio</h2>
+          <ul className="ed-footer__list">
+            <li><Link className="ed-footer__link" to="/about">About</Link></li>
+            <li><Link className="ed-footer__link" to="/pricing">Pricing</Link></li>
+            <li><Link className="ed-footer__link" to="/portfolio">Portfolio</Link></li>
+            <li><Link className="ed-footer__link" to="/industries">Industries</Link></li>
+            <li><Link className="ed-footer__link" to="/locations">Locations</Link></li>
+            <li><Link className="ed-footer__link" to="/blog">Guides</Link></li>
+            <li><Link className="ed-footer__link" to="/faq">FAQ</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 className="ed-footer__title">Start a project</h2>
+          <div className="ed-footer__contact">
+            <a href={`mailto:${siteSettings.contact_email}`}>{siteSettings.contact_email}</a>
+            <a href={CONTACT_PHONE_TEL}>{CONTACT_PHONE_DISPLAY}</a>
+            <a href={CONTACT_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp us</a>
+            <Link className="ed-btn ed-btn--onDark ed-btn--sm" to="/contact" style={{ marginTop: '0.6rem', width: 'fit-content' }}>
+              Start your project free
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="ed-footer__seo">
+        <p>
+          <span className="ed-footer__title" style={{ display: 'inline', marginRight: '0.6rem' }}>Worldwide</span>
+          <Link to="/international-web-development">Web development for USA, UK, Pakistan, Canada, Australia &amp; more</Link>
+          {' · '}
+          <Link to="/fiverr-upwork-alternative">Fiverr &amp; Upwork alternative</Link>
+        </p>
+        <p>
+          <span className="ed-footer__title" style={{ display: 'inline', marginRight: '0.6rem' }}>Guides</span>
+          <Link to="/blog/best-website-development-service-for-small-business-on-a-budget">Choose a web designer</Link>
+          {' · '}
+          <Link to="/blog/what-does-a-499-dollar-business-website-include">What a $499 website includes</Link>
+          {' · '}
+          <Link to="/blog/how-to-compare-fast-web-design-agencies">Compare fast web design agencies</Link>
+        </p>
+      </div>
+
+      <div className="ed-footer__bottom">
+        <p>{siteSettings.footer_copyright}</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.1rem' }}>
+          <Link to="/terms">Terms</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/refunds">Refunds</Link>
+        </div>
+        <p>{siteSettings.footer_tagline}</p>
       </div>
     </footer>
   );

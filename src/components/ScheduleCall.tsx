@@ -190,7 +190,7 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative bg-dark-900 border border-white/10 rounded-3xl p-8 md:p-12 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="ed-dialog relative bg-dark-900 border border-white/10 rounded-3xl p-8 md:p-12 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         <button
           onClick={onClose}

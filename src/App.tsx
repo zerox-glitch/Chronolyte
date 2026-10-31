@@ -3,6 +3,8 @@ import { ServiceLanding } from './pages/ServiceLanding';
 import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { MainSite } from './MainSite';
+import { NotFound } from './pages/NotFound';
+import { EditorialPage } from './components/editorial/EditorialPage';
 import { AdminLayout } from './admin/AdminLayout';
 import { AdminLogin } from './admin/pages/Login';
 import { Dashboard } from './admin/pages/Dashboard';
@@ -32,8 +34,8 @@ import { BlogsAdmin } from './admin/pages/Blogs';
 // Import page components
 import { TermsOfService, PrivacyPolicy, RefundPolicy, About, Services, Contact, Portfolio, FAQ, Pricing, BlogListing, BlogPost, Industries, Locations, FiverrAlternative } from './pages';
 
-function PublicCanvas({ children }: { children: React.ReactNode }) {
-  return <div className="chronolyte-editorial editorial-inner-page">{children}</div>;
+function PublicPage({ children }: { children: React.ReactNode }) {
+  return <EditorialPage>{children}</EditorialPage>;
 }
 
 function LegacyGuidesRedirect() {
@@ -50,37 +52,40 @@ export function App() {
           <Route path="/" element={<MainSite />} />
           
           {/* Legal Pages */}
-          <Route path="/terms" element={<PublicCanvas><TermsOfService /></PublicCanvas>} />
-          <Route path="/privacy" element={<PublicCanvas><PrivacyPolicy /></PublicCanvas>} />
-          <Route path="/refunds" element={<PublicCanvas><RefundPolicy /></PublicCanvas>} />
+          <Route path="/terms" element={<PublicPage><TermsOfService /></PublicPage>} />
+          <Route path="/privacy" element={<PublicPage><PrivacyPolicy /></PublicPage>} />
+          <Route path="/refunds" element={<PublicPage><RefundPolicy /></PublicPage>} />
           
           {/* Main Pages */}
-          <Route path="/about" element={<PublicCanvas><About /></PublicCanvas>} />
-          <Route path="/services" element={<PublicCanvas><Services /></PublicCanvas>} />
-          <Route path="/website-design" element={<PublicCanvas><ServiceLanding slug="website-design" /></PublicCanvas>} />
-          <Route path="/affordable-web-design" element={<PublicCanvas><ServiceLanding slug="affordable-web-design" /></PublicCanvas>} />
-          <Route path="/website-redesign" element={<PublicCanvas><ServiceLanding slug="website-redesign" /></PublicCanvas>} />
-          <Route path="/ai-automation" element={<PublicCanvas><ServiceLanding slug="ai-automation" /></PublicCanvas>} />
-          <Route path="/custom-software" element={<PublicCanvas><ServiceLanding slug="custom-software" /></PublicCanvas>} />
-          <Route path="/contact" element={<PublicCanvas><Contact /></PublicCanvas>} />
-          <Route path="/portfolio" element={<PublicCanvas><Portfolio /></PublicCanvas>} />
-          <Route path="/faq" element={<PublicCanvas><FAQ /></PublicCanvas>} />
-          <Route path="/pricing" element={<PublicCanvas><Pricing /></PublicCanvas>} />
-          <Route path="/industries" element={<PublicCanvas><Industries /></PublicCanvas>} />
-          <Route path="/locations" element={<PublicCanvas><Locations /></PublicCanvas>} />
-          <Route path="/international-web-development" element={<PublicCanvas><InternationalServices /></PublicCanvas>} />
-          <Route path="/fiverr-upwork-alternative" element={<PublicCanvas><FiverrAlternative /></PublicCanvas>} />
+          <Route path="/about" element={<PublicPage><About /></PublicPage>} />
+          <Route path="/services" element={<PublicPage><Services /></PublicPage>} />
+          <Route path="/website-design" element={<PublicPage><ServiceLanding slug="website-design" /></PublicPage>} />
+          <Route path="/affordable-web-design" element={<PublicPage><ServiceLanding slug="affordable-web-design" /></PublicPage>} />
+          <Route path="/website-redesign" element={<PublicPage><ServiceLanding slug="website-redesign" /></PublicPage>} />
+          <Route path="/ai-automation" element={<PublicPage><ServiceLanding slug="ai-automation" /></PublicPage>} />
+          <Route path="/custom-software" element={<PublicPage><ServiceLanding slug="custom-software" /></PublicPage>} />
+          <Route path="/contact" element={<PublicPage><Contact /></PublicPage>} />
+          <Route path="/portfolio" element={<PublicPage><Portfolio /></PublicPage>} />
+          <Route path="/faq" element={<PublicPage><FAQ /></PublicPage>} />
+          <Route path="/pricing" element={<PublicPage><Pricing /></PublicPage>} />
+          <Route path="/industries" element={<PublicPage><Industries /></PublicPage>} />
+          <Route path="/locations" element={<PublicPage><Locations /></PublicPage>} />
+          <Route path="/international-web-development" element={<PublicPage><InternationalServices /></PublicPage>} />
+          <Route path="/fiverr-upwork-alternative" element={<PublicPage><FiverrAlternative /></PublicPage>} />
           
           {/* Legacy guide URLs mirror the current /blog routes outside Vercel too */}
           <Route path="/guides" element={<Navigate to="/blog" replace />} />
           <Route path="/guides/:slug" element={<LegacyGuidesRedirect />} />
 
           {/* Blog Pages */}
-          <Route path="/blog" element={<PublicCanvas><BlogListing /></PublicCanvas>} />
-          <Route path="/blog/:slug" element={<PublicCanvas><BlogPost /></PublicCanvas>} />
-          <Route path="/blog/category/:category" element={<PublicCanvas><BlogListing /></PublicCanvas>} />
-          <Route path="/blog/search" element={<PublicCanvas><BlogListing /></PublicCanvas>} />
+          <Route path="/blog" element={<PublicPage><BlogListing /></PublicPage>} />
+          <Route path="/blog/:slug" element={<PublicPage><BlogPost /></PublicPage>} />
+          <Route path="/blog/category/:category" element={<PublicPage><BlogListing /></PublicPage>} />
+          <Route path="/blog/search" element={<PublicPage><BlogListing /></PublicPage>} />
           
+          {/* Unknown public URL */}
+          <Route path="*" element={<PublicPage><NotFound /></PublicPage>} />
+
           {/* Admin Login */}
           <Route path="/admin/login" element={<AdminLogin />} />
           
@@ -97,13 +102,13 @@ export function App() {
             <Route path="leads" element={<Leads />} />
             <Route path="project-requests" element={<ProjectRequests />} />
             <Route path="projects-manager" element={<ProjectsManager />} />
-            <Route path="services" element={<PublicCanvas><ServicesManager /></PublicCanvas>} />
-            <Route path="pricing" element={<PublicCanvas><PricingManager /></PublicCanvas>} />
+            <Route path="services" element={<ServicesManager />} />
+            <Route path="pricing" element={<PricingManager />} />
             <Route path="videos" element={<ProjectVideoUpload />} />
             <Route path="blogs" element={<BlogsAdmin />} />
             <Route path="content" element={<ContentManager />} />
             <Route path="testimonials" element={<Testimonials />} />
-            <Route path="portfolio" element={<PublicCanvas><PortfolioManager /></PublicCanvas>} />
+            <Route path="portfolio" element={<PortfolioManager />} />
             <Route path="site-settings" element={<SiteSettings />} />
             <Route path="settings" element={<Settings />} />
           </Route>

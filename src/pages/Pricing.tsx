@@ -1,28 +1,11 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { CallNowButton } from '../components/CallNowButton';
 import { ProjectIntakeForm } from '../components/ProjectIntakeForm';
-import { Footer } from '../components/Footer';
-import { SiteNavigation } from '../components/SiteNavigation';
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, Loader2, Shield, CreditCard, HeartHandshake } from 'lucide-react';
+import { CheckCircle2, ChevronDown, Clock, Shield, CreditCard, HeartHandshake, ArrowRight } from 'lucide-react';
+import { CtaBand, PageHero, SectionHead, Sheet } from '../components/editorial/EditorialPage';
 
-// Animated Section Wrapper
-function AnimatedSection({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay, ease: [0.25, 0.1, 0.25, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-// Pricing Card Component - Dark Theme
+// Pricing Card
 interface PricingCardProps {
   tier: {
     name: string;
@@ -46,133 +29,94 @@ function PricingCard({ tier, isPopular = false, onStartProject }: PricingCardPro
   const features = Array.isArray(tier.features) ? tier.features : typeof tier.features === 'string' ? (() => { try { return JSON.parse(tier.features); } catch { return []; } })() : [];
   const isMostPopular = Boolean(Number(isPopular) || Number(tier.highlighted));
   const priceDisplay = tier.price_display || `$${tier.price?.toLocaleString()}`;
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.55 }}
       whileHover={{ y: -5 }}
-      className={`relative flex flex-col h-full rounded-2xl transition-all duration-300 ${
-        isMostPopular
-          ? 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20'
-          : 'glass border border-white/10 hover:border-cyan-400/30'
-      }`}
+      className="ed-card h-full"
+      style={isMostPopular ? { borderColor: '#7b182a', borderWidth: 2, boxShadow: '9px 9px 0 rgba(123,24,42,0.24)' } : undefined}
     >
-      {/* Badge */}
       {isMostPopular && (
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-cyan-400 to-blue-500 text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-          Most Popular
-        </div>
+        <span className="ed-chip" style={{ alignSelf: 'flex-start', marginBottom: '0.7rem', background: '#7b182a', borderColor: '#5a0f1f', color: '#fff5e8' }}>
+          Most popular
+        </span>
       )}
+      <h3 className="ed-card__title">{tier.name}</h3>
+      <p className="ed-card__body" style={{ marginTop: '0.2rem' }}>{tier.description}</p>
 
-      <div className="p-8 flex-1 flex flex-col">
-        {/* Header */}
-        <div className="mb-6">
-          <h3 className="text-2xl font-bold text-white mb-2">
-            {tier.name}
-          </h3>
-          <p className="text-sm mb-4 text-white/60">
-            {tier.description}
-          </p>
-          
-          {/* Price */}
-          <div className="mb-2">
-            <div className="flex items-baseline gap-1">
-              <span className={`text-4xl font-bold ${isMostPopular ? 'gradient-text' : 'text-cyan-400'}`}>
-                {priceDisplay}
-              </span>
-              {tier.period && (
-                <span className="text-white/50">
-                  {tier.period}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Timeline */}
-          <div className="flex items-center gap-2 text-sm text-white/50">
-            <Clock size={16} />
-            <span>{tier.timeline}</span>
-          </div>
-        </div>
-
-        {/* Features */}
-        <div className="space-y-3 mb-8 flex-1">
-          {features.slice(0, 7).map((feature: string, idx: number) => (
-            <div key={idx} className="flex items-start gap-3">
-              <CheckCircle2 size={18} className={isMostPopular ? 'text-cyan-400 flex-shrink-0' : 'text-emerald-400 flex-shrink-0'} />
-              <span className="text-sm leading-relaxed text-white/70">
-                {feature}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => onStartProject({
-            name: tier.name,
-            price: tier.price || 0,
-            category: tier.category || 'Custom'
-          })}
-          className={`w-full py-3 px-6 rounded-lg font-semibold text-center transition-all duration-300 ${
-            isMostPopular
-              ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-black hover:shadow-lg hover:shadow-cyan-500/30'
-              : 'border border-cyan-400/50 text-cyan-400 hover:bg-cyan-400/10'
-          }`}
-        >
-          Get My Exact Quote
-        </motion.button>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', margin: '0.9rem 0 0.3rem' }}>
+        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.9rem, 3vw, 2.6rem)', fontWeight: 700, letterSpacing: '-0.05em', color: '#7b182a', lineHeight: 1 }}>
+          {priceDisplay}
+        </span>
+        {tier.period && <span style={{ fontSize: '0.82rem', color: '#5f6d62' }}>{tier.period}</span>}
       </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#5f6d62' }}>
+        <Clock className="h-3.5 w-3.5" />
+        <span>{tier.timeline}</span>
+      </div>
+
+      <hr className="ed-hairline" style={{ margin: '1rem 0' }} />
+
+      <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.5rem', flexGrow: 1 }}>
+        {features.slice(0, 8).map((feature: string, idx: number) => (
+          <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.87rem', lineHeight: 1.55, color: '#4c5a50' }}>
+            <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#7b182a' }} />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <button
+        type="button"
+        onClick={() => onStartProject({
+          name: tier.name,
+          price: tier.price || 0,
+          category: tier.category || 'Custom'
+        })}
+        className={isMostPopular ? 'ed-btn' : 'ed-btn ed-btn--ghost'}
+        style={{ width: '100%', marginTop: '1.2rem' }}
+      >
+        Get my exact quote
+      </button>
     </motion.div>
   );
 }
 
-// FAQ Item Component - Dark Theme
-interface FAQItemProps {
+// FAQ Item
+function FAQItem({ question, answer, isOpen, onToggle }: {
   question: string;
   answer: string;
   isOpen: boolean;
   onToggle: () => void;
-}
-
-function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
+}) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="glass rounded-xl overflow-hidden border border-white/10 hover:border-cyan-400/30 transition-colors"
-    >
+    <div className="ed-card ed-card--flat" style={{ padding: 0, overflow: 'hidden' }}>
       <button
         onClick={onToggle}
-        className="w-full px-6 py-5 flex items-center justify-between hover:bg-white/5 transition-colors"
+        aria-expanded={isOpen}
+        style={{ width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', padding: '1rem 1.2rem', background: 'transparent', border: 0, cursor: 'pointer', textAlign: 'left' }}
       >
-        <h4 className="text-lg font-semibold text-white text-left">{question}</h4>
-        {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-white/50 flex-shrink-0" />
-        )}
+        <h4 style={{ margin: 0, fontFamily: "'Space Grotesk', sans-serif", fontSize: '1rem', fontWeight: 600, letterSpacing: '-0.02em', color: '#26312a' }}>{question}</h4>
+        <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }} style={{ flex: 'none', width: 26, height: 26, borderRadius: '50%', border: '1px solid rgba(123,24,42,0.4)', display: 'grid', placeItems: 'center', color: '#7b182a' }}>
+          <ChevronDown className="h-4 w-4" />
+        </motion.span>
       </button>
-      <motion.div
-        initial={{ height: 0, opacity: 0 }}
-        animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="overflow-hidden border-t border-white/10"
-      >
-        <p className="px-6 py-5 text-white/70 leading-relaxed">{answer}</p>
-      </motion.div>
-    </motion.div>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} style={{ overflow: 'hidden' }}>
+            <p className="ed-copy" style={{ padding: '0.9rem 1.2rem 1.1rem', margin: 0, fontSize: '0.92rem', borderTop: '1px solid rgba(84,72,48,0.18)' }}>{answer}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
-const pricingGroups = ['websites','ai-tools','saas','automation'];
 const formatStartingPrice = (plan: any) => plan.price_display || 'From $' + Number(plan.price || 0).toLocaleString('en-US');
 
 export function Pricing() {
@@ -250,391 +194,179 @@ export function Pricing() {
     }
   ];
 
+  const featured = pricingData.websites.find((plan: any) => plan.is_popular || plan.highlighted);
+
+  const renderGroup = (plans: any[], categoryLabel: string) => (
+    loading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0', gap: '0.5rem' }}>
+        <span className="ed-loading-dot" /><span className="ed-loading-dot" /><span className="ed-loading-dot" />
+      </div>
+    ) : (
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {plans?.map((tier, index) => (
+          <PricingCard key={index} tier={{ ...tier, category: categoryLabel }} isPopular={tier.is_popular} onStartProject={handleStartProject} />
+        ))}
+      </div>
+    )
+  );
+
   return (
-    <div className="min-h-screen bg-dark-900 text-white">
-      <SiteNavigation />
+    <>
+      <PageHero
+        eyebrow="Transparent pricing"
+        title={<>Simple, <em>honest</em> pricing</>}
+        lede="Explore up-to-date packages managed directly by Chronolyte. Compare features, delivery timelines and prices before requesting a tailored quote."
+        actions={
+          <>
+            <button type="button" onClick={() => handleStartProject({ name: 'Custom Project', price: 0, category: 'Custom' })} className="ed-btn">
+              Get a custom quote <ArrowRight className="h-4 w-4" />
+            </button>
+            <Link to="/contact" className="ed-btn ed-btn--ghost">Talk it through</Link>
+          </>
+        }
+        meta={
+          <>
+            <span>50 / 50 payment split</span>
+            <span>14 days post-launch support</span>
+            <span>Fixed-price quotes</span>
+          </>
+        }
+      />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Transparent Pricing</span>
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
-              Simple, <span className="gradient-text">Honest</span> Pricing
-            </h1>
-            <p className="text-white/60 text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              Explore up-to-date packages managed directly by Chronolyte. Compare features, delivery timelines and prices before requesting a tailored quote.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <CallNowButton className="text-center" />
-              <Link
-                to="/contact"
-                className="px-8 py-3 rounded-full border border-cyan-400/50 text-cyan-400 font-semibold hover:bg-cyan-400/10 transition-colors"
-              >
-                Get Custom Quote
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Featured offer uses the same admin-managed data as the pricing cards. */}
-      {pricingData.websites.find((plan: any) => plan.is_popular || plan.highlighted) && (() => {
-        const plan = pricingData.websites.find((p: any) => p.is_popular || p.highlighted);
-        const features = typeof plan.features === 'string' ? (() => { try { return JSON.parse(plan.features); } catch { return []; } })() : (plan.features || []);
-        return <section className="px-4 md:px-6 pb-16">
-          <div className="max-w-6xl mx-auto rounded-3xl border border-cyan-400/30 bg-cyan-500/10 p-7 md:p-10">
-            <p className="text-cyan-300 uppercase tracking-widest text-sm mb-3">Featured website package</p>
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">{plan.name} — {formatStartingPrice(plan)}</h2>
-            <p className="text-white/75 mb-3">{plan.description}</p>
-            {plan.timeline && <p className="text-cyan-300 mb-6">Delivery: {plan.timeline}</p>}
-            <ul className="grid sm:grid-cols-2 gap-3 mb-7">
-              {features.map((feature: string, index: number) => <li key={index} className="flex gap-2 text-white/80"><CheckCircle2 className="shrink-0 h-5 w-5 text-cyan-300"/>{feature}</li>)}
-            </ul>
-            <button onClick={() => handleStartProject({ name: plan.name, price: Number(plan.price), category: plan.category })} className="bg-cyan-400 text-black rounded-xl px-7 py-3 font-bold">Get a quote for {plan.name}</button>
-          </div>
-        </section>;
-      })()}
-      <section className="px-4 md:px-6 pb-16">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-5">
-          {[['01','Choose a package','Review the current prices and features above.'],['02','Agree on scope','Confirm pages, integrations, timeline and a written final quote.'],['03','Launch and hand over','Review, approve and receive your agreed deliverables.']].map(([step,title,description]) => <div key={step} className="rounded-2xl bg-white/5 border border-white/10 p-6"><p className="text-cyan-300 mb-2">{step}</p><h3 className="font-bold text-xl mb-2">{title}</h3><p className="text-white/65">{description}</p></div>)}
-        </div>
-      </section>
-      {/* Payment Terms */}
-      <section className="py-16 px-4 md:px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            <AnimatedSection delay={0.1}>
-              <div className="glass rounded-2xl p-8 border border-white/10 text-center">
-                <div className="text-4xl font-bold gradient-text mb-4">50/50</div>
-                <h3 className="text-xl font-semibold text-white mb-3">Payment Split</h3>
-                <p className="text-white/60 leading-relaxed">
-                  50% upfront to start, 50% upon completion. Simple and fair.
-                </p>
+      {featured && (() => {
+        const features = typeof featured.features === 'string' ? (() => { try { return JSON.parse(featured.features); } catch { return []; } })() : (featured.features || []);
+        return (
+          <Sheet tone="cherry">
+            <div className="ed-rubric">Featured website package<span className="ed-rubric__num">01 / 06</span></div>
+            <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+              <div>
+                <h2 className="ed-title ed-title--sm" style={{ marginTop: '0.6rem' }}>
+                  {featured.name} <em>— {formatStartingPrice(featured)}</em>
+                </h2>
+                <p className="ed-lede">{featured.description}</p>
+                {featured.timeline && <p className="ed-chip" style={{ marginTop: '0.9rem' }}>Delivery: {featured.timeline}</p>}
               </div>
-            </AnimatedSection>
-            <AnimatedSection delay={0.2}>
-              <div className="glass rounded-2xl p-8 border border-white/10 text-center">
-                <div className="text-4xl font-bold gradient-text mb-4">14</div>
-                <h3 className="text-xl font-semibold text-white mb-3">Days Free Support</h3>
-                <p className="text-white/60 leading-relaxed">
-                  Every project includes post-launch support at no extra cost.
-                </p>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection delay={0.3}>
-              <div className="glass rounded-2xl p-8 border border-white/10 text-center">
-                <div className="text-4xl font-bold gradient-text mb-4">∞</div>
-                <h3 className="text-xl font-semibold text-white mb-3">Revisions Included</h3>
-                <p className="text-white/60 leading-relaxed">
-                  We work with you until you're completely satisfied.
-                </p>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
-
-      {/* Website Development */}
-      <section className="py-20 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          <AnimatedSection>
-            <div className="text-center mb-16">
-              <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Websites</span>
-              <h2 className="text-4xl font-bold text-white mb-4">Website Development</h2>
-              <p className="text-xl text-white/60">
-                Stunning, high-performance websites that convert
-              </p>
-            </div>
-          </AnimatedSection>
-
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
-            </div>
-          ) : (
-            <div className="flex flex-wrap justify-center gap-6">
-              {pricingData.websites?.map((tier, index) => (
-                <div key={index} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] min-w-[280px] max-w-[350px]">
-                  <PricingCard tier={{...tier, category: 'Website'}} isPopular={tier.is_popular} onStartProject={handleStartProject} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* AI Tools */}
-      <section className="py-20 px-4 md:px-6 bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900">
-        <div className="max-w-7xl mx-auto">
-          <AnimatedSection>
-            <div className="text-center mb-16">
-              <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">AI Solutions</span>
-              <h2 className="text-4xl font-bold text-white mb-4">Mobile App Development</h2>
-              <p className="text-xl text-white/60">
-                Intelligent solutions powered by cutting-edge AI
-              </p>
-            </div>
-          </AnimatedSection>
-
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
-            </div>
-          ) : (
-            <div className="flex flex-wrap justify-center gap-6">
-              {pricingData.aitools?.map((tier, index) => (
-                <div key={index} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] min-w-[280px] max-w-[380px]">
-                  <PricingCard tier={{...tier, category: 'AI Tool'}} isPopular={tier.is_popular} onStartProject={handleStartProject} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* SaaS Development */}
-      <section className="py-20 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto">
-          <AnimatedSection>
-            <div className="text-center mb-16">
-              <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">SaaS</span>
-              <h2 className="text-4xl font-bold text-white mb-4">SaaS Development</h2>
-              <p className="text-xl text-white/60">
-                Full-stack products built for growth and scale
-              </p>
-            </div>
-          </AnimatedSection>
-
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
-            </div>
-          ) : (
-            <div className="flex flex-wrap justify-center gap-6">
-              {pricingData.saas?.map((tier, index) => (
-                <div key={index} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] min-w-[280px] max-w-[380px]">
-                  <PricingCard tier={{...tier, category: 'SaaS'}} isPopular={tier.is_popular} onStartProject={handleStartProject} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Automation */}
-      <section className="py-20 px-4 md:px-6 bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900">
-        <div className="max-w-7xl mx-auto">
-          <AnimatedSection>
-            <div className="text-center mb-16">
-              <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Automation</span>
-              <h2 className="text-4xl font-bold text-white mb-4">Hire Developers</h2>
-              <p className="text-xl text-white/60">
-                Intelligent workflow automation for your business
-              </p>
-            </div>
-          </AnimatedSection>
-
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
-            </div>
-          ) : (
-            <div className="flex flex-wrap justify-center gap-6">
-              {pricingData.automation?.map((tier, index) => (
-                <div key={index} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] min-w-[280px] max-w-[380px]">
-                  <PricingCard tier={{...tier, category: 'Automation'}} isPopular={tier.is_popular} onStartProject={handleStartProject} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-20 px-4 md:px-6">
-        <div className="max-w-4xl mx-auto">
-          <AnimatedSection>
-            <div className="text-center mb-16">
-              <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">FAQ</span>
-              <h2 className="text-4xl font-bold text-white mb-4">Common Questions</h2>
-              <p className="text-xl text-white/60">
-                Everything about our pricing and process
-              </p>
-            </div>
-          </AnimatedSection>
-
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <FAQItem
-                key={index}
-                question={faq.question}
-                answer={faq.answer}
-                isOpen={openFAQs[index] || false}
-                onToggle={() => toggleFAQ(index)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 md:px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <AnimatedSection>
-            <div className="glass rounded-3xl p-12 border border-cyan-400/20">
-              <h2 className="text-4xl font-bold text-white mb-6">Ready to Get Started?</h2>
-              <p className="text-xl text-white/60 mb-8 leading-relaxed">
-                Submit your project request and we'll get back to you within 24 hours.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="ed-card">
+                <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.5rem' }}>
+                  {features.map((feature: string, index: number) => (
+                    <li key={index} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.55, color: '#eddccd' }}>
+                      <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#c5de97' }} /> {feature}
+                    </li>
+                  ))}
+                </ul>
                 <button
-                  onClick={() => handleStartProject({ name: 'Custom Project', price: 0, category: 'Custom' })}
-                  className="px-8 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-black font-semibold hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+                  type="button"
+                  onClick={() => handleStartProject({ name: featured.name, price: Number(featured.price), category: featured.category })}
+                  className="ed-btn ed-btn--onDark"
+                  style={{ width: '100%', marginTop: '1.1rem' }}
                 >
-                  Start Your Project
+                  Get a quote for {featured.name}
                 </button>
-                <Link
-                  to="/contact"
-                  className="px-8 py-3 rounded-full border border-white/20 text-white font-semibold hover:bg-white/5 transition-colors"
-                >
-                  Get Custom Quote
-                </Link>
               </div>
             </div>
-          </AnimatedSection>
+          </Sheet>
+        );
+      })()}
+
+      <Sheet tone="paper">
+        <div className="grid gap-4 md:grid-cols-3">
+          {[['01', 'Choose a package', 'Review the current prices and features above.'], ['02', 'Agree on scope', 'Confirm pages, integrations, timeline and a written final quote.'], ['03', 'Launch and hand over', 'Review, approve and receive your agreed deliverables.']].map(([step, title, description]) => (
+            <article key={step} className="ed-card h-full">
+              <span className="ed-card__num">{step}</span>
+              <h3 className="ed-card__title">{title}</h3>
+              <p className="ed-card__body">{description}</p>
+            </article>
+          ))}
         </div>
-      </section>
+      </Sheet>
 
-      {/* Policy Sections for Paddle Compliance */}
-      <section className="py-20 px-4 md:px-6 bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900">
-        <div className="max-w-6xl mx-auto">
-          <AnimatedSection>
-            <div className="text-center mb-16">
-              <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Our Policies</span>
-              <h2 className="text-4xl font-bold text-white mb-4">Transparent Terms</h2>
-              <p className="text-xl text-white/60">
-                Clear, fair policies to protect both parties
-              </p>
+      <Sheet tone="lime">
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            ['50/50', 'Payment split', '50% upfront to start, 50% upon completion. Simple and fair.'],
+            ['14', 'Days free support', 'Every project includes post-launch support at no extra cost.'],
+            ['∞', 'Revisions included', 'We work with you until you are comfortable with the delivery.']
+          ].map(([value, label, body]) => (
+            <div key={label} className="ed-stat">
+              <span className="ed-stat__value">{value}</span>
+              <span className="ed-stat__label" style={{ marginTop: '0.7rem' }}>{label}</span>
+              <p className="ed-copy" style={{ margin: '0.6rem 0 0', fontSize: '0.9rem' }}>{body}</p>
             </div>
-          </AnimatedSection>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Payment Terms */}
-            <AnimatedSection delay={0.1}>
-              <div className="glass rounded-2xl p-8 border border-white/10 h-full">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400/20 to-blue-500/20 flex items-center justify-center mb-6">
-                  <CreditCard className="w-6 h-6 text-cyan-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">Payment Terms</h3>
-                <ul className="space-y-3 text-white/60">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>50% deposit before work begins</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>50% upon project completion</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Milestone payments for large projects ($15k+)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Secure payment via Paddle</span>
-                  </li>
-                </ul>
-              </div>
-            </AnimatedSection>
-
-            {/* Refund Policy */}
-            <AnimatedSection delay={0.2}>
-              <div className="glass rounded-2xl p-8 border border-white/10 h-full">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400/20 to-orange-500/20 flex items-center justify-center mb-6">
-                  <Shield className="w-6 h-6 text-amber-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">Refund Policy</h3>
-                <ul className="space-y-3 text-white/60">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Full refund if canceled before work starts</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Deposits non-refundable after development begins</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Pro-rated refund for canceled milestones</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Processing fees may apply</span>
-                  </li>
-                </ul>
-              </div>
-            </AnimatedSection>
-
-            {/* Support Policy */}
-            <AnimatedSection delay={0.3}>
-              <div className="glass rounded-2xl p-8 border border-white/10 h-full">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400/20 to-teal-500/20 flex items-center justify-center mb-6">
-                  <HeartHandshake className="w-6 h-6 text-emerald-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">Support Policy</h3>
-                <ul className="space-y-3 text-white/60">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>14-day post-launch support included</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Bug fixes during support period at no cost</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Optional monthly maintenance plans</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span>Priority support for ongoing clients</span>
-                  </li>
-                </ul>
-              </div>
-            </AnimatedSection>
-          </div>
-
-          {/* Legal Links */}
-          <div className="mt-12 text-center">
-            <p className="text-white/40 text-sm mb-4">Read our complete policies:</p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/terms" className="text-cyan-400 hover:text-cyan-300 text-sm underline underline-offset-2">
-                Terms of Service
-              </Link>
-              <Link to="/privacy" className="text-cyan-400 hover:text-cyan-300 text-sm underline underline-offset-2">
-                Privacy Policy
-              </Link>
-              <Link to="/refunds" className="text-cyan-400 hover:text-cyan-300 text-sm underline underline-offset-2">
-                Refund Policy
-              </Link>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
+      </Sheet>
 
-      <Footer />
+      <Sheet tone="paper" id="websites">
+        <SectionHead rubric="Websites" number="02 / 06" title={<>Website <em>development</em></>} lede="Stunning, high-performance websites that convert." />
+        {renderGroup(pricingData.websites, 'Website')}
+      </Sheet>
 
-      {/* Project Intake Form Modal */}
+      <Sheet tone="mist" id="ai-tools">
+        <SectionHead rubric="AI solutions" number="03 / 06" title={<>Mobile app & <em>AI builds</em></>} lede="Intelligent solutions powered by modern AI tooling." />
+        {renderGroup(pricingData.aitools, 'AI Tool')}
+      </Sheet>
+
+      <Sheet tone="paper" id="saas">
+        <SectionHead rubric="SaaS" number="04 / 06" title={<>SaaS <em>development</em></>} lede="Full-stack products built for growth and scale." />
+        {renderGroup(pricingData.saas, 'SaaS')}
+      </Sheet>
+
+      <Sheet tone="lime" id="automation">
+        <SectionHead rubric="Automation" number="05 / 06" title={<>Hire <em>developers</em></>} lede="Intelligent workflow automation and vetted talent for your business." />
+        {renderGroup(pricingData.automation, 'Automation')}
+      </Sheet>
+
+      <Sheet tone="paper">
+        <SectionHead rubric="FAQ" number="06 / 06" title={<>Common <em>questions</em></>} lede="Everything about our pricing and process." />
+        <div style={{ display: 'grid', gap: '0.7rem' }}>
+          {faqs.map((faq, index) => (
+            <FAQItem key={index} question={faq.question} answer={faq.answer} isOpen={openFAQs[index] || false} onToggle={() => toggleFAQ(index)} />
+          ))}
+        </div>
+      </Sheet>
+
+      <Sheet tone="mist">
+        <SectionHead rubric="Our policies" title={<>Transparent <em>terms</em></>} lede="Clear, fair policies that protect both sides of the project." />
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            { title: 'Payment terms', icon: <CreditCard className="h-5 w-5" />, items: ['50% deposit before work begins', '50% upon project completion', 'Milestone payments for large projects ($15k+)', 'Secure payment via Paddle'] },
+            { title: 'Refund policy', icon: <Shield className="h-5 w-5" />, items: ['Full refund if canceled before work starts', 'Deposits non-refundable after development begins', 'Pro-rated refund for canceled milestones', 'Processing fees may apply'] },
+            { title: 'Support policy', icon: <HeartHandshake className="h-5 w-5" />, items: ['14-day post-launch support included', 'Bug fixes during support period at no cost', 'Optional monthly maintenance plans', 'Priority support for ongoing clients'] }
+          ].map((policy) => (
+            <article key={policy.title} className="ed-card h-full">
+              <span className="ed-icon-badge">{policy.icon}</span>
+              <h3 className="ed-card__title">{policy.title}</h3>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.45rem' }}>
+                {policy.items.map((item) => (
+                  <li key={item} style={{ display: 'flex', gap: '0.45rem', alignItems: 'flex-start', fontSize: '0.86rem', lineHeight: 1.55, color: '#4c5a50' }}>
+                    <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#3f7a37' }} /> {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+        <p className="ed-copy" style={{ marginTop: '1.2rem', fontSize: '0.85rem' }}>
+          Read the complete policies: <Link to="/terms" className="ed-link">Terms of Service</Link>, <Link to="/privacy" className="ed-link">Privacy Policy</Link>, <Link to="/refunds" className="ed-link">Refund Policy</Link>.
+        </p>
+      </Sheet>
+
+      <CtaBand
+        eyebrow="Ready when you are"
+        title={<>Ready to get <em>started?</em></>}
+        description="Submit your project request and we'll get back to you within one business day with a free plan, timeline and fixed quote."
+        primaryTo="/contact"
+        primaryLabel="Get a custom quote"
+        secondaryTo="/services"
+        secondaryLabel="Explore services"
+        note="No obligation, no card required."
+      />
+
       <ProjectIntakeForm
         isOpen={intakeFormOpen}
         onClose={() => setIntakeFormOpen(false)}
         selectedPackage={selectedPackage}
       />
-    </div>
+    </>
   );
 }

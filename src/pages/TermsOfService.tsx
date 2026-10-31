@@ -1,25 +1,25 @@
 import { motion } from 'framer-motion';
-import { Footer } from '../components/Footer';
-import { SiteNavigation } from '../components/SiteNavigation';
+import { Sheet } from '../components/editorial/EditorialPage';
 
 export function TermsOfService() {
   return (
-    <div className="min-h-screen bg-dark-900 text-white">
-      <SiteNavigation />
+    <>
+      <section className="ed-sheet ed-sheet--paper ed-hero">
+        <div className="ed-sheet__inner">
+          <span className="ed-hero__asterisk" aria-hidden="true">✳︎</span>
+          <p className="ed-rubric">Legal</p>
+          <h1 className="ed-hero__title" style={{ fontSize: 'clamp(2.3rem, 5.6vw, 4.6rem)' }}>Terms of Service</h1>
+          <p className="ed-hero__meta" style={{ borderTop: 0, paddingTop: 0, marginTop: '1rem' }}>Last updated: February 7, 2026</p>
+        </div>
+      </section>
 
-      {/* Content */}
-      <main className="pt-24 pb-16 px-4 md:px-6">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+      <Sheet tone="paper" medium>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto"
+          transition={{ duration: 0.5 }}
         >
-          <div className="glass rounded-3xl p-8 md:p-12">
-            <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 gradient-text">Terms of Service</h1>
-            <p className="text-white/50 mb-8">Last updated: February 7, 2026</p>
-
-            <div className="space-y-8 text-white/80 leading-relaxed">
+          <div className="ed-prose space-y-8">
               <section>
                 <h2 className="text-2xl font-bold text-white mb-4">1. Agreement to Terms</h2>
                 <p>
@@ -171,12 +171,9 @@ export function TermsOfService() {
                   <strong className="text-cyan-400">Website:</strong> https://chronolyte.com
                 </p>
               </section>
-            </div>
           </div>
         </motion.div>
-      </main>
-
-      <Footer />
-    </div>
+      </Sheet>
+    </>
   );
 }
