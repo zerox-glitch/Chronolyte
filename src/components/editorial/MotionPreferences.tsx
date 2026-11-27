@@ -40,6 +40,11 @@ export function MotionPreferences({ children }: { children: ReactNode }) {
   );
 }
 
+/** Site-wide motion state: true when the visitor or OS prefers reduced motion. */
+export function useMotionPaused() {
+  return useContext(MotionContext).paused;
+}
+
 export function MotionSwitch({ compact = false }: { compact?: boolean }) {
   const { paused, toggle } = useContext(MotionContext);
   return (

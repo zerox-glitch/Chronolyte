@@ -1,0 +1,43 @@
+/* Homepage-only motion system. Content remains readable without WebGL or animation. */
+.ed-home .studio-hero{position:relative;overflow:hidden;background:#0c1111;color:#f5f2e9;padding:clamp(55px,7.5vw,118px) var(--edge) clamp(64px,7vw,112px);isolation:isolate}
+.ed-home .luminous-field{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 77% 52%,#8c3017 0,#231915 34%,#0c1111 72%);overflow:hidden}
+.ed-home .luminous-field canvas{display:block;width:100%;height:100%}
+.ed-home .studio-hero:after{content:'';pointer-events:none;position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#0c1111 2%,#0c1111eb 31%,#0c111184 57%,transparent 90%),linear-gradient(0deg,#0c1111a8,transparent 38%)}
+.ed-home .studio-hero__inner{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:4vw;min-height:480px;align-items:end}
+.ed-home .studio-hero__copy{align-self:center;max-width:780px}
+.ed-home .studio-hero .studio-eyebrow{color:#e0ded6;margin-bottom:clamp(25px,3vw,48px)}
+.ed-home .studio-headline{color:#f7f5ed;font-size:clamp(78px,8.5vw,140px);line-height:.85}
+.ed-home .studio-headline em{color:#ff7148}
+.ed-home .studio-intro{color:#d5d6cd;font-size:clamp(15px,1.15vw,18px);max-width:32em}
+.ed-home .hero-footnote{color:#bdc2b9}.ed-home .hero-footnote svg{color:#ff805b}
+.ed-home .studio-hero .ed-btn--ghost{color:#f5f2e9;border-color:#aeb5a7}.ed-home .studio-hero .ed-btn--ghost:hover{background:#ffffff1c;border-color:white}
+.ed-home .studio-hero a:focus-visible{outline-color:#fff}
+.hero-signature{position:relative;align-self:stretch;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;text-align:right;gap:20px;color:#faf4e9}
+.hero-signature>span{font:500 9px/1.4 var(--mono);letter-spacing:.14em;color:#b6bdb1}.hero-signature>span:first-child{margin-bottom:auto;border-top:1px solid #ffffff59;padding-top:12px;min-width:220px}
+.hero-signature strong{font:800 clamp(38px,4.3vw,66px)/.82 var(--display);letter-spacing:-.035em}.hero-signature strong em{font-style:italic}.hero-signature strong i{font-style:normal;color:#ff6a3d;margin-left:8px}
+.ed-home .capabilities-strip{position:relative;z-index:1}
+.ed-home #services{isolation:isolate;overflow:hidden}.ed-home #services .luminous-field--section{opacity:.30;z-index:-1}.ed-home #services .luminous-field--section canvas{width:100%;height:100%}.ed-home #services:before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#1c1d1a 12%,transparent 100%)}
+.ed-home .home-planner{position:relative;background:linear-gradient(125deg,#fff 0%,#fff 65%,#fff2e8 100%)}
+.ed-home .lead-panel{box-shadow:0 20px 65px #252c1e0d;transition:box-shadow .45s, border-color .45s}.ed-home .lead-panel:focus-within{border-top-color:#ee5826;box-shadow:0 24px 70px #b7461c20}
+.ed-home .directory-row button,.ed-home .benefit-grid article,.ed-home .industry-grid article,.ed-home .process-track li{transition:background-color .3s,color .3s,transform .4s cubic-bezier(.2,.8,.2,1)}
+.ed-home .directory-row button:hover{color:#ff9a75}.ed-home .industry-grid article:hover,.ed-home .benefit-grid article:hover{transform:translateY(-5px)}
+.ed-home .process-marker svg,.ed-home .industry-grid svg{transition:transform .45s cubic-bezier(.2,.8,.2,1)}.ed-home .process-track li:hover .process-marker svg{transform:translateX(7px)}.ed-home .industry-grid article:hover svg{transform:rotate(-10deg) scale(1.1)}
+@keyframes home-arrive{from{opacity:.3;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes home-glint{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes home-turn{to{transform:rotate(90deg)}}
+html:not([data-motion='paused']) .ed-home .studio-hero__copy{animation:home-arrive .85s cubic-bezier(.22,1,.36,1) both}
+html:not([data-motion='paused']) .ed-home .hero-signature{animation:home-arrive 1.2s .15s cubic-bezier(.22,1,.36,1) both}
+html:not([data-motion='paused']) .ed-home .hero-signature i{display:inline-block;animation:home-turn 12s linear infinite}
+html:not([data-motion='paused']) .ed-home .home-in-view .ed-rubric__num,html:not([data-motion='paused']) .ed-home .home-in-view .section-index{animation:home-glint 3s ease-in-out infinite}
+html:not([data-motion='paused']) .ed-home .home-in-view .directory-rows,html:not([data-motion='paused']) .ed-home .home-in-view .benefit-grid,html:not([data-motion='paused']) .ed-home .home-in-view .process-track,html:not([data-motion='paused']) .ed-home .home-in-view .industry-grid{animation:home-arrive .7s cubic-bezier(.22,1,.36,1) both}
+@media(max-width:760px){.ed-home .studio-hero{padding:50px var(--edge) 38px;min-height:0}.ed-home .studio-hero__inner{display:flex;flex-direction:column;align-items:stretch;gap:52px;min-height:0}.ed-home .studio-hero__copy{align-self:stretch}.ed-home .studio-headline{font-size:clamp(61px,12.4vw,92px);line-height:.89}.ed-home .studio-hero .studio-eyebrow{margin-bottom:22px}.ed-home .studio-hero:after{background:linear-gradient(180deg,#0c1111e8 0%,#0c1111c9 48%,#0c11113b 80%,#0c11117a 100%)}.hero-signature{min-height:155px;gap:12px}.hero-signature>span:first-child{min-width:160px}.hero-signature strong{font-size:clamp(42px,12vw,65px)}.ed-home .studio-intro{max-width:30em}.ed-home .home-planner{padding-top:38px}}
+@media(prefers-reduced-motion:reduce){.ed-home *, .ed-home *:before, .ed-home *:after{animation:none!important;transition:none!important}}
+html[data-motion='paused'] .ed-home :is(.studio-hero__copy,.hero-signature,.directory-rows,.benefit-grid,.process-track,.industry-grid,.hero-signature i){animation:none!important}
+/* Fine animated detail continues through the rest of the homepage. */
+.ed-home .process-marker{position:relative;overflow:hidden}
+.ed-home .process-marker:after{content:'';position:absolute;bottom:0;left:0;height:2px;width:30%;background:var(--signal);transform:scaleX(0);transform-origin:left;transition:transform .65s var(--ease-out)}
+.ed-home .home-in-view .process-marker:after{transform:scaleX(1)}
+.ed-home .industry-grid article svg{color:var(--accent-ink)}
+.ed-home .section-index{transition:background .3s,color .3s}
+.ed-home .home-in-view .section-index{background:var(--signal-wash)}
+html[data-motion='paused'] .ed-home *,html[data-motion='paused'] .ed-home *:before,html[data-motion='paused'] .ed-home *:after{animation:none!important;transition:none!important}

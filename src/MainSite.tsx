@@ -19,7 +19,8 @@ import {
 import { LeadCaptureForm } from './components/LeadCaptureForm';
 import { FeaturedBlogs } from './components/FeaturedBlogs';
 import { CtaBand, EditorialPage, SectionHead, Sheet } from './components/editorial/EditorialPage';
-import { StudioArtwork } from './components/editorial/StudioArtwork';
+import { LuminousField } from './components/editorial/LuminousField';
+import './styles/home-immersive.css';
 import { MotionSwitch } from './components/editorial/MotionPreferences';
 import { CONTACT_PHONE_TEL, CONTACT_PHONE_DISPLAY } from './constants/siteContact.js';
 
@@ -233,6 +234,7 @@ function Hero({ content }: { content: HomePageContent['hero'] }) {
   const [intro, ...note] = content.subheadline.split('\n');
   return (
     <section className="studio-hero" aria-labelledby="home-title">
+      <LuminousField />
       <div className="studio-hero__inner">
         <div className="studio-hero__copy">
           <p className="studio-eyebrow">
@@ -260,7 +262,7 @@ function Hero({ content }: { content: HomePageContent['hero'] }) {
             </p>
           )}
         </div>
-        <StudioArtwork interactive />
+        <div className="hero-signature" aria-hidden="true"><span>INDEPENDENT DIGITAL STUDIO</span><strong>IDEAS<br/><em>IN MOTION</em><i>✳</i></strong><span>STRATEGY / DESIGN / DEVELOPMENT</span></div>
       </div>
     </section>
   );
@@ -324,6 +326,7 @@ function ServicesSection({ content }: { content: HomePageContent['services'] }) 
   const [expanded, setExpanded] = useState<number | null>(0);
   return (
     <Sheet id="services" tone="graphite" innerClassName="service-directory">
+      <LuminousField variant="section" />
       <SectionHead
         rubric="What we build"
         number="02 / 07"
@@ -460,6 +463,14 @@ function IndustriesSection({ content }: { content: HomePageContent['industries']
 }
 
 export function MainSite() {
+  useEffect(() => {
+    const sections = document.querySelectorAll('.ed-home .ed-sheet');
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      entry.target.classList.toggle('home-in-view', entry.isIntersecting);
+    }), { threshold: 0.08 });
+    sections.forEach(section => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
   const [homeContent, setHomeContent] = useState<HomePageContent>(defaultHomeContent);
   const [websiteStartingPrice, setWebsiteStartingPrice] = useState<string | null>(null);
 
