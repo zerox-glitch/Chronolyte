@@ -30,7 +30,8 @@ export const HOME_HERO_SLIDES: HeroSlide[] = [
     id: 'website',
     kind: 'website',
     caption: 'Website design',
-    alt: 'Website design study: an editorial website layout with navigation and headline type over a dusk photograph of a modern coastal house.',
+    tag: 'Concept project',
+    alt: 'Atelier Estates concept website: an editorial property collection over a dusk photograph of a modern coastal house.',
     src: '/images/hero/website-960.webp',
     srcSet:
       '/images/hero/website-640.webp 640w, /images/hero/website-960.webp 960w, /images/hero/website-1280.webp 1280w',
@@ -78,234 +79,40 @@ export const HOME_HERO_SLIDES: HeroSlide[] = [
 const pad = (n: number) => String(n).padStart(2, '0');
 
 function WebsiteArt({ slide, eager, onReady }: { slide: HeroSlide; eager: boolean; onReady: () => void }) {
-  return (
-    <div className="hero-website">
-      <div className="browser-chrome" aria-hidden="true">
-        <span className="browser-dots">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span className="browser-nav">Collection&nbsp;&nbsp;Journal&nbsp;&nbsp;Contact</span>
-      </div>
-      <div className="hero-photo">
-        <img
-          src={slide.src}
-          srcSet={slide.srcSet}
-          sizes={SIZES}
-          width={slide.width}
-          height={slide.height}
-          alt={slide.alt}
-          fetchPriority={eager ? 'high' : 'auto'}
-          loading={eager ? 'eager' : 'lazy'}
-          decoding="async"
-          onLoad={onReady}
-        />
-        <div className="website-overlay" aria-hidden="true">
-          <span className="website-eyebrow">Coastal collection</span>
-          <span className="website-headline">Homes by the sea.</span>
-        </div>
-      </div>
-    </div>
-  );
+  return <div className="art-site">
+    <img src={slide.src} srcSet={slide.srcSet} sizes={SIZES} width={slide.width} height={slide.height} alt={slide.alt} fetchPriority={eager ? 'high' : 'auto'} loading={eager ? 'eager' : 'lazy'} decoding="async" onLoad={onReady} />
+    <div className="art-site-shade" aria-hidden="true" />
+    <div className="art-site-nav" aria-hidden="true"><span>ATELIER <i> / </i> ESTATES</span><span>Homes &nbsp;&nbsp; Journal &nbsp;&nbsp; ↗</span></div>
+    <div className="art-site-copy" aria-hidden="true"><small>THE COASTAL COLLECTION &nbsp; / &nbsp; 01</small><strong>A place<br /><em>to belong.</em></strong><span>Thoughtfully chosen homes by the sea.</span><b>EXPLORE THE COLLECTION &nbsp; ↗</b></div>
+    <div className="art-site-index" aria-hidden="true">01 — 04 <span>────────</span></div>
+  </div>;
 }
 
 function CommerceArt({ slide, onReady }: { slide: HeroSlide; onReady: () => void }) {
-  return (
-    <div className="hero-commerce">
-      <img
-        src={slide.src}
-        srcSet={slide.srcSet}
-        sizes={SIZES}
-        width={slide.width}
-        height={slide.height}
-        alt={slide.alt}
-        loading="lazy"
-        decoding="async"
-        onLoad={onReady}
-      />
-      <div className="product-card" aria-hidden="true">
-        <span className="product-card__eyebrow">Verdant &amp; Co. · Concept project</span>
-        <span className="product-card__name">Botanical face oil</span>
-        <span className="product-card__meta">30 ml · Amber glass</span>
-        <span className="product-card__sizes">
-          <i className="is-active" />
-          <i />
-          <i />
-        </span>
-        <span className="product-card__cta">Add to bag</span>
-      </div>
-    </div>
-  );
+  return <div className="art-commerce">
+    <img src={slide.src} srcSet={slide.srcSet} sizes={SIZES} width={slide.width} height={slide.height} alt={slide.alt} loading="lazy" decoding="async" onLoad={onReady} />
+    <div className="commerce-top" aria-hidden="true"><span>VERDANT &amp; CO.</span><span>SHOP &nbsp; ABOUT &nbsp; BAG (0)</span></div>
+    <div className="commerce-card" aria-hidden="true"><small>THE DAILY RITUAL &nbsp; / &nbsp; 01</small><strong>Botanical<br /><em>face oil.</em></strong><p>A little nourishment, every day.</p><div className="commerce-rule"><span>30 ML &nbsp; · &nbsp; AMBER GLASS</span><span>+</span></div><b>ADD TO BAG <span>↗</span></b></div>
+  </div>;
 }
 
 function BookingArt({ alt }: { alt: string }) {
-  return (
-    <div className="hero-booking" role="img" aria-label={alt}>
-      <div className="phone" aria-hidden="true">
-        <div className="phone__status">
-          <span>9:41</span>
-          <span className="phone__dots">
-            <i />
-            <i />
-            <i />
-          </span>
-        </div>
-        <div className="phone__title">Book a visit</div>
-        <div className="phone__sub">Choose a time</div>
-        <div className="phone__dates">
-          <span>Mon 12</span>
-          <span className="is-active">Tue 13</span>
-          <span>Wed 14</span>
-        </div>
-        <div className="phone__times">
-          <span>09:00</span>
-          <span className="is-active">10:30</span>
-          <span>12:00</span>
-          <span>14:00</span>
-          <span>15:30</span>
-          <span>17:00</span>
-        </div>
-        <div className="phone__summary">Tue 13 · 10:30</div>
-        <div className="phone__cta">
-          <Check size={15} />
-          Confirm booking
-        </div>
-      </div>
-    </div>
-  );
+  return <div className="art-booking" role="img" aria-label={alt}>
+    <div className="booking-editorial" aria-hidden="true"><small>01 / MOBILE EXPERIENCE</small><strong>Make<br /><em>time.</em></strong><span>A simpler way to<br />book your next visit.</span><div className="booking-orbit">✳</div></div>
+    <div className="booking-phone" aria-hidden="true"><div className="booking-status"><span>9:41</span><span>● ● ●</span></div><div className="booking-back">← <span>BOOKING</span> ···</div><div className="booking-head"><small>YOUR NEXT VISIT</small><strong>Find your<br />moment.</strong><p>Choose a day and time that works for you.</p></div><div className="booking-month">October <span>‹ &nbsp; ›</span></div><div className="booking-days"><span>M <b>12</b></span><span>T <b className="selected">13</b></span><span>W <b>14</b></span><span>T <b>15</b></span><span>F <b>16</b></span></div><div className="booking-label">AVAILABLE TIMES <span>3 OPTIONS</span></div><div className="booking-times"><span>09:00</span><span className="selected">10:30</span><span>14:00</span></div><div className="booking-confirm">Confirm booking <span>↗</span></div></div>
+  </div>;
 }
 
 function SaasArt({ alt }: { alt: string }) {
-  return (
-    <div className="hero-saas" role="img" aria-label={alt}>
-      <div className="saas-head" aria-hidden="true">
-        <span className="saas-title">Launch plan</span>
-        <span className="saas-pills">
-          <i className="is-active">All</i>
-          <i>Mine</i>
-        </span>
-      </div>
-      <div className="saas-board" aria-hidden="true">
-        <div className="saas-col">
-          <div className="saas-col__head">
-            To review <b>2</b>
-          </div>
-          <div className="saas-card">
-            <span>Homepage hero</span>
-            <span className="saas-card__meta">
-              <i className="avatar" />
-              <i className="chip">Design</i>
-            </span>
-          </div>
-          <div className="saas-card">
-            <span>Checkout flow</span>
-            <span className="saas-card__meta">
-              <i className="avatar" />
-              <i className="chip">Build</i>
-            </span>
-          </div>
-        </div>
-        <div className="saas-col">
-          <div className="saas-col__head">
-            In review <b>3</b>
-          </div>
-          <div className="saas-card is-moving">
-            <span>Onboarding email</span>
-            <span className="saas-card__meta">
-              <i className="avatar" />
-              <i className="chip">Copy</i>
-            </span>
-            <span className="saas-move">Move to approved →</span>
-          </div>
-          <div className="saas-card">
-            <span>Settings page</span>
-            <span className="saas-card__meta">
-              <i className="avatar" />
-              <i className="chip">Build</i>
-            </span>
-          </div>
-        </div>
-        <div className="saas-col">
-          <div className="saas-col__head">
-            Approved <b>1</b>
-          </div>
-          <div className="saas-card is-done">
-            <span>Pricing page</span>
-            <span className="saas-done">
-              <Check size={12} />
-              Approved
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <div className="art-workspace" role="img" aria-label={alt}><div className="workspace-shell" aria-hidden="true"><aside><div className="workspace-mark">✳</div><span>◫</span><span>▦</span><span>◷</span><span>⚙</span></aside><div className="workspace-main"><div className="workspace-top"><span>WORKSPACE &nbsp; / &nbsp; PROJECTS</span><span>◌ &nbsp; <b>JD</b></span></div><div className="workspace-title"><div><small>PROJECT OVERVIEW</small><strong>Launch plan<span> ✳</span></strong><p>Everything moving, in one place.</p></div><span className="workspace-button">+ New task</span></div><div className="workspace-tabs"><b>Board view</b><span>List view</span><span>Activity</span></div><div className="workspace-columns"><section><header>TO DO <span>02</span></header><article><small>DESIGN</small><b>Homepage direction</b><p>Visual exploration</p><footer>◉ &nbsp; JD <span>↗</span></footer></article><article><small>CONTENT</small><b>Product copy</b><p>First draft</p><footer>◉ &nbsp; AL</footer></article></section><section><header>IN REVIEW <span>01</span></header><article className="workspace-feature"><small>READY FOR REVIEW</small><b>Onboarding flow</b><p>Feedback incorporated</p><footer>◉ &nbsp; JD <span>→ APPROVE</span></footer></article></section><section><header>APPROVED <span>01</span></header><article><small>COMPLETE</small><b>Design system</b><p>Components &amp; styles</p><footer><Check size={12} /> &nbsp; Approved</footer></article></section></div></div></div></div>;
 }
 
 function AutomationArt({ alt }: { alt: string }) {
-  return (
-    <div className="hero-flow" role="img" aria-label={alt}>
-      <div className="flow-node" aria-hidden="true">
-        <span className="flow-num">01</span>
-        <Mail size={18} />
-        <span className="flow-title">Enquiry arrives</span>
-        <span className="flow-sub">New message</span>
-      </div>
-      <div className="flow-link is-signal" aria-hidden="true">
-        <i />
-      </div>
-      <div className="flow-node" aria-hidden="true">
-        <span className="flow-num">02</span>
-        <ClipboardCheck size={18} />
-        <span className="flow-title">Record created</span>
-        <span className="flow-sub">Saved automatically</span>
-      </div>
-      <div className="flow-link" aria-hidden="true">
-        <i />
-      </div>
-      <div className="flow-node" aria-hidden="true">
-        <span className="flow-num">03</span>
-        <Send size={18} />
-        <span className="flow-title">Follow-up prepared</span>
-        <span className="flow-sub">Draft ready to send</span>
-      </div>
-    </div>
-  );
+  return <div className="art-automation" role="img" aria-label={alt}><div className="automation-header" aria-hidden="true"><div><small>WORKFLOW / 01</small><strong>From enquiry<br /><em>to action.</em></strong></div><span>● &nbsp; ACTIVE</span></div><div className="automation-flow" aria-hidden="true"><div><span className="automation-icon"><Mail size={19}/></span><small>01 &nbsp; TRIGGER</small><strong>Enquiry arrives</strong><p>New message received</p></div><i>↓</i><div><span className="automation-icon"><ClipboardCheck size={19}/></span><small>02 &nbsp; ORGANISE</small><strong>Record created</strong><p>Details saved to workspace</p></div><i>↓</i><div><span className="automation-icon"><Send size={19}/></span><small>03 &nbsp; FOLLOW UP</small><strong>Reply prepared</strong><p>Draft ready for review</p></div></div><div className="automation-foot" aria-hidden="true"><span>LESS BUSYWORK.</span><span>MORE MOMENTUM. &nbsp; ↗</span></div></div>;
 }
 
 function WireframeArt({ alt }: { alt: string }) {
-  return (
-    <div className="hero-wire" role="img" aria-label={alt}>
-      <div className="wire-panel is-rough" aria-hidden="true">
-        <span className="wire-label">Wireframe</span>
-        <span className="w-bar" />
-        <span className="w-hero" />
-        <span className="w-cols">
-          <i />
-          <i />
-        </span>
-        <span className="w-btn" />
-      </div>
-      <div className="wire-arrow" aria-hidden="true">
-        <ArrowRight size={26} />
-      </div>
-      <div className="wire-panel is-finished" aria-hidden="true">
-        <span className="wire-label">Finished</span>
-        <span className="f-bar">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span className="f-hero">Design that converts</span>
-        <span className="f-cols">
-          <i />
-          <i />
-        </span>
-        <span className="f-btn">Start free</span>
-      </div>
-    </div>
-  );
+  return <div className="art-design" role="img" aria-label={alt}><div className="design-heading" aria-hidden="true"><small>THE DESIGN PROCESS &nbsp; / &nbsp; 01—02</small><strong>From thinking<br /><em>to feeling.</em></strong><span>Structure meets expression. ↗</span></div><div className="design-panels" aria-hidden="true"><div className="design-sketch"><div className="design-panel-label">01 / WIREFRAME <span>↗</span></div><div className="sketch-nav"><i/><i/><i/></div><div className="sketch-copy"><i/><i/><i/></div><div className="sketch-image"><span>×</span></div><div className="sketch-bottom"><i/><i/></div></div><div className="design-final"><div className="design-panel-label">02 / FINAL DESIGN <span>↗</span></div><div className="final-interface"><div className="final-nav">STUDIO / 01 <span>MENU &nbsp; ☰</span></div><div className="final-content"><small>SPACE TO SLOW DOWN</small><strong>Live<br /><em>beautifully.</em></strong><span>DISCOVER THE COLLECTION &nbsp; ↗</span></div><div className="final-photo" /></div></div></div></div>;
 }
 
 export function HomeHeroCarousel() {
