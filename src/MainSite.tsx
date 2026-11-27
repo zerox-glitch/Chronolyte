@@ -464,6 +464,7 @@ function IndustriesSection({ content }: { content: HomePageContent['industries']
 
 export function MainSite() {
   useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
     const sections = document.querySelectorAll('.ed-home .ed-sheet');
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       entry.target.classList.toggle('home-in-view', entry.isIntersecting);

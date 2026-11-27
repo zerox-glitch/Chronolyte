@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LuminousField } from './LuminousField';
+import { OpeningSequence } from './OpeningSequence';
 import '../../styles/site-motion.css';
 import { ArrowUpRight } from 'lucide-react';
 import { SiteNavigation } from '../SiteNavigation';
@@ -13,6 +14,7 @@ export type SheetTone = 'paper' | 'white' | 'graphite' | 'fog' | 'alloy' | 'ink'
 export function EditorialPage({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div className={`ed-site ${className}`}>
+      <OpeningSequence />
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
