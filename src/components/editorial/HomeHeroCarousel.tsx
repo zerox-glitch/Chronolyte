@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Pause, Play, RotateCcw } from 'lucide-react';
-import { useMotionPaused } from './MotionPreferences';
+import { useState } from 'react';
+import { RotateCcw } from 'lucide-react';
 import '../../styles/after-hours.css';
 
 const stories = [
@@ -29,24 +28,19 @@ function Story({ index, result, active, act }: { index: number; result: boolean;
 }
 
 export function HomeHeroCarousel({ onSuggestion }: { onSuggestion: (service: string | null) => void }) {
-  const motionPaused = useMotionPaused();
-  const [index, setIndex] = useState(0); const [visited, setVisited] = useState([0]); const [results, setResults] = useState<boolean[]>(() => stories.map(() => false));
-  const [paused, setPaused] = useState(false); const [hover, setHover] = useState(false); const [focus, setFocus] = useState(false); const [visible, setVisible] = useState(true); const [inView, setInView] = useState(true); const [announcement, setAnnouncement] = useState('');
-  const root = useRef<HTMLElement>(null); const request = useRef(0); const playing = !motionPaused && !paused && !hover && !focus && visible && inView; const playingRef = useRef(playing); playingRef.current = playing;
-  const prepare = useCallback((i: number) => { const image = stories[i].image; if (!image) return Promise.resolve(); return new Promise<void>(resolve => { const img = new Image(); img.onload = img.onerror = () => resolve(); img.sizes = '(max-width: 760px) 92vw, 48vw'; img.srcset = `/images/after-hours/${image}-640.webp 640w, /images/after-hours/${image}-1200.webp 1200w`; img.src = `/images/after-hours/${image}-1200.webp`; }); }, []);
-  const go = useCallback((target: number, manual = false) => { const next = (target + stories.length) % stories.length; const token = ++request.current; if (manual) setPaused(true); void prepare(next).then(() => { if (token !== request.current || (!manual && !playingRef.current)) return; setResults(v => v.map((value, i) => i === next ? false : value)); setVisited(v => v.includes(next) ? v : [...v,next]); setIndex(next); if (manual) setAnnouncement(`${stories[next].goal}, story ${next + 1} of ${stories.length}`); }); }, [prepare]);
-  useEffect(() => { void prepare((index + 1) % stories.length); }, [index, prepare]);
-  useEffect(() => { if (!playing) return; const demo = window.setTimeout(() => setResults(v => v.map((value, i) => i === index ? true : value)), 1900); const next = window.setTimeout(() => go(index + 1), 6000); return () => { clearTimeout(demo); clearTimeout(next); }; }, [playing, index, go]);
-  useEffect(() => { const change = () => setVisible(!document.hidden); change(); document.addEventListener('visibilitychange', change); return () => document.removeEventListener('visibilitychange', change); }, []);
-  useEffect(() => { if (!root.current) return; const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: .15 }); observer.observe(root.current); return () => observer.disconnect(); }, []);
-  useEffect(() => () => { request.current++; }, []);
-  const act = () => { setPaused(true); setResults(v => v.map((value, i) => i === index ? true : value)); setAnnouncement('Concept result shown. No real transaction was made.'); };
-  const replay = () => { setPaused(true); setResults(v => v.map((value, i) => i === index ? false : value)); setAnnouncement('Concept reset. Try the action.'); };
-  return <section ref={root} className="after-hours" aria-label="After Hours interactive studio concepts" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onFocus={e => setFocus(!(e.target as HTMLElement).closest('.ah-play'))} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocus(false); }}>
-    <div className="ah-frame">{stories.map((story,i) => visited.includes(i) && <div key={story.goal} className={`ah-slide ${i === index ? 'active' : ''}`} aria-hidden={i !== index}><Story index={i} result={results[i]} active={i === index} act={act}/></div>)}</div>
-    <div className="ah-caption"><span><b>11:47 PM</b> / AFTER HOURS <small>INTERACTIVE STUDIO CONCEPT</small></span><span>{pad(index + 1)} / {pad(stories.length)}</span></div>
-    <div className="ah-goals" aria-label="Choose a product story">{stories.map((story,i) => <button key={story.goal} type="button" aria-pressed={index === i} onClick={() => go(i,true)}>{story.goal}</button>)}</div>
-    <div className="ah-footer"><button type="button" className="ah-real-cta" onClick={() => onSuggestion(stories[index].service)}>{stories[index].cta} <span>→</span></button><div className="ah-controls"><button type="button" onClick={replay} aria-label="Replay this concept" title="Replay"><RotateCcw size={15}/><span>Replay</span></button><button type="button" onClick={() => go(index-1,true)} aria-label="Previous story"><ArrowLeft size={16}/></button><button type="button" onClick={() => go(index+1,true)} aria-label="Next story"><ArrowRight size={16}/></button><button type="button" className="ah-play" onClick={() => { setPaused(!paused); setAnnouncement(paused ? 'Autoplay on' : 'Autoplay paused'); }} aria-label={paused ? 'Play autoplay' : 'Pause autoplay'} aria-pressed={paused}>{paused ? <Play size={14}/> : <Pause size={14}/>}</button></div></div>
-    <span className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{announcement}</span>
+  const [results, setResults] = useState<boolean[]>(() => stories.map(() => false));
+  const descriptions = [
+    'A shop that turns a moment of discovery into a reason to visit.',
+    'A welcoming space, with a simpler way to find the right time.',
+    'A better conversation starts with a more thoughtful brief.',
+    'One change, shared with everyone behind the scenes.',
+    'Give good ideas room to grow by taking care of the busywork.',
+  ];
+  return <section className="after-hours ah-gallery" aria-labelledby="gallery-title">
+    <div className="ah-gallery-intro"><p className="ah-kicker">11:47 PM / AFTER HOURS &nbsp; ✳ &nbsp; INTERACTIVE STUDIO CONCEPTS</p><div><h2 id="gallery-title">Ideas made<br/><em>to move.</em></h2><p>Five imagined businesses. Five small moments that show what thoughtful digital experiences can do. Go on, try them.</p></div><span className="ah-scroll-cue">SCROLL TO EXPLORE ↓</span></div>
+    {stories.map((story, i) => <article className="ah-chapter" key={story.goal}>
+      <div className="ah-chapter-copy"><div className="ah-chapter-meta"><span>STUDIO CONCEPT / {pad(i+1)}</span><span>✳</span></div><h3>{story.goal}<span>.</span></h3><p>{descriptions[i]}</p><div className="ah-chapter-actions"><button type="button" className="ah-real-cta" onClick={() => onSuggestion(story.service)}>{story.cta} <span>↗</span></button><button type="button" className="ah-reset" onClick={() => setResults(v => v.map((value, n) => n === i ? false : value))}><RotateCcw size={14}/> Reset demo</button></div><small>INTERACTIVE CONCEPT · NO REAL TRANSACTION</small></div>
+      <div className="ah-frame"><Story index={i} result={results[i]} active act={() => setResults(v => v.map((value, n) => n === i ? true : value))}/></div>
+    </article>)}
   </section>;
 }

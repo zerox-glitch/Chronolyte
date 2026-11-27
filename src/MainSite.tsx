@@ -20,6 +20,7 @@ import { LeadCaptureForm } from './components/LeadCaptureForm';
 import { FeaturedBlogs } from './components/FeaturedBlogs';
 import { CtaBand, EditorialPage, SectionHead, Sheet } from './components/editorial/EditorialPage';
 import { HomeHeroCarousel } from './components/editorial/HomeHeroCarousel';
+import { LuminousField } from './components/editorial/LuminousField';
 import { MotionSwitch } from './components/editorial/MotionPreferences';
 import { CONTACT_PHONE_TEL, CONTACT_PHONE_DISPLAY } from './constants/siteContact.js';
 
@@ -229,7 +230,7 @@ const defaultHomeContent: HomePageContent = {
   },
 };
 
-function Hero({ content, onSuggestion }: { content: HomePageContent['hero']; onSuggestion: (service: string | null) => void }) {
+function Hero({ content }: { content: HomePageContent['hero'] }) {
   const [intro, ...note] = content.subheadline.split('\n');
   return (
     <section className="studio-hero" aria-labelledby="home-title">
@@ -260,7 +261,7 @@ function Hero({ content, onSuggestion }: { content: HomePageContent['hero']; onS
             </p>
           )}
         </div>
-        <HomeHeroCarousel onSuggestion={onSuggestion} />
+        <LuminousField />
       </div>
     </section>
   );
@@ -499,8 +500,9 @@ export function MainSite() {
 
   return (
     <EditorialPage className="ed-home">
-      <Hero content={homeContent.hero} onSuggestion={suggestService} />
+      <Hero content={homeContent.hero} />
       <CapabilitiesStrip services={homeContent.services.items} />
+      <HomeHeroCarousel onSuggestion={suggestService} />
       <ProjectPlanner badge={homeContent.hero.badge_text} suggestion={suggestion} />
       <ServicesSection content={homeContent.services} />
       <WhySection
