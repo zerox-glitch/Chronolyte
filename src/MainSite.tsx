@@ -19,7 +19,7 @@ import {
 import { LeadCaptureForm } from './components/LeadCaptureForm';
 import { FeaturedBlogs } from './components/FeaturedBlogs';
 import { CtaBand, EditorialPage, SectionHead, Sheet } from './components/editorial/EditorialPage';
-import { StudioArtwork } from './components/editorial/StudioArtwork';
+import { HomeHeroCarousel } from './components/editorial/HomeHeroCarousel';
 import { MotionSwitch } from './components/editorial/MotionPreferences';
 import { CONTACT_PHONE_TEL, CONTACT_PHONE_DISPLAY } from './constants/siteContact.js';
 
@@ -260,7 +260,7 @@ function Hero({ content }: { content: HomePageContent['hero'] }) {
             </p>
           )}
         </div>
-        <StudioArtwork interactive />
+        <HomeHeroCarousel />
       </div>
     </section>
   );
