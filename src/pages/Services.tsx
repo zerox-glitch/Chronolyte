@@ -271,11 +271,12 @@ export function Services() {
 
   const categories = content.categories;
 
-  const tones = ['cherry', 'paper', 'mist', 'lime'] as const;
+  const tones = ['graphite', 'paper', 'alloy', 'fog'] as const;
 
   return (
     <>
       <PageHero
+        study="helix"
         eyebrow={content.hero.badge_text}
         title={<>{content.hero.headline_1}<br /><em>{content.hero.headline_2}</em></>}
         lede={content.hero.description}
@@ -308,7 +309,7 @@ export function Services() {
               </div>
               <button
                 type="button"
-                className={tone === 'cherry' ? 'ed-btn ed-btn--onDark ed-btn--sm' : 'ed-btn ed-btn--sm'}
+                className={tone === 'graphite' ? 'ed-btn ed-btn--onDark ed-btn--sm' : 'ed-btn ed-btn--sm'}
                 aria-expanded={isOpen}
                 onClick={() => setExpandedCategory(isOpen ? null : category.id)}
               >
@@ -332,7 +333,7 @@ export function Services() {
                         <span className="ed-card__num">{String(serviceIndex + 1).padStart(2, '0')}</span>
                         <p className="ed-rubric" style={{ marginBottom: '0.5rem' }}>{category.name.split(' ')[0]}</p>
                         <h3 className="ed-card__title">{service.title}</h3>
-                        <p style={{ margin: '0 0 0.6rem', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.02em', color: tone === 'cherry' ? '#c5de97' : '#7b182a' }}>
+                        <p style={{ margin: '0 0 0.6rem', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.02em', color: tone === 'graphite' ? 'var(--signal-light)' : 'var(--accent-ink)' }}>
                           {service.subtitle}
                         </p>
                         <p className="ed-card__body" style={{ flexGrow: 1 }}>{service.description}</p>
@@ -343,7 +344,7 @@ export function Services() {
                             </span>
                           ))}
                         </div>
-                        <Link to="/contact" className={tone === 'cherry' ? 'ed-btn ed-btn--onDark ed-btn--sm' : 'ed-btn ed-btn--sm'} style={{ width: 'fit-content' }}>
+                        <Link to="/contact" className={tone === 'graphite' ? 'ed-btn ed-btn--onDark ed-btn--sm' : 'ed-btn ed-btn--sm'} style={{ width: 'fit-content' }}>
                           Get started <ArrowRight className="h-3.5 w-3.5" />
                         </Link>
                       </article>

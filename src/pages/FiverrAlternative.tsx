@@ -11,24 +11,21 @@ const comparisonOptions = [
     model: 'Marketplace of seller services and custom offers',
     bestFor: 'A small, clearly defined deliverable—such as a one-off design asset or a narrowly scoped fix.',
     coordination: 'You select the seller, confirm the requirements, and coordinate the work.',
-    tradeoff: 'A series of separate gigs may need extra planning and integration if your project has many parts.',
-    tone: 'border-white/10 bg-white/[0.035]'
+    tradeoff: 'A series of separate gigs may need extra planning and integration if your project has many parts.'
   },
   {
     name: 'Upwork',
     model: 'Freelance marketplace with different engagement formats',
     bestFor: 'Finding an individual specialist or assembling a flexible freelance arrangement.',
     coordination: 'You review candidates, agree on a contract, and manage communication and delivery.',
-    tradeoff: 'You remain responsible for joining the pieces together unless you separately arrange project leadership.',
-    tone: 'border-white/10 bg-white/[0.035]'
+    tradeoff: 'You remain responsible for joining the pieces together unless you separately arrange project leadership.'
   },
   {
     name: 'Chronolyte',
     model: 'Remote managed web and software development studio',
     bestFor: 'A website, app, e-commerce store, or SaaS project that needs coordinated planning, design, and development.',
     coordination: 'Start with one project brief and a point of contact for a proposed scope, timeline, and quote.',
-    tradeoff: 'A managed studio is not a marketplace for browsing many individual sellers and may not fit every micro-task.',
-    tone: 'border-cyan-300/30 bg-gradient-to-br from-cyan-950/45 via-[#0b1420] to-blue-950/35'
+    tradeoff: 'A managed studio is not a marketplace for browsing many individual sellers and may not fit every micro-task.'
   }
 ];
 
@@ -48,6 +45,7 @@ export function FiverrAlternative() {
   return (
     <>
       <PageHero
+        study="register"
         eyebrow="Compare ways to build your project"
         title={<>Looking for a Fiverr or Upwork alternative for <em>web development?</em></>}
         lede="The right choice depends on the size of the job and how much project coordination you want to do. Compare freelance marketplaces with a managed studio before you choose a team for your website, app, online store, or SaaS product."
@@ -66,7 +64,7 @@ export function FiverrAlternative() {
         }
       />
 
-      <Sheet tone="lime">
+      <Sheet tone="fog">
         <p className="ed-rubric">Short answer<span className="ed-rubric__num">01 / 06</span></p>
         <h2 className="ed-title ed-title--sm" style={{ marginTop: '0.5rem' }}>Which option should you <em>choose?</em></h2>
         <p className="ed-lede">
@@ -86,14 +84,14 @@ export function FiverrAlternative() {
             <article
               key={option.name}
               className="ed-card h-full"
-              style={index === 2 ? { borderColor: '#7b182a', borderWidth: 2, boxShadow: '9px 9px 0 rgba(123,24,42,0.22)' } : undefined}
+              style={index === 2 ? { borderColor: 'var(--accent-ink)', borderWidth: 2, boxShadow: 'inset 0 3px var(--signal)' } : undefined}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.7rem' }}>
                 <div>
                   <p className="ed-rubric" style={{ marginBottom: '0.4rem' }}>Option {index + 1}</p>
                   <h3 className="ed-card__title" style={{ fontSize: '1.5rem' }}>{option.name}</h3>
                 </div>
-                {index === 2 && <Handshake className="h-6 w-6" style={{ color: '#7b182a', flex: 'none' }} aria-hidden="true" />}
+                {index === 2 && <Handshake className="h-6 w-6" style={{ color: 'var(--accent-ink)', flex: 'none' }} aria-hidden="true" />}
               </div>
               <dl style={{ margin: '1rem 0 0', display: 'grid', gap: '0.8rem' }}>
                 {[
@@ -102,45 +100,45 @@ export function FiverrAlternative() {
                   ['Who coordinates?', option.coordination],
                   ['Consider', option.tradeoff]
                 ].map(([term, value]) => (
-                  <div key={term} style={term === 'Consider' ? { borderTop: '1px solid rgba(84,72,48,0.2)', paddingTop: '0.7rem' } : undefined}>
-                    <dt style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#7b182a' }}>{term}</dt>
-                    <dd style={{ margin: '0.25rem 0 0', fontSize: '0.86rem', lineHeight: 1.6, color: '#4c5a50' }}>{value}</dd>
+                  <div key={term} style={term === 'Consider' ? { borderTop: '1px solid var(--line)', paddingTop: '0.7rem' } : undefined}>
+                    <dt style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent-ink)' }}>{term}</dt>
+                    <dd style={{ margin: '0.25rem 0 0', fontSize: '0.86rem', lineHeight: 1.6, color: 'var(--copy)' }}>{value}</dd>
                   </div>
                 ))}
               </dl>
             </article>
           ))}
         </div>
-        <p style={{ marginTop: '0.9rem', fontSize: '0.74rem', lineHeight: 1.6, color: '#6a746a' }}>
+        <p style={{ marginTop: '0.9rem', fontSize: '0.74rem', lineHeight: 1.6, color: 'var(--muted)' }}>
           Fiverr and Upwork are mentioned for comparison only. Chronolyte is independent and is not affiliated with or endorsed by either platform. Confirm current platform features, fees, and terms directly with each provider.
         </p>
       </Sheet>
 
-      <Sheet tone="mist">
+      <Sheet tone="alloy">
         <SectionHead rubric="Which fits your situation?" number="03 / 06" title={<>Two honest <em>fit checks</em></>} />
         <div className="grid gap-4 md:grid-cols-2">
           <article className="ed-card h-full">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.8rem' }}>
-              <Users className="h-5 w-5" style={{ color: '#7b182a' }} />
+              <Users className="h-5 w-5" style={{ color: 'var(--accent-ink)' }} />
               <h3 className="ed-card__title" style={{ margin: 0 }}>A marketplace may fit when…</h3>
             </div>
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.55rem' }}>
               {fitSignals.map((signal) => (
-                <li key={signal} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.6, color: '#4c5a50' }}>
-                  <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#7b182a' }} /> {signal}
+                <li key={signal} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--copy)' }}>
+                  <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--accent-ink)' }} /> {signal}
                 </li>
               ))}
             </ul>
           </article>
           <article className="ed-card h-full">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.8rem' }}>
-              <Workflow className="h-5 w-5" style={{ color: '#7b182a' }} />
+              <Workflow className="h-5 w-5" style={{ color: 'var(--accent-ink)' }} />
               <h3 className="ed-card__title" style={{ margin: 0 }}>A managed studio may fit when…</h3>
             </div>
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.55rem' }}>
               {studioSignals.map((signal) => (
-                <li key={signal} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.6, color: '#4c5a50' }}>
-                  <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#3f7a37' }} /> {signal}
+                <li key={signal} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--copy)' }}>
+                  <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--accent-ink)' }} /> {signal}
                 </li>
               ))}
             </ul>
@@ -174,7 +172,7 @@ export function FiverrAlternative() {
         </div>
       </Sheet>
 
-      <Sheet tone="lime">
+      <Sheet tone="fog">
         <div className="grid gap-8 md:grid-cols-[1.1fr_0.9fr] md:items-center">
           <div>
             <p className="ed-rubric">Compare the full picture<span className="ed-rubric__num">05 / 06</span></p>
@@ -183,8 +181,8 @@ export function FiverrAlternative() {
           </div>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.55rem' }}>
             {['Written deliverables and exclusions', 'Communication and project-management time', 'Testing, revisions, integrations, and handoff', 'Payment schedule, platform terms, and ongoing costs'].map((item) => (
-              <li key={item} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.6, color: '#2f422a' }}>
-                <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#7b182a' }} /> {item}
+              <li key={item} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--copy)' }}>
+                <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--accent-ink)' }} /> {item}
               </li>
             ))}
           </ul>
@@ -207,14 +205,14 @@ export function FiverrAlternative() {
             'Check the platform’s current terms before changing how you communicate or pay, and keep important agreements in writing.'
           ].map((tip) => (
             <li key={tip} className="ed-card ed-card--flat" style={{ flexDirection: 'row', gap: '0.6rem', alignItems: 'flex-start', padding: '0.85rem 1rem' }}>
-              <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#3f7a37' }} />
-              <span style={{ fontSize: '0.86rem', lineHeight: 1.6, color: '#4c5a50' }}>{tip}</span>
+              <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--accent-ink)' }} />
+              <span style={{ fontSize: '0.86rem', lineHeight: 1.6, color: 'var(--copy)' }}>{tip}</span>
             </li>
           ))}
         </ul>
       </Sheet>
 
-      <Sheet tone="mist">
+      <Sheet tone="alloy">
         <SectionHead rubric="Frequently asked questions" title={<>Fiverr, Upwork and <em>alternatives</em></>} />
         <div style={{ display: 'grid', gap: '0.8rem' }}>
           {faqs.map((faq) => (
@@ -238,10 +236,10 @@ export function FiverrAlternative() {
             const CardIcon = item.icon;
             return (
               <Link key={item.to} to={item.to} className="ed-card h-full" style={{ textDecoration: 'none' }}>
-                <CardIcon className="h-5 w-5" style={{ color: '#7b182a' }} />
+                <CardIcon className="h-5 w-5" style={{ color: 'var(--accent-ink)' }} />
                 <h3 className="ed-card__title" style={{ marginTop: '0.7rem', fontSize: '1rem' }}>{item.title}</h3>
                 <p className="ed-card__body" style={{ fontSize: '0.85rem' }}>{item.body}</p>
-                <span style={{ marginTop: '0.7rem', display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.76rem', fontWeight: 700, color: '#7b182a' }}>
+                <span style={{ marginTop: '0.7rem', display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.76rem', fontWeight: 700, color: 'var(--accent-ink)' }}>
                   Explore <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </Link>

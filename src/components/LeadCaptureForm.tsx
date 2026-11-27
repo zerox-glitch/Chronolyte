@@ -32,9 +32,10 @@ const CONTACT_METHODS = ['Email', 'Phone call', 'WhatsApp'] as const;
 
 interface LeadCaptureFormProps {
   source?: string;
+  eyebrow?: string;
 }
 
-export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProps) {
+export function LeadCaptureForm({ source = 'homepage-cta', eyebrow = 'Free project plan' }: LeadCaptureFormProps) {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [services, setServices] = useState<string[]>([]);
@@ -111,23 +112,23 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="ed-card"
+        className="ed-card lead-success" role="status"
         style={{ maxWidth: '46rem', margin: '0 auto', textAlign: 'center', padding: 'clamp(24px, 4vw, 44px)' }}
       >
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 14, delay: 0.15 }}
-          style={{ width: 62, height: 62, margin: '0 auto 1.1rem', borderRadius: '50%', background: '#c5de97', border: '2px solid #7b182a', display: 'grid', placeItems: 'center' }}
+          style={{ width: 62, height: 62, margin: '0 auto 1.1rem', borderRadius: '50%', background: 'var(--signal-light)', border: '2px solid var(--accent-ink)', display: 'grid', placeItems: 'center' }}
         >
-          <Check className="h-7 w-7" strokeWidth={3} style={{ color: '#7b182a' }} />
+          <Check className="h-7 w-7" strokeWidth={3} style={{ color: 'var(--accent-ink)' }} />
         </motion.div>
         <p className="ed-rubric" style={{ justifyContent: 'center' }}>Request received</p>
         <h3 className="ed-title ed-title--xs" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-          You&apos;re all set, {name.split(' ')[0]}! <PartyPopper className="h-5 w-5" style={{ color: '#7b182a' }} />
+          You&apos;re all set, {name.split(' ')[0]}! <PartyPopper className="h-5 w-5" style={{ color: 'var(--accent-ink)' }} />
         </h3>
         <p className="ed-copy" style={{ marginTop: '0.6rem' }}>
-          Your request <strong style={{ color: '#7b182a', fontFamily: 'monospace' }}>{reference}</strong> has been received.
+          Your request <strong style={{ color: 'var(--accent-ink)', fontFamily: 'monospace' }}>{reference}</strong> has been received.
         </p>
         <div style={{ marginTop: '1.4rem', textAlign: 'left', display: 'grid', gap: '0.7rem' }}>
           {[
@@ -136,7 +137,7 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
             'You get a free plan, timeline and quote — no obligation.'
           ].map((line, i) => (
             <div key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
-              <span style={{ flex: 'none', width: 24, height: 24, borderRadius: '50%', background: 'rgba(197,222,151,0.7)', border: '1px solid #7b182a', color: '#7b182a', fontSize: '0.7rem', fontWeight: 700, display: 'grid', placeItems: 'center' }}>{i + 1}</span>
+              <span style={{ flex: 'none', width: 24, height: 24, borderRadius: '50%', background: 'var(--signal-wash)', border: '1px solid var(--accent-ink)', color: 'var(--accent-ink)', fontSize: '0.7rem', fontWeight: 700, display: 'grid', placeItems: 'center' }}>{i + 1}</span>
               <p className="ed-copy" style={{ margin: 0, fontSize: '0.9rem' }}>{line}</p>
             </div>
           ))}
@@ -145,7 +146,7 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
           <a href="/blog/how-much-does-a-website-cost" className="ed-btn ed-btn--ghost ed-btn--sm"><BookOpen className="h-4 w-4" /> Website cost guide</a>
           <a href="/blog/saas-mvp-development-guide" className="ed-btn ed-btn--ghost ed-btn--sm"><BookOpen className="h-4 w-4" /> SaaS MVP guide</a>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1.4rem', justifyContent: 'center', marginTop: '1.2rem', fontSize: '0.74rem', color: '#5f6d62' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1.4rem', justifyContent: 'center', marginTop: '1.2rem', fontSize: '0.74rem', color: 'var(--muted)' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Clock className="h-3.5 w-3.5" /> Reply within one business day</span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><ShieldCheck className="h-3.5 w-3.5" /> 100% free, no obligation</span>
         </div>
@@ -154,37 +155,19 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
   }
 
   return (
-    <div
-      id="start"
-      className="ed-card ed-card--flat"
-      style={{ maxWidth: '56rem', margin: '0 auto', padding: 'clamp(18px, 2.6vw, 30px)', boxShadow: '8px 8px 0 rgba(123,24,42,0.16)', scrollMarginTop: '110px' }}
-    >
-      {/* Header */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '0.9rem', marginBottom: '1.2rem' }}>
-        <div>
-          <p className="ed-rubric" style={{ marginBottom: '0.5rem' }}>Free project plan</p>
-          <h3 className="ed-title ed-title--xs">
-            {step === 0 && 'What would you like to build?'}
-            {step === 1 && 'Tell us about it (optional)'}
-            {step === 2 && 'Where should we send your free plan?'}
-          </h3>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              style={{
-                height: 5,
-                width: i === step ? 30 : 14,
-                borderRadius: 99,
-                background: i === step ? '#7b182a' : i < step ? 'rgba(123,24,42,0.45)' : 'rgba(31,39,35,0.16)',
-                transition: 'all .3s ease'
-              }}
-            />
-          ))}
-          <span className="ed-chip" style={{ marginLeft: '0.5rem' }}>Step {step + 1} / 3</span>
+    <div className="lead-panel">
+      <div className="lead-head">
+        <p className="lead-kicker">{eyebrow}</p>
+        <div className="lead-progress" aria-label={`Step ${step + 1} of 3`}>
+          <span>Step 0{step + 1} / 03</span>
+          {[0, 1, 2].map(i => <i key={i} data-complete={i <= step} />)}
         </div>
       </div>
+      <h3 className="lead-title" aria-live="polite">
+        {step === 0 && 'What would you like to build?'}
+        {step === 1 && 'Tell us about it (optional)'}
+        {step === 2 && 'Where should we send your free plan?'}
+      </h3>
 
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
@@ -211,13 +194,9 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
                       onClick={() => toggleService(opt.value)}
                       className={`ed-choice ${active ? 'ed-choice--active' : ''}`}
                     >
-                      <span style={{ display: 'grid', placeItems: 'center', width: 36, height: 36, flex: 'none', borderRadius: 3, background: active ? '#7b182a' : 'rgba(197,222,151,0.6)', color: active ? '#fff5e8' : '#7b182a' }}>
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span style={{ flex: 1, textAlign: 'left', fontSize: '0.88rem', fontWeight: 600, lineHeight: 1.35, color: '#26312a' }}>{opt.label}</span>
-                      <span style={{ flex: 'none', width: 18, height: 18, borderRadius: '50%', border: '1.5px solid rgba(123,24,42,0.5)', background: active ? '#7b182a' : 'transparent', display: 'grid', placeItems: 'center' }}>
-                        {active && <Check className="h-3 w-3" strokeWidth={3.5} style={{ color: '#fff5e8' }} />}
-                      </span>
+                      <Icon className="choice-symbol" size={20} strokeWidth={1.6} />
+                      <span className="choice-label">{opt.label}</span>
+                      <span className="choice-check">{active && <Check size={12} strokeWidth={3} />}</span>
                     </button>
                   );
                 })}
@@ -230,7 +209,7 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
             <div style={{ display: 'grid', gap: '1.1rem' }}>
               <div className="ed-field">
                 <label htmlFor="lead-brief" className="ed-label">
-                  What are you trying to achieve? <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: '#5f6d62' }}>A few lines is plenty — skip it if you would rather talk it through.</span>
+                  What are you trying to achieve? <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: 'var(--muted)' }}>A few lines is plenty — skip it if you would rather talk it through.</span>
                 </label>
                 <textarea
                   id="lead-brief"
@@ -268,11 +247,11 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
               <p className="ed-copy" style={{ margin: 0, fontSize: '0.88rem' }}>We reply within one business day. No spam, no obligation.</p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="ed-field">
-                  <label htmlFor="lead-name" className="ed-label">Your name <span style={{ color: '#7b182a' }}>*</span></label>
+                  <label htmlFor="lead-name" className="ed-label">Your name <span style={{ color: 'var(--accent-ink)' }}>*</span></label>
                   <input id="lead-name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder="Alex Founder" className="ed-input" />
                 </div>
                 <div className="ed-field">
-                  <label htmlFor="lead-email" className="ed-label">Email <span style={{ color: '#7b182a' }}>*</span></label>
+                  <label htmlFor="lead-email" className="ed-label">Email <span style={{ color: 'var(--accent-ink)' }}>*</span></label>
                   <input id="lead-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="you@company.com" className="ed-input" />
                 </div>
                 <div className="ed-field">

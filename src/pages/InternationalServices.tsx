@@ -24,6 +24,7 @@ export function InternationalServices() {
   return (
     <>
       <PageHero
+        study="globe"
         eyebrow="Worldwide remote delivery"
         title={<>Website design & software for businesses <em>worldwide</em></>}
         lede="Chronolyte works remotely with businesses in the USA, UK, Pakistan, Canada, Australia, New Zealand, Ireland and other countries. We build responsive websites, online stores, focused software MVPs and practical AI workflows — planned and delivered online, wherever you are."
@@ -55,7 +56,7 @@ export function InternationalServices() {
               <span className="ed-card__num">{String(index + 1).padStart(2, '0')}</span>
               <h3 className="ed-card__title">{country.name}</h3>
               <p className="ed-card__body">{country.note}</p>
-              <p className="ed-card__body" style={{ marginTop: '0.7rem', paddingTop: '0.7rem', borderTop: '1px solid rgba(84,72,48,0.2)', fontSize: '0.8rem', color: '#5f6d62' }}>
+              <p className="ed-card__body" style={{ marginTop: '0.7rem', paddingTop: '0.7rem', borderTop: '1px solid var(--line)', fontSize: '0.8rem', color: 'var(--muted)' }}>
                 {country.examples}
               </p>
             </article>
@@ -63,7 +64,7 @@ export function InternationalServices() {
         </div>
       </Sheet>
 
-      <Sheet tone="lime">
+      <Sheet tone="fog">
         <div className="grid gap-10 md:grid-cols-2">
           <div>
             <SectionHead
@@ -71,7 +72,7 @@ export function InternationalServices() {
               number="02 / 04"
               title={<>Build the <em>whole thing</em></>}
             />
-            <ul style={{ margin: '1.2rem 0 0', paddingLeft: '1.2rem', display: 'grid', gap: '0.6rem', color: '#2f422a', lineHeight: 1.65 }}>
+            <ul style={{ margin: '1.2rem 0 0', paddingLeft: '1.2rem', display: 'grid', gap: '0.6rem', color: 'var(--copy)', lineHeight: 1.65 }}>
               <li><Link to="/website-design" className="ed-link">Business websites</Link>, landing pages and redesigns</li>
               <li>Starter e-commerce storefronts and catalogues</li>
               <li><Link to="/custom-software" className="ed-link">Custom software</Link>, dashboards and SaaS prototypes</li>
@@ -84,7 +85,7 @@ export function InternationalServices() {
               number="03 / 04"
               title={<>Cross-border, <em>without friction</em></>}
             />
-            <ol style={{ margin: '1.2rem 0 0', paddingLeft: '1.2rem', display: 'grid', gap: '0.6rem', color: '#2f422a', lineHeight: 1.65 }}>
+            <ol style={{ margin: '1.2rem 0 0', paddingLeft: '1.2rem', display: 'grid', gap: '0.6rem', color: 'var(--copy)', lineHeight: 1.65 }}>
               <li>Share your goals, country, audience and required features</li>
               <li>Receive a written scope, quote, milestones and delivery estimate</li>
               <li>Collaborate remotely using an agreed communication schedule</li>

@@ -38,10 +38,10 @@ function PricingCard({ tier, isPopular = false, onStartProject }: PricingCardPro
       transition={{ duration: 0.55 }}
       whileHover={{ y: -5 }}
       className="ed-card h-full"
-      style={isMostPopular ? { borderColor: '#7b182a', borderWidth: 2, boxShadow: '9px 9px 0 rgba(123,24,42,0.24)' } : undefined}
+      style={isMostPopular ? { borderColor: 'var(--accent-ink)', borderWidth: 2, boxShadow: 'inset 0 3px var(--signal)' } : undefined}
     >
       {isMostPopular && (
-        <span className="ed-chip" style={{ alignSelf: 'flex-start', marginBottom: '0.7rem', background: '#7b182a', borderColor: '#5a0f1f', color: '#fff5e8' }}>
+        <span className="ed-chip" style={{ alignSelf: 'flex-start', marginBottom: '0.7rem', background: 'var(--accent-ink)', borderColor: 'var(--accent-ink)', color: 'var(--white)' }}>
           Most popular
         </span>
       )}
@@ -49,13 +49,13 @@ function PricingCard({ tier, isPopular = false, onStartProject }: PricingCardPro
       <p className="ed-card__body" style={{ marginTop: '0.2rem' }}>{tier.description}</p>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', margin: '0.9rem 0 0.3rem' }}>
-        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(1.9rem, 3vw, 2.6rem)', fontWeight: 700, letterSpacing: '-0.05em', color: '#7b182a', lineHeight: 1 }}>
+        <span style={{ fontFamily: 'var(--sans)', fontSize: 'clamp(1.9rem, 3vw, 2.6rem)', fontWeight: 700, letterSpacing: '-0.05em', color: 'var(--accent-ink)', lineHeight: 1 }}>
           {priceDisplay}
         </span>
-        {tier.period && <span style={{ fontSize: '0.82rem', color: '#5f6d62' }}>{tier.period}</span>}
+        {tier.period && <span style={{ fontSize: '0.82rem', color: 'var(--muted)' }}>{tier.period}</span>}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#5f6d62' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--muted)' }}>
         <Clock className="h-3.5 w-3.5" />
         <span>{tier.timeline}</span>
       </div>
@@ -64,8 +64,8 @@ function PricingCard({ tier, isPopular = false, onStartProject }: PricingCardPro
 
       <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.5rem', flexGrow: 1 }}>
         {features.slice(0, 8).map((feature: string, idx: number) => (
-          <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.87rem', lineHeight: 1.55, color: '#4c5a50' }}>
-            <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#7b182a' }} />
+          <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.87rem', lineHeight: 1.55, color: 'var(--copy)' }}>
+            <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--accent-ink)' }} />
             <span>{feature}</span>
           </li>
         ))}
@@ -101,15 +101,15 @@ function FAQItem({ question, answer, isOpen, onToggle }: {
         aria-expanded={isOpen}
         style={{ width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', padding: '1rem 1.2rem', background: 'transparent', border: 0, cursor: 'pointer', textAlign: 'left' }}
       >
-        <h4 style={{ margin: 0, fontFamily: "'Space Grotesk', sans-serif", fontSize: '1rem', fontWeight: 600, letterSpacing: '-0.02em', color: '#26312a' }}>{question}</h4>
-        <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }} style={{ flex: 'none', width: 26, height: 26, borderRadius: '50%', border: '1px solid rgba(123,24,42,0.4)', display: 'grid', placeItems: 'center', color: '#7b182a' }}>
+        <h4 style={{ margin: 0, fontFamily: 'var(--sans)', fontSize: '1rem', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--text)' }}>{question}</h4>
+        <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }} style={{ flex: 'none', width: 26, height: 26, borderRadius: '50%', border: '1px solid var(--line)', display: 'grid', placeItems: 'center', color: 'var(--accent-ink)' }}>
           <ChevronDown className="h-4 w-4" />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} style={{ overflow: 'hidden' }}>
-            <p className="ed-copy" style={{ padding: '0.9rem 1.2rem 1.1rem', margin: 0, fontSize: '0.92rem', borderTop: '1px solid rgba(84,72,48,0.18)' }}>{answer}</p>
+            <p className="ed-copy" style={{ padding: '0.9rem 1.2rem 1.1rem', margin: 0, fontSize: '0.92rem', borderTop: '1px solid var(--line)' }}>{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -213,6 +213,7 @@ export function Pricing() {
   return (
     <>
       <PageHero
+        study="register"
         eyebrow="Transparent pricing"
         title={<>Simple, <em>honest</em> pricing</>}
         lede="Explore up-to-date packages managed directly by Chronolyte. Compare features, delivery timelines and prices before requesting a tailored quote."
@@ -236,7 +237,7 @@ export function Pricing() {
       {featured && (() => {
         const features = typeof featured.features === 'string' ? (() => { try { return JSON.parse(featured.features); } catch { return []; } })() : (featured.features || []);
         return (
-          <Sheet tone="cherry">
+          <Sheet tone="graphite">
             <div className="ed-rubric">Featured website package<span className="ed-rubric__num">01 / 06</span></div>
             <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
               <div>
@@ -249,8 +250,8 @@ export function Pricing() {
               <div className="ed-card">
                 <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.5rem' }}>
                   {features.map((feature: string, index: number) => (
-                    <li key={index} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.55, color: '#eddccd' }}>
-                      <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#c5de97' }} /> {feature}
+                    <li key={index} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--copy)' }}>
+                      <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--signal-light)' }} /> {feature}
                     </li>
                   ))}
                 </ul>
@@ -280,7 +281,7 @@ export function Pricing() {
         </div>
       </Sheet>
 
-      <Sheet tone="lime">
+      <Sheet tone="fog">
         <div className="grid gap-6 md:grid-cols-3">
           {[
             ['50/50', 'Payment split', '50% upfront to start, 50% upon completion. Simple and fair.'],
@@ -301,7 +302,7 @@ export function Pricing() {
         {renderGroup(pricingData.websites, 'Website')}
       </Sheet>
 
-      <Sheet tone="mist" id="ai-tools">
+      <Sheet tone="alloy" id="ai-tools">
         <SectionHead rubric="AI solutions" number="03 / 06" title={<>Mobile app & <em>AI builds</em></>} lede="Intelligent solutions powered by modern AI tooling." />
         {renderGroup(pricingData.aitools, 'AI Tool')}
       </Sheet>
@@ -311,7 +312,7 @@ export function Pricing() {
         {renderGroup(pricingData.saas, 'SaaS')}
       </Sheet>
 
-      <Sheet tone="lime" id="automation">
+      <Sheet tone="fog" id="automation">
         <SectionHead rubric="Automation" number="05 / 06" title={<>Hire <em>developers</em></>} lede="Intelligent workflow automation and vetted talent for your business." />
         {renderGroup(pricingData.automation, 'Automation')}
       </Sheet>
@@ -325,7 +326,7 @@ export function Pricing() {
         </div>
       </Sheet>
 
-      <Sheet tone="mist">
+      <Sheet tone="alloy">
         <SectionHead rubric="Our policies" title={<>Transparent <em>terms</em></>} lede="Clear, fair policies that protect both sides of the project." />
         <div className="grid gap-4 md:grid-cols-3">
           {[
@@ -338,8 +339,8 @@ export function Pricing() {
               <h3 className="ed-card__title">{policy.title}</h3>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.45rem' }}>
                 {policy.items.map((item) => (
-                  <li key={item} style={{ display: 'flex', gap: '0.45rem', alignItems: 'flex-start', fontSize: '0.86rem', lineHeight: 1.55, color: '#4c5a50' }}>
-                    <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#3f7a37' }} /> {item}
+                  <li key={item} style={{ display: 'flex', gap: '0.45rem', alignItems: 'flex-start', fontSize: '0.86rem', lineHeight: 1.55, color: 'var(--copy)' }}>
+                    <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--accent-ink)' }} /> {item}
                   </li>
                 ))}
               </ul>

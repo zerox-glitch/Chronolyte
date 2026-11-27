@@ -18,11 +18,11 @@ function FAQItem({ question, answer, isOpen, onClick }: {
         aria-expanded={isOpen}
         style={{ width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', padding: '1.05rem 1.2rem', background: 'transparent', border: 0, cursor: 'pointer', textAlign: 'left' }}
       >
-        <h3 style={{ margin: 0, fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.02rem', fontWeight: 600, letterSpacing: '-0.02em', color: '#26312a' }}>{question}</h3>
+        <h3 style={{ margin: 0, fontFamily: 'var(--sans)', fontSize: '1.02rem', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--text)' }}>{question}</h3>
         <motion.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.25 }}
-          style={{ flex: 'none', width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(123,24,42,0.4)', display: 'grid', placeItems: 'center', color: '#7b182a' }}
+          style={{ flex: 'none', width: 28, height: 28, borderRadius: '50%', border: '1px solid var(--line)', display: 'grid', placeItems: 'center', color: 'var(--accent-ink)' }}
         >
           <ChevronDown className="h-4 w-4" />
         </motion.span>
@@ -36,7 +36,7 @@ function FAQItem({ question, answer, isOpen, onClick }: {
             transition={{ duration: 0.25 }}
             style={{ overflow: 'hidden' }}
           >
-            <p className="ed-copy" style={{ padding: '0 1.2rem 1.15rem', margin: 0, fontSize: '0.94rem', borderTop: '1px solid rgba(84,72,48,0.18)', paddingTop: '0.9rem' }}>
+            <p className="ed-copy" style={{ padding: '0 1.2rem 1.15rem', margin: 0, fontSize: '0.94rem', borderTop: '1px solid var(--line)', paddingTop: '0.9rem' }}>
               {answer}
             </p>
           </motion.div>
@@ -145,6 +145,7 @@ export function FAQ() {
   return (
     <>
       <PageHero
+        study="signal"
         eyebrow={content.hero.badge_text}
         title={<>Frequently asked <em>questions</em></>}
         lede={content.hero.description}
@@ -165,7 +166,7 @@ export function FAQ() {
 
       <Sheet tone="paper">
         <div className="grid gap-10 lg:grid-cols-[240px_1fr] lg:items-start">
-          <div style={{ position: 'sticky', top: 108 }}>
+          <div className="faq-index">
             <p className="ed-rubric">Sections</p>
             <ol style={{ listStyle: 'none', margin: '0.8rem 0 0', padding: 0, display: 'grid', gap: '0.5rem' }}>
               {categories.map((category, catIndex) => (

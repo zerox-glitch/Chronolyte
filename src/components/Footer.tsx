@@ -1,3 +1,4 @@
+import { MotionSwitch } from './editorial/MotionPreferences';
 import { useState, useEffect, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { BrandMark, BrandWordmark } from './editorial/Brand';
@@ -72,10 +73,10 @@ export function Footer() {
     <footer className="ed-footer">
       <div className="ed-footer__top">
         <div className="ed-footer__brand">
-          <div className="ed-brand" style={{ marginBottom: '0.9rem' }}>
+          <Link to="/" aria-label="Chronolyte home" className="ed-brand" style={{ marginBottom: '0.9rem' }}>
             <BrandMark />
             <BrandWordmark />
-          </div>
+          </Link>
           <p className="ed-footer__blurb">
             An independent digital studio building websites, apps and SaaS products on fixed quotes —
             one team for design, development and launch, working worldwide.
@@ -156,6 +157,7 @@ export function Footer() {
           <Link to="/refunds">Refunds</Link>
         </div>
         <p>{siteSettings.footer_tagline}</p>
+        <MotionSwitch />
       </div>
     </footer>
   );

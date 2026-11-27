@@ -1,36 +1,23 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import { SiteNavigation } from '../SiteNavigation';
 import { Footer } from '../Footer';
+import { StudioArtwork, ClosingDrawing, type StudyKind } from './StudioArtwork';
 
-export type SheetTone = 'paper' | 'cream' | 'cherry' | 'lime' | 'mist' | 'ink' | 'blue';
+export type SheetTone = 'paper' | 'white' | 'graphite' | 'fog' | 'alloy' | 'ink' | 'silver';
 
-/** Fixed sliced-wood slab sealed under a transparent resin pour. */
-export function WoodStage() {
+/** Shared masthead, content measure, skip target and colophon on all public routes. */
+export function EditorialPage({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className="ed-stage" aria-hidden="true">
-      <div className="ed-stage__wood" />
-      <div className="ed-stage__grain" />
-      <div className="ed-stage__planks" />
-      <div className="ed-stage__resin" />
-      <div className="ed-stage__sheen" />
-      <div className="ed-stage__vignette" />
-    </div>
-  );
-}
-
-interface EditorialPageProps {
-  children: ReactNode;
-  className?: string;
-}
-
-/** Shared shell for every public route: nav, wood/resin stage, sheets, footer. */
-export function EditorialPage({ children, className = '' }: EditorialPageProps) {
-  return (
-    <div className={`ed-site ${className}`.trim()}>
-      <WoodStage />
+    <div className={`ed-site ${className}`}>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
       <SiteNavigation />
-      <main className="ed-main">{children}</main>
+      <main id="main-content" className="ed-main" tabIndex={-1}>
+        {children}
+      </main>
       <Footer />
     </div>
   );
@@ -47,23 +34,21 @@ interface SheetProps {
   narrow?: boolean;
   as?: 'section' | 'div' | 'article' | 'aside';
 }
-
-/** A sheet of paper resting on the resin slab. */
 export function Sheet({
   children,
   tone = 'paper',
   id,
   className = '',
   innerClassName = '',
-  wide = false,
-  medium = false,
-  narrow = false,
+  wide,
+  medium,
+  narrow,
   as: Tag = 'section',
 }: SheetProps) {
-  const widthClass = wide ? 'ed-sheet__inner--wide' : medium ? 'ed-sheet__inner--medium' : narrow ? 'ed-sheet__inner--narrow' : '';
+  const measure = wide ? 'wide' : medium ? 'medium' : narrow ? 'narrow' : 'standard';
   return (
-    <Tag id={id} className={`ed-sheet ed-sheet--${tone} ${className}`.trim()}>
-      <div className={`ed-sheet__inner ${widthClass} ${innerClassName}`.trim()}>{children}</div>
+    <Tag id={id} className={`ed-sheet ed-sheet--${tone} ${className}`}>
+      <div className={`ed-sheet__inner ed-sheet__inner--${measure} ${innerClassName}`}>{children}</div>
     </Tag>
   );
 }
@@ -77,23 +62,55 @@ interface PageHeroProps {
   tone?: SheetTone;
   children?: ReactNode;
   className?: string;
+  study?: StudyKind;
+  visual?: ReactNode;
 }
-
-/** Editorial hero used by every inner page. */
-export function PageHero({ eyebrow, title, lede, actions, meta, tone = 'paper', children, className = '' }: PageHeroProps) {
+export function PageHero({
+  eyebrow,
+  title,
+  lede,
+  actions,
+  meta,
+  tone = 'paper',
+  children,
+  className = '',
+  study = 'register',
+  visual,
+}: PageHeroProps) {
   return (
-    <Sheet tone={tone} className={`ed-hero ${className}`.trim()} innerClassName="ed-hero__body">
-      <span className="ed-hero__asterisk" aria-hidden="true">✳︎</span>
-      {eyebrow && <p className="ed-rubric">{eyebrow}</p>}
-      <h1 className="ed-hero__title">{title}</h1>
-      {lede && <p className="ed-hero__lede">{lede}</p>}
-      {actions && <div className="ed-btn-row ed-hero__actions">{actions}</div>}
-      {children}
+    <Sheet tone={tone} className={`ed-hero ${className}`}>
+      <div className="inner-hero-grid">
+        <div className="inner-hero-copy">
+          {eyebrow && (
+            <p className="studio-eyebrow">
+              <span className="signal-rule" />
+              {eyebrow}
+            </p>
+          )}
+          <h1 className="ed-hero__title">{title}</h1>
+          {lede && <p className="ed-hero__lede">{lede}</p>}
+          {actions && <div className="ed-btn-row ed-hero__actions">{actions}</div>}
+          {children}
+        </div>
+        {visual || <StudioArtwork kind={study} />}
+      </div>
       {meta && <div className="ed-hero__meta">{meta}</div>}
     </Sheet>
   );
 }
 
+export function LegalHero({ title, updated }: { title: string; updated: string }) {
+  return (
+    <Sheet className="legal-head" medium>
+      <p className="studio-eyebrow">
+        <span className="signal-rule" />
+        Legal
+      </p>
+      <h1 className="ed-hero__title">{title}</h1>
+      <p className="legal-dateline">{updated}</p>
+    </Sheet>
+  );
+}
 interface SectionHeadProps {
   rubric?: string;
   number?: string;
@@ -102,10 +119,9 @@ interface SectionHeadProps {
   aside?: ReactNode;
   className?: string;
 }
-
 export function SectionHead({ rubric, number, title, lede, aside, className = '' }: SectionHeadProps) {
   return (
-    <div className={`ed-section-head ${className}`.trim()}>
+    <div className={`ed-section-head ${className}`}>
       <div className="ed-section-head__body">
         {rubric && (
           <p className="ed-rubric">
@@ -120,48 +136,61 @@ export function SectionHead({ rubric, number, title, lede, aside, className = ''
     </div>
   );
 }
-
 interface CtaBandProps {
+  id?: string;
   eyebrow?: string;
+  number?: string;
   title: ReactNode;
   description?: ReactNode;
   primaryTo?: string;
   primaryLabel?: string;
   secondaryTo?: string;
   secondaryLabel?: string;
+  extraAction?: ReactNode;
   children?: ReactNode;
   tone?: SheetTone;
   note?: string;
 }
-
 export function CtaBand({
+  id,
   eyebrow = 'Ready when you are',
+  number,
   title,
   description,
   primaryTo = '/contact',
   primaryLabel = 'Start your project free',
   secondaryTo = '/pricing',
   secondaryLabel = 'See pricing',
+  extraAction,
   children,
   tone = 'ink',
   note,
 }: CtaBandProps) {
   return (
-    <Sheet tone={tone} innerClassName="ed-cta" className="ed-cta-sheet">
-      <span className="ed-hero__asterisk" aria-hidden="true">✳︎</span>
+    <Sheet id={id} tone={tone} innerClassName="ed-cta" className="ed-cta-sheet">
       <div className="ed-cta__body">
-        <p className="ed-rubric">{eyebrow}</p>
+        <p className="ed-rubric">
+          {eyebrow}
+          {number && <span className="ed-rubric__num">{number}</span>}
+        </p>
         <h2 className="ed-title">{title}</h2>
         {description && <p className="ed-lede">{description}</p>}
-        <div className="ed-btn-row" style={{ marginTop: 'clamp(20px, 2.6vw, 32px)' }}>
-          <Link to={primaryTo} className="ed-btn ed-btn--onDark">{primaryLabel}</Link>
+        <div className="ed-btn-row section-actions">
+          <Link to={primaryTo} className="ed-btn ed-btn--onDark">
+            {primaryLabel}
+            <ArrowUpRight />
+          </Link>
           {secondaryLabel && secondaryTo && (
-            <Link to={secondaryTo} className="ed-btn ed-btn--ghostOnDark">{secondaryLabel}</Link>
+            <Link to={secondaryTo} className="ed-btn ed-btn--ghostOnDark">
+              {secondaryLabel}
+            </Link>
           )}
+          {extraAction}
         </div>
         {children}
         {note && <p className="ed-cta__note">{note}</p>}
       </div>
+      <ClosingDrawing />
     </Sheet>
   );
 }

@@ -8,6 +8,7 @@ export function Locations() {
   return (
     <>
       <PageHero
+        study="globe"
         eyebrow="Remote nationwide service"
         title={<>Web design and development across the <em>United States.</em></>}
         lede="Chronolyte works remotely with businesses in all 50 states. We plan, design, build and support projects online, so you can work with our team from a major metro, a smaller city or a surrounding community. The cities below are examples — not a limit on where we work — and do not imply a local office in each place."
@@ -52,12 +53,12 @@ export function Locations() {
                 <h3 className="ed-card__title" style={{ margin: 0 }}>{state.name}</h3>
                 <span className="ed-chip">{state.abbr}</span>
               </div>
-              <p style={{ margin: '0.8rem 0 0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#7b182a' }}>
+              <p style={{ margin: '0.8rem 0 0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent-ink)' }}>
                 <MapPin className="h-3.5 w-3.5" /> Example cities
               </p>
               <ul style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', margin: 0, padding: 0, listStyle: 'none' }}>
                 {state.cities.map((city) => (
-                  <li key={city} style={{ padding: '0.28rem 0.6rem', border: '1px solid rgba(84,72,48,0.22)', borderRadius: 999, background: 'rgba(197,222,151,0.28)', fontSize: '0.72rem', color: '#3e4c43' }}>{city}</li>
+                  <li key={city} style={{ padding: '0.28rem 0.6rem', border: '1px solid var(--line)', borderRadius: 999, background: 'var(--signal-wash)', fontSize: '0.72rem', color: 'var(--copy)' }}>{city}</li>
                 ))}
               </ul>
             </article>
@@ -68,7 +69,7 @@ export function Locations() {
         </p>
       </Sheet>
 
-      <Sheet tone="mist">
+      <Sheet tone="alloy">
         <SectionHead
           rubric="Remote project delivery"
           number="02 / 03"

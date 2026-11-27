@@ -15,6 +15,7 @@ export function NotFound() {
   return (
     <>
       <PageHero
+        study="turbine"
         eyebrow="404 — Nothing on this sheet"
         title={<>This page slipped <em>off the slab.</em></>}
         lede="The link may be old, mistyped, or the page has moved. Nothing is lost — pick a route below and carry on."
@@ -45,7 +46,7 @@ export function NotFound() {
             <Link key={route.to} to={route.to} className="ed-card" style={{ textDecoration: 'none' }}>
               <h3 className="ed-card__title">{route.label}</h3>
               <p className="ed-card__body">{route.note}</p>
-              <span style={{ marginTop: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: '#7b182a' }}>
+              <span style={{ marginTop: '0.9rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-ink)' }}>
                 Open <ArrowRight className="h-4 w-4" />
               </span>
             </Link>

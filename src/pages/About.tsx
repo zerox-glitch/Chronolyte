@@ -126,6 +126,7 @@ export function About() {
   return (
     <>
       <PageHero
+        study="gyroscope"
         eyebrow={content.hero.badge_text}
         title={<>We're <em>Chronolyte</em></>}
         lede={content.hero.description}
@@ -144,7 +145,7 @@ export function About() {
         }
       />
 
-      <Sheet tone="lime">
+      <Sheet tone="fog">
         <div className="ed-rubric" style={{ marginBottom: 'clamp(18px, 2.4vw, 28px)' }}>
           By the numbers<span className="ed-rubric__num">01 / 05</span>
         </div>
@@ -175,7 +176,7 @@ export function About() {
             </div>
           </AnimatedSection>
           <AnimatedSection delay={0.15}>
-            <div className="ed-card" style={{ background: '#f7f1e2' }}>
+            <div className="ed-card" style={{ background: 'var(--surface)' }}>
               <p className="ed-rubric">{content.story.mission_title}</p>
               <p className="ed-quote" style={{ marginTop: '0.6rem' }}>“{content.story.mission_text}”</p>
               <p className="ed-card__body" style={{ marginTop: '1rem' }}>
@@ -186,7 +187,7 @@ export function About() {
         </div>
       </Sheet>
 
-      <Sheet tone="mist">
+      <Sheet tone="alloy">
         <SectionHead
           rubric="Our expertise"
           number="03 / 05"
@@ -206,7 +207,7 @@ export function About() {
         </div>
       </Sheet>
 
-      <Sheet tone="cherry">
+      <Sheet tone="graphite">
         <SectionHead
           rubric={content.values.section_title}
           number="04 / 05"

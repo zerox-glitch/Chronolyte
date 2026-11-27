@@ -10,6 +10,7 @@ export function Industries() {
   return (
     <>
       <PageHero
+        study="helix"
         eyebrow="Industry-aware digital work"
         title={<>Websites and software shaped around <em>your business.</em></>}
         lede="A contractor, clinic, online store, nonprofit or software startup each has different customers and workflows. We scope the website, app, store or automation around what your organisation actually needs — not a one-size-fits-all industry template."
@@ -47,8 +48,8 @@ export function Industries() {
               <span className="ed-card__num">{String(index + 1).padStart(2, '0')}</span>
               <h3 className="ed-card__title">{industry.name}</h3>
               <p className="ed-card__body">{industry.examples}</p>
-              <p style={{ marginTop: '0.9rem', paddingTop: '0.9rem', borderTop: '1px solid rgba(84,72,48,0.2)', fontSize: '0.86rem', lineHeight: 1.6, color: '#4c5a50', display: 'flex', gap: '0.5rem' }}>
-                <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#7b182a' }} />
+              <p style={{ marginTop: '0.9rem', paddingTop: '0.9rem', borderTop: '1px solid var(--line)', fontSize: '0.86rem', lineHeight: 1.6, color: 'var(--copy)', display: 'flex', gap: '0.5rem' }}>
+                <CheckCircle2 className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--accent-ink)' }} />
                 <span>{industry.digitalNeeds}</span>
               </p>
             </article>
@@ -56,7 +57,7 @@ export function Industries() {
         </div>
       </Sheet>
 
-      <Sheet tone="mist">
+      <Sheet tone="alloy">
         <SectionHead
           rubric="Ways we help"
           number="02 / 03"

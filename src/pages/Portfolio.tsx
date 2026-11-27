@@ -1,3 +1,5 @@
+import { StudioCover } from '../components/editorial/StudioCover';
+import { useDialogFocus } from '../components/useDialogFocus';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -208,6 +210,7 @@ export function Portfolio() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [selectedVideoProject, setSelectedVideoProject] = useState<number | string | null>(null);
+  const videoDialog = useDialogFocus(selectedVideoProject !== null, () => setSelectedVideoProject(null));
 
   const filters = [
     { id: 'all', label: 'All projects' },
@@ -261,12 +264,18 @@ export function Portfolio() {
   const filteredProjects = activeFilter === 'all'
     ? projects
     : projects.filter((project) => project.project_type === activeFilter);
+  const coverProject = projects.find(p => p.featured_image.startsWith('/images/')) || projects[0];
   const selectedProject = projects.find((project) => String(project.id) === String(selectedVideoProject));
   const selectedVideoUrl = selectedProject?.video_url || selectedProject?.videos.find((video) => video.is_primary)?.video_url || selectedProject?.videos[0]?.video_url || '';
 
   return (
     <>
       <PageHero
+        study="gyroscope"
+        visual={coverProject && <figure className="work-plate"><a href="#work-index" aria-label="Explore the portfolio">
+          <div className="work-plate__image"><StudioCover src={coverProject.featured_image} title={coverProject.title} label="Project index" eager /></div>
+          <figcaption className="study-caption"><span><b>{coverProject.portfolio_kind === 'concept' ? 'Concept project' : coverProject.portfolio_kind === 'personal' ? 'Personal project' : 'Client work'}</b><span className="caption-slash">/</span>{coverProject.title}</span><ArrowUpRight size={15} /></figcaption>
+        </a></figure>}
         eyebrow="Selected work & experiments"
         title={<>Built with <em>curiosity.</em></>}
         lede="QRWho is a product I built. The other clearly marked concept projects show how I approach thoughtful, useful digital experiences."
@@ -285,7 +294,7 @@ export function Portfolio() {
         }
       />
 
-      <Sheet tone="paper">
+      <Sheet tone="paper" id="work-index">
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: 'clamp(18px, 2.4vw, 28px)' }}>
           <div>
             <p className="ed-rubric">The work<span className="ed-rubric__num">01 / 02</span></p>
@@ -331,16 +340,8 @@ export function Portfolio() {
                     className="ed-card"
                     style={{ padding: 0, overflow: 'hidden' }}
                   >
-                    <div style={{ position: 'relative', aspectRatio: '16 / 10', overflow: 'hidden', background: '#e6ddc9', borderBottom: '1px solid rgba(84,72,48,0.3)' }}>
-                      {project.featured_image && (
-                        <img
-                          src={project.featured_image}
-                          alt={`${project.title} project preview`}
-                          loading="lazy"
-                          onError={(event) => { event.currentTarget.style.display = 'none'; }}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      )}
+                    <div style={{ position: 'relative', aspectRatio: '16 / 10', overflow: 'hidden', background: 'var(--alloy)', borderBottom: '1px solid var(--line)' }}>
+                      <StudioCover src={project.featured_image} alt={`${project.title} project preview`} title={project.title} label="Project index" />
                       {videoUrl && (
                         <button
                           type="button"
@@ -348,39 +349,39 @@ export function Portfolio() {
                           onClick={() => setSelectedVideoProject(project.id)}
                           style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', background: 'rgba(31,39,35,0.18)', border: 0, cursor: 'pointer' }}
                         >
-                          <span style={{ display: 'grid', placeItems: 'center', width: 54, height: 54, borderRadius: '50%', background: '#f0ebdd', border: '2px solid #7b182a', color: '#7b182a' }}>
+                          <span style={{ display: 'grid', placeItems: 'center', width: 54, height: 54, borderRadius: '50%', background: 'var(--canvas)', border: '2px solid var(--accent-ink)', color: 'var(--accent-ink)' }}>
                             <Play className="ml-1 h-5 w-5 fill-current" />
                           </span>
                         </button>
                       )}
                       <div style={{ position: 'absolute', left: 10, top: 10, display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-                        <span className="ed-chip" style={{ background: '#f0ebdd' }}>{projectTypeLabel(project.project_type)}</span>
+                        <span className="ed-chip" style={{ background: 'var(--canvas)' }}>{projectTypeLabel(project.project_type)}</span>
                         {project.portfolio_kind !== 'client' && (
-                          <span className="ed-chip" style={{ background: '#f0ebdd' }}>{project.portfolio_kind === 'personal' ? 'Personal project' : 'Concept project'}</span>
+                          <span className="ed-chip" style={{ background: 'var(--canvas)' }}>{project.portfolio_kind === 'personal' ? 'Personal project' : 'Concept project'}</span>
                         )}
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, padding: 'clamp(16px, 2vw, 22px)' }}>
                       <h3 className="ed-card__title" style={{ marginTop: 0 }}>{project.title}</h3>
-                      {project.client_name && <p style={{ margin: '0.2rem 0 0', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#8a8577' }}>{project.client_name}</p>}
+                      {project.client_name && <p style={{ margin: '0.2rem 0 0', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--muted)' }}>{project.client_name}</p>}
                       <p className="ed-card__body" style={{ marginTop: '0.7rem', flexGrow: 1 }}>{project.short_description}</p>
 
                       {project.tech_stack.length > 0 && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.8rem' }}>
                           {project.tech_stack.slice(0, 4).map((tag) => (
-                            <span key={tag} className="ed-chip" style={{ background: 'transparent', borderColor: 'rgba(84,72,48,0.25)', color: '#4c5a50', fontWeight: 600 }}>{tag}</span>
+                            <span key={tag} className="ed-chip" style={{ background: 'transparent', borderColor: 'var(--line)', color: 'var(--copy)', fontWeight: 600 }}>{tag}</span>
                           ))}
-                          {project.tech_stack.length > 4 && <span className="ed-chip" style={{ background: 'transparent', borderColor: 'rgba(84,72,48,0.25)', color: '#5f6d62' }}>+{project.tech_stack.length - 4}</span>}
+                          {project.tech_stack.length > 4 && <span className="ed-chip" style={{ background: 'transparent', borderColor: 'var(--line)', color: 'var(--muted)' }}>+{project.tech_stack.length - 4}</span>}
                         </div>
                       )}
 
                       {Object.keys(project.metrics).length > 0 && (
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem 1.4rem', marginTop: '0.9rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(84,72,48,0.2)' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem 1.4rem', marginTop: '0.9rem', paddingTop: '0.8rem', borderTop: '1px solid var(--line)' }}>
                           {Object.entries(project.metrics).slice(0, 2).map(([key, value]) => (
                             <div key={key}>
-                              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: '#7b182a' }}>{value}</p>
-                              <p style={{ margin: '0.15rem 0 0', fontSize: '0.6rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#8a8577' }}>{safeMetricLabel(key)}</p>
+                              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent-ink)' }}>{value}</p>
+                              <p style={{ margin: '0.15rem 0 0', fontSize: '0.6rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--muted)' }}>{safeMetricLabel(key)}</p>
                             </div>
                           ))}
                         </div>
@@ -421,6 +422,7 @@ export function Portfolio() {
       <AnimatePresence>
         {selectedVideoProject !== null && (
           <motion.div
+            ref={videoDialog} role="dialog" aria-modal="true" aria-label="Project video"
             className="ed-modal-backdrop"
             style={{ alignItems: 'center', zIndex: 90 }}
             initial={{ opacity: 0 }}
@@ -447,9 +449,9 @@ export function Portfolio() {
               {selectedVideoUrl ? (
                 <video key={selectedVideoUrl} src={selectedVideoUrl} controls autoPlay style={{ width: '100%', maxHeight: '80vh', borderRadius: 5, background: '#000' }} />
               ) : (
-                <div style={{ display: 'grid', placeItems: 'center', height: 260, borderRadius: 5, background: '#1f2723', color: '#f0ebdd' }}>No video available.</div>
+                <div style={{ display: 'grid', placeItems: 'center', height: 260, borderRadius: 5, background: 'var(--carbon)', color: 'var(--canvas)' }}>No video available.</div>
               )}
-              <p style={{ marginTop: '0.7rem', textAlign: 'center', fontSize: '0.85rem', color: '#f0ebdd' }}>{selectedProject?.title}</p>
+              <p style={{ marginTop: '0.7rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--canvas)' }}>{selectedProject?.title}</p>
             </motion.div>
           </motion.div>
         )}

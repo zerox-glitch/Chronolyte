@@ -1,5 +1,6 @@
+import { StudioCover } from './editorial/StudioCover';
 import { useEffect, useState } from 'react';
-import { ArrowRight, BookOpen, Clock3 } from 'lucide-react';
+import { ArrowRight, Clock3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BlogRecord, formatBlogDate, normalizeBlog } from '../utils/blog';
 
@@ -65,33 +66,22 @@ export function FeaturedBlogs({ limit = 3 }: FeaturedBlogsProps) {
               className="ed-card"
               style={{ padding: 0, overflow: 'hidden', textDecoration: 'none' }}
             >
-              <div style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: '#e6ddc9', borderBottom: '1px solid rgba(84,72,48,0.3)' }}>
-                {blog.featured_image ? (
-                  <img
-                    src={blog.featured_image}
-                    alt={blog.featured_image_alt}
-                    loading="lazy"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div style={{ display: 'grid', placeItems: 'center', height: '100%', color: '#7b182a' }}>
-                    <BookOpen className="h-10 w-10" />
-                  </div>
-                )}
-                <span className="ed-chip" style={{ position: 'absolute', left: 12, top: 12, background: '#f0ebdd' }}>
+              <div style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: 'var(--alloy)', borderBottom: '1px solid var(--line)' }}>
+                <StudioCover src={blog.featured_image} alt={blog.featured_image_alt} title={blog.title} />
+                  <span className="ed-chip" style={{ position: 'absolute', left: 12, top: 12, background: 'var(--canvas)' }}>
                   {blog.category}
                 </span>
               </div>
               <div style={{ padding: 'clamp(16px, 2vw, 22px)', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <h3 className="ed-card__title" style={{ marginTop: 0 }}>{blog.title}</h3>
                 <p className="ed-card__body" style={{ flexGrow: 1 }}>{blog.excerpt}</p>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.8rem', marginTop: '1rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(84,72,48,0.2)', fontSize: '0.74rem', color: '#5f6d62' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.8rem', marginTop: '1rem', paddingTop: '0.8rem', borderTop: '1px solid var(--line)', fontSize: '0.74rem', color: 'var(--muted)' }}>
                   <span>{formatBlogDate(blog.published_at)}</span>
                   {blog.reading_time > 0 && (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Clock3 className="h-3.5 w-3.5" /> {blog.reading_time} min read</span>
                   )}
                 </div>
-                <span style={{ marginTop: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: '#7b182a' }}>
+                <span style={{ marginTop: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-ink)' }}>
                   Read the guide <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </div>

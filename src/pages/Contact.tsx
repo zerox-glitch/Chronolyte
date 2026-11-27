@@ -248,6 +248,7 @@ export function Contact() {
   return (
     <>
       <PageHero
+        study="signal"
         eyebrow={pageContent.hero.badge_text}
         title={<>Let's build <em>together</em></>}
         lede={pageContent.hero.description}
@@ -268,7 +269,7 @@ export function Contact() {
         }
       />
 
-      <Sheet tone="lime">
+      <Sheet tone="fog">
         <div className="grid gap-4 md:grid-cols-3">
           {contactInfo.map((info, index) => (
             <motion.div key={info.title} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
@@ -276,16 +277,16 @@ export function Contact() {
                 <a href={info.href} className="ed-card h-full" style={{ flexDirection: 'row', alignItems: 'center', gap: '0.9rem', textDecoration: 'none' }}>
                   <span className="ed-icon-badge" style={{ marginBottom: 0 }}>{info.icon}</span>
                   <span>
-                    <span style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#5c6b52' }}>{info.title}</span>
-                    <span style={{ display: 'block', marginTop: '0.2rem', fontWeight: 700, color: '#26312a' }}>{info.value}</span>
+                    <span style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)' }}>{info.title}</span>
+                    <span style={{ display: 'block', marginTop: '0.2rem', fontWeight: 700, color: 'var(--text)' }}>{info.value}</span>
                   </span>
                 </a>
               ) : (
                 <div className="ed-card h-full" style={{ flexDirection: 'row', alignItems: 'center', gap: '0.9rem' }}>
                   <span className="ed-icon-badge" style={{ marginBottom: 0 }}>{info.icon}</span>
                   <span>
-                    <span style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#5c6b52' }}>{info.title}</span>
-                    <span style={{ display: 'block', marginTop: '0.2rem', fontWeight: 700, color: '#26312a' }}>{info.value}</span>
+                    <span style={{ display: 'block', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)' }}>{info.title}</span>
+                    <span style={{ display: 'block', marginTop: '0.2rem', fontWeight: 700, color: 'var(--text)' }}>{info.value}</span>
                   </span>
                 </div>
               )}
@@ -303,7 +304,7 @@ export function Contact() {
               title={<>Tell us about <em>the project</em></>}
               lede={pageContent.form.description}
             />
-            <div style={{ display: 'grid', gap: '0.55rem', marginTop: '1.4rem', fontSize: '0.88rem', color: '#3e4c43' }}>
+            <div style={{ display: 'grid', gap: '0.55rem', marginTop: '1.4rem', fontSize: '0.88rem', color: 'var(--copy)' }}>
               <a href={`mailto:hello@chronolyte.com`} className="ed-link" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}><Mail className="h-4 w-4" /> hello@chronolyte.com</a>
               <a href={CONTACT_PHONE_TEL} className="ed-link" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}><Phone className="h-4 w-4" /> {CONTACT_PHONE_DISPLAY}</a>
               <a href={CONTACT_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="ed-link">WhatsApp {CONTACT_PHONE_DISPLAY}</a>
@@ -316,8 +317,8 @@ export function Contact() {
           <div className="ed-card" style={{ padding: 'clamp(20px, 3vw, 34px)' }}>
             {submitted ? (
               <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-                <div style={{ width: 58, height: 58, borderRadius: '50%', background: '#c5de97', border: '2px solid #7b182a', display: 'grid', placeItems: 'center', margin: '0 auto 1rem' }}>
-                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="#7b182a" strokeWidth={2.4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <div style={{ width: 58, height: 58, borderRadius: '50%', background: 'var(--signal-light)', border: '2px solid var(--accent-ink)', display: 'grid', placeItems: 'center', margin: '0 auto 1rem' }}>
+                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="var(--accent-ink)" strokeWidth={2.4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <h3 className="ed-title ed-title--xs">Message sent!</h3>
                 <p className="ed-copy" style={{ marginTop: '0.6rem' }}>{pageContent.form.success_message || "Thank you for reaching out. We'll get back to you within 24 hours."}</p>
@@ -366,8 +367,8 @@ export function Contact() {
                       {budgetOptions.map((option) => (
                         <label key={option.value} className={`ed-choice ${formData.budgetOption === option.value.toString() ? 'ed-choice--active' : ''}`} style={{ cursor: 'pointer' }}>
                           <input type="radio" name="budgetOption" value={option.value.toString()} checked={formData.budgetOption === option.value.toString()} onChange={handleChange} className="ed-check" />
-                          <span style={{ flex: 1, fontSize: '0.88rem', color: '#26312a' }}>{option.label}</span>
-                          <span style={{ fontWeight: 700, color: '#7b182a' }}>${option.value.toLocaleString()}</span>
+                          <span style={{ flex: 1, fontSize: '0.88rem', color: 'var(--text)' }}>{option.label}</span>
+                          <span style={{ fontWeight: 700, color: 'var(--accent-ink)' }}>${option.value.toLocaleString()}</span>
                         </label>
                       ))}
                     </div>
@@ -390,7 +391,7 @@ export function Contact() {
                 <button type="submit" disabled={isSubmitting} className="ed-btn" style={{ width: '100%', opacity: isSubmitting ? 0.6 : 1 }}>
                   {isSubmitting ? 'Sending…' : <><Send className="h-4 w-4" /> Send message</>}
                 </button>
-                <p style={{ margin: 0, fontSize: '0.74rem', color: '#5f6d62', textAlign: 'center' }}>
+                <p style={{ margin: 0, fontSize: '0.74rem', color: 'var(--muted)', textAlign: 'center' }}>
                   By sending this form you agree to our <Link to="/privacy" className="ed-link">privacy policy</Link>.
                 </p>
               </form>
@@ -399,7 +400,7 @@ export function Contact() {
         </div>
       </Sheet>
 
-      <Sheet tone="cherry">
+      <Sheet tone="graphite">
         <div className="grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-center">
           <div>
             <p className="ed-rubric">Prefer to talk?<span className="ed-rubric__num">03 / 03</span></p>

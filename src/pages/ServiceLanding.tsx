@@ -54,6 +54,7 @@ export function ServiceLanding({ slug }: { slug: ServiceSlug }) {
   return (
     <>
       <PageHero
+        study={slug === 'ai-automation' ? 'signal' : slug === 'custom-software' ? 'gyroscope' : slug === 'website-redesign' ? 'helix' : 'turbine'}
         eyebrow={entry.eyebrow}
         title={entry.title.split(' for ')[0]}
         lede={entry.intro}
@@ -81,7 +82,7 @@ export function ServiceLanding({ slug }: { slug: ServiceSlug }) {
         />
       </Sheet>
 
-      <Sheet tone="lime">
+      <Sheet tone="fog">
         <SectionHead
           rubric="What's included"
           number="02 / 03"
@@ -90,8 +91,8 @@ export function ServiceLanding({ slug }: { slug: ServiceSlug }) {
         <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: '0.55rem' }}>
           {entry.deliverables.map((item) => (
             <li key={item} className="ed-card" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: '0.7rem', padding: '0.9rem 1.1rem' }}>
-              <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: '#7b182a' }} />
-              <span style={{ fontSize: '0.92rem', lineHeight: 1.6, color: '#2f422a' }}>{item}</span>
+              <Check className="h-4 w-4" style={{ flex: 'none', marginTop: 3, color: 'var(--accent-ink)' }} />
+              <span style={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--copy)' }}>{item}</span>
             </li>
           ))}
         </ul>

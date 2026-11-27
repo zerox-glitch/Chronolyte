@@ -397,10 +397,11 @@ export function injectSeo(html, opts) {
   if (ssrContent) {
     // Visible crawlable fallback. React's createRoot replaces this markup on the
     // client; without JavaScript, the page still exposes readable page content.
-    // Replace the full loading fallback; Vite embeds application JS in the head.
-    const rootPattern = /<div id="root">\s*<div id="loading-fallback"[\s\S]*?<\/div>\s*<\/div>/i;
-    if (!rootPattern.test(out)) throw new Error('SEO prerender root loading fallback not found');
-    out = out.replace(rootPattern, () => `<div id="root">${ssrContent}</div>`);
+    // The dynamic pricing/guide renderer receives an already prerendered homepage.
+    // Delimit just the root content, so both initial and subsequent renders keep the SPA assets.
+    const rootPattern = /<!--CONTENT-START-->[\s\S]*?<!--CONTENT-END-->/;
+    if (!rootPattern.test(out)) throw new Error('SEO content markers not found');
+    out = out.replace(rootPattern, () => `<!--CONTENT-START-->${ssrContent}<!--CONTENT-END-->`);
   }
 
   return out;

@@ -1,25 +1,23 @@
-import { useState, useRef, useEffect } from 'react';
+import { useDialogFocus } from '../components/useDialogFocus';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
-import { HourglassLogo } from '../components/HourglassLogo';
-import { 
-  LayoutDashboard, 
-  Users, 
-  FolderKanban, 
-  MessageSquareQuote, 
-  FileText, 
-  Settings, 
+import { BrandMark, BrandWordmark } from '../components/editorial/Brand';
+import {
+  LayoutDashboard,
+  Users,
+  FolderKanban,
+  MessageSquareQuote,
+  FileText,
+  Settings,
   LogOut,
   Menu,
   X,
   Bell,
   Search,
   ChevronDown,
-  Image,
   DollarSign,
   Globe,
-  Home,
   CreditCard,
-  ClipboardList,
   Video,
   BookOpen
 } from 'lucide-react';
@@ -48,6 +46,14 @@ export function AdminLayout() {
   const { user, logout } = useAuth();
   const profileRef = useRef<HTMLDivElement>(null);
 
+  const sidebarRef = useDialogFocus<HTMLElement>(sidebarOpen, () => setSidebarOpen(false));
+  useEffect(() => {
+    const viewport = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = () => { if (viewport.matches) setSidebarOpen(false); };
+    viewport.addEventListener('change', closeOnDesktop);
+    return () => viewport.removeEventListener('change', closeOnDesktop);
+  }, []);
+
   // Close profile menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -66,30 +72,29 @@ export function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="desk min-h-screen">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside className={`
-        fixed top-0 left-0 z-50 h-full w-64 bg-[#0d0d14] border-r border-white/5 
+      <aside ref={sidebarRef} id="admin-sidebar" aria-label="Workspace navigation" role={sidebarOpen ? 'dialog' : undefined} aria-modal={sidebarOpen || undefined} data-open={sidebarOpen} className={`
+        desk-sidebar fixed top-0 left-0 z-50 h-full w-64 bg-[#0d0d14] border-r border-white/5
         transform transition-transform duration-300 ease-in-out flex flex-col
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0
       `}>
         {/* Logo */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-white/5 flex-shrink-0">
           <Link to="/admin" className="flex items-center gap-3">
-            <HourglassLogo className="w-8 h-8" />
-            <span className="font-display font-bold text-lg">Chronolyte</span>
+            <BrandMark /><BrandWordmark />
           </Link>
-          <button 
-            onClick={() => setSidebarOpen(false)}
+          <button
+            aria-label="Close sidebar" onClick={() => setSidebarOpen(false)}
             className="lg:hidden text-white/60 hover:text-white"
           >
             <X className="w-5 h-5" />
@@ -97,20 +102,20 @@ export function AdminLayout() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1 pb-4">
+        <nav aria-label="Admin navigation" className="flex-1 overflow-y-auto p-4 space-y-1 pb-4">
           {navigation.map((item) => {
-            const isActive = location.pathname === item.href || 
+            const isActive = location.pathname === item.href ||
               (item.href !== '/admin' && location.pathname.startsWith(item.href));
             return (
               <Link
                 key={item.name}
-                to={item.href}
+                to={item.href} aria-current={isActive ? 'page' : undefined}
                 onClick={() => setSidebarOpen(false)}
                 className={`
                   flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
                   transition-all duration-200
-                  ${isActive 
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 border border-cyan-500/20' 
+                  ${isActive
+                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 border border-cyan-500/20'
                     : 'text-white/60 hover:text-white hover:bg-white/5'
                   }
                 `}
@@ -142,8 +147,8 @@ export function AdminLayout() {
         <header className="sticky top-0 z-30 h-16 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5">
           <div className="flex items-center justify-between h-full px-4 lg:px-8">
             {/* Mobile Menu Button */}
-            <button 
-              onClick={() => setSidebarOpen(true)}
+            <button
+              aria-label="Open sidebar" aria-controls="admin-sidebar" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}
               className="lg:hidden text-white/60 hover:text-white"
             >
               <Menu className="w-6 h-6" />
@@ -171,7 +176,7 @@ export function AdminLayout() {
 
               {/* Profile Dropdown */}
               <div className="relative" ref={profileRef}>
-                <button 
+                <button
                   onClick={() => setProfileOpen(!profileOpen)}
                   className="flex items-center gap-2 p-1.5 hover:bg-white/5 rounded-lg transition-colors"
                 >
@@ -188,8 +193,8 @@ export function AdminLayout() {
                       <p className="text-sm font-medium text-white">{user?.username}</p>
                       <p className="text-xs text-white/60">{user?.email}</p>
                     </div>
-                    
-                    <button 
+
+                    <button
                       onClick={() => {
                         navigate('/admin/settings');
                         setProfileOpen(false);
@@ -200,7 +205,7 @@ export function AdminLayout() {
                       My Settings
                     </button>
 
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-2 border-t border-white/5"
                     >
@@ -215,8 +220,8 @@ export function AdminLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="p-8">
-          <Outlet />
+        <main className={`desk-workspace p-4 md:p-8 ${['/admin/project-requests', '/admin/portfolio'].includes(location.pathname) ? 'desk-workspace--light' : ''}`}>
+          <Suspense fallback={<p role="status">Loading...</p>}><Outlet /></Suspense>
         </main>
       </div>
     </div>

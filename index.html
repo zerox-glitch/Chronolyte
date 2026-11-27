@@ -8,11 +8,11 @@
     <meta name="keywords" content="hire web developer, web designer, fiverr alternative, saas development company, build a saas product, mvp development, ai automation agency, custom website design, app development help, ai chatbot developer, upwork alternative, web development agency" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="author" content="Chronolyte" />
-    <meta name="theme-color" content="#33200f" />
+    <meta name="theme-color" content="#f7f7f1" />
     <!--SEO-START-->
     <!--SEO-END-->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/brand/icon-180.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta property="og:site_name" content="Chronolyte" />
     <meta property="og:title" content="Chronolyte — Hire Web Designers & Developers - Start Free" />
@@ -22,19 +22,25 @@
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
-    <div id="root">
-      <div id="loading-fallback" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#33200f;color:#f0ebdd;font-family:Inter,system-ui,sans-serif;flex-direction:column;gap:16px;">
-        <div style="width:48px;height:48px;border:3px solid rgba(240,235,221,0.25);border-top-color:#c5de97;border-radius:50%;animation:spin 1s linear infinite;"></div>
+    <div id="root"><!--CONTENT-START-->
+      <div id="loading-fallback" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f7f1;color:#242520;font-family:Inter,system-ui,sans-serif;flex-direction:column;gap:16px;">
+        <div style="width:48px;height:48px;border:3px solid #d8d9d2;border-top-color:#ff541d;border-radius:50%;animation:spin 1s linear infinite;"></div>
         <p style="font-size:14px;opacity:0.7;">Loading Chronolyte...</p>
         <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
       </div>
-    </div>
+    <!--CONTENT-END--></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
       window.addEventListener('error', function (e) {
         var root = document.getElementById('root');
         if (root && !root.hasChildNodes()) {
-          root.innerHTML = '<div style="padding:40px;background:#1a0000;color:#ff4444;font-family:monospace;white-space:pre-wrap;max-width:800px;margin:40px auto;border-radius:8px;border:1px solid #ff4444;"><h2 style="color:#ff6666;margin-bottom:16px;">JavaScript Error</h2><p>' + (e.message || 'Unknown error') + '</p></div>';
+          var panel = document.createElement('main');
+          var title = document.createElement('h1');
+          var message = document.createElement('p');
+          title.textContent = 'JavaScript Error';
+          message.textContent = e.message || 'Unknown error';
+          panel.append(title, message);
+          root.append(panel);
         }
       });
     </script>

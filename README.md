@@ -75,14 +75,10 @@ All endpoints exist in clean form (`/api/leads`) and legacy form (`/backend/api/
 
 `/api/auth` · `/api/leads` (+`/export` CSV) · `/api/project-requests` · `/api/settings` · `/api/faqs` · `/api/snippets` · `/api/pages` · `/api/pricing` · `/api/blogs` · `/api/projects` · `/api/project-videos` · `/api/testimonials` · `/api/services` · `/api/upload` · `/api/form-settings` · `/api/stats/dashboard` · `/api/health`
 
-## Public site design system (paper on resin)
+## Studio design system — Kinetic Studies
 
-Every public route (homepage, services, pricing, portfolio, about, FAQ, industries, locations, international, guides, contact, legal) shares one editorial language, all driven by `src/styles/editorial-site.css`:
+`src/styles/studio.css` owns the public palette, type, layout, forms and responsive rules. `EditorialPage`, `Sheet`, `PageHero`, `SectionHead` and `CtaBand` give all public routes one masthead and design language. Studio objects are responsive WebPs in `public/images/studio`; typefaces live in `src/assets/fonts`, with their OFL licenses shipped in `public/assets/font-licenses`.
 
-- **Stage** — `WoodStage` paints a fixed sliced-wood slab (heartwood gradient, log rings, plank seams, a knot) sealed under a glossy transparent resin pour with a slow moving specular sheen. The homepage and every page render it behind the content.
-- **Sheets** — content sits on slightly inset "sheets of paper" (`Sheet` in `src/components/editorial/EditorialPage.tsx`) in `paper`, `cream`, `cherry`, `lime`, `mist` or `ink`, alternating down each page so the wood stays visible at the edges and between sheets.
-- **Type** — Space Grotesk uppercase headlines with Instrument Serif italic accents, DM Sans body copy, numbered rubrics (`01 / 05`) and hard offset shadows kept from the original homepage.
-- **Palette** — cherry `#7b182a`, lime `#c5de97`, paper `#f0ebdd`, ink `#1f2723`, mist `#dbe8e5` on wood `#33200f`.
-- **Page recipe** — `EditorialPage` supplies nav + stage + footer; pages compose `<PageHero>`, `<Sheet>`, `<SectionHead>` and finish with `<CtaBand>`.
+The homepage pairs the editable introduction with a manually browsable series of three kinetic studies. The capability strip and artwork respect system reduced motion and the persistent motion switch. Service details, lead capture, pricing, guides and portfolio content still use their original sources. The admin workspace and customer dialogs share the graphite instrument palette in `src/styles/workspace.css`.
 
-The admin dashboard keeps its own dark theme and is intentionally outside this shell.
+The production build shares hashed assets between prerendered pages and loads the admin application only on `/admin/*`.

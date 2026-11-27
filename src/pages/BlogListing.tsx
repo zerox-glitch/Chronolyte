@@ -1,3 +1,4 @@
+import { StudioCover } from '../components/editorial/StudioCover';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Clock3, Search } from 'lucide-react';
@@ -142,7 +143,7 @@ export function BlogListing() {
     if (nextPage <= 1) nextParams.delete('page');
     else nextParams.set('page', String(nextPage));
     setSearchParams(nextParams);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const clearFilters = () => {
@@ -160,6 +161,7 @@ export function BlogListing() {
   return (
     <>
       <PageHero
+        study="folio"
         eyebrow="The Chronolyte guides"
         title={heading}
         lede="Clear, practical advice on project costs, timelines and hiring — so you can make your next digital move with confidence."
@@ -173,10 +175,10 @@ export function BlogListing() {
       />
 
       <Sheet tone="paper">
-        <nav aria-label="Breadcrumb" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.45rem', marginBottom: '1.4rem', fontSize: '0.8rem', color: '#6a746a' }}>
+        <nav aria-label="Breadcrumb" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.45rem', marginBottom: '1.4rem', fontSize: '0.8rem', color: 'var(--muted)' }}>
           <Link to="/" className="ed-link" style={{ textDecoration: 'none' }}>Home</Link>
           <span aria-hidden="true">/</span>
-          <span style={{ color: '#26312a', fontWeight: 700 }}>Guides</span>
+          <span style={{ color: 'var(--text)', fontWeight: 700 }}>Guides</span>
           {selectedCategory && (
             <>
               <span aria-hidden="true">/</span>
@@ -188,7 +190,7 @@ export function BlogListing() {
         <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '1rem' }}>
           <label style={{ position: 'relative', flex: '1 1 240px' }}>
             <span className="sr-only">Search guides</span>
-            <Search style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', width: 18, height: 18, color: '#7b8578' }} />
+            <Search style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', width: 18, height: 18, color: 'var(--muted)' }} />
             <input
               type="search"
               placeholder="Search costs, websites, apps, hiring…"
@@ -203,7 +205,7 @@ export function BlogListing() {
 
         {categories.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.4rem', marginBottom: '1.6rem' }}>
-            <span style={{ marginRight: '0.3rem', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7b8578' }}>Explore</span>
+            <span style={{ marginRight: '0.3rem', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)' }}>Explore</span>
             {categories.map((category) => (
               <button
                 key={category}
@@ -229,7 +231,7 @@ export function BlogListing() {
               {searchQuery ? `Results for “${searchQuery}”` : selectedCategory ? `Latest ${selectedCategory.toLowerCase()}` : 'Ideas worth getting right'}
             </h2>
           </div>
-          {!loading && blogs.length > 0 && <span style={{ fontSize: '0.8rem', color: '#6a746a' }}>Page {page} of {totalPages}</span>}
+          {!loading && blogs.length > 0 && <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Page {page} of {totalPages}</span>}
         </div>
 
         {error && (
@@ -250,22 +252,18 @@ export function BlogListing() {
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {blogs.map((blog) => (
               <Link key={blog.id} to={`/blog/${blog.slug}`} className="ed-card" style={{ padding: 0, overflow: 'hidden', textDecoration: 'none' }}>
-                <div style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: '#e6ddc9', borderBottom: '1px solid rgba(84,72,48,0.3)' }}>
-                  {blog.featured_image ? (
-                    <img src={blog.featured_image} alt={blog.featured_image_alt} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ display: 'grid', placeItems: 'center', height: '100%', color: '#7b182a' }}><BookOpen className="h-10 w-10" /></div>
-                  )}
-                  <span className="ed-chip" style={{ position: 'absolute', left: 12, top: 12, background: '#f0ebdd' }}>{blog.category}</span>
+                <div style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: 'var(--alloy)', borderBottom: '1px solid var(--line)' }}>
+                  <StudioCover src={blog.featured_image} alt={blog.featured_image_alt} title={blog.title} />
+                  <span className="ed-chip" style={{ position: 'absolute', left: 12, top: 12, background: 'var(--canvas)' }}>{blog.category}</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1, padding: 'clamp(16px, 2vw, 22px)' }}>
                   <h3 className="ed-card__title" style={{ marginTop: 0 }}>{blog.title}</h3>
                   <p className="ed-card__body" style={{ flexGrow: 1 }}>{blog.excerpt}</p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem 0.9rem', marginTop: '0.9rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(84,72,48,0.2)', fontSize: '0.74rem', color: '#6a746a' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem 0.9rem', marginTop: '0.9rem', paddingTop: '0.8rem', borderTop: '1px solid var(--line)', fontSize: '0.74rem', color: 'var(--muted)' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><CalendarDays className="h-3.5 w-3.5" /> {formatBlogDate(blog.published_at)}</span>
                     {blog.reading_time > 0 && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Clock3 className="h-3.5 w-3.5" /> {blog.reading_time} min read</span>}
                   </div>
-                  <span style={{ marginTop: '0.7rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: '#7b182a' }}>
+                  <span style={{ marginTop: '0.7rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-ink)' }}>
                     Read the guide <ArrowUpRight className="h-3.5 w-3.5" />
                   </span>
                 </div>
@@ -274,7 +272,7 @@ export function BlogListing() {
           </div>
         ) : !error ? (
           <div className="ed-card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
-            <div style={{ margin: '0 auto 1rem', width: 52, height: 52, display: 'grid', placeItems: 'center', borderRadius: 4, background: 'rgba(197,222,151,0.6)', border: '1px solid rgba(123,24,42,0.3)', color: '#7b182a' }}>
+            <div style={{ margin: '0 auto 1rem', width: 52, height: 52, display: 'grid', placeItems: 'center', borderRadius: 4, background: 'var(--signal-wash)', border: '1px solid var(--line)', color: 'var(--accent-ink)' }}>
               <BookOpen className="h-6 w-6" />
             </div>
             <h2 className="ed-card__title">No guides found</h2>

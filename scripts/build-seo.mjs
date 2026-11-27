@@ -354,7 +354,7 @@ function genericLandingSsr(route, meta) {
     ['Custom software', '/custom-software'], ['Pricing', '/pricing'],
     ['Portfolio', '/portfolio'], ['About', '/about'], ['Contact', '/contact']
   ].map(([name, link]) => '<a href="' + link + '">' + name + '</a>').join(' · ');
-  return '<main style="max-width:950px;margin:0 auto;min-height:80vh;padding:5rem 1.5rem;background:#050508;color:#f1f5f9;font-family:system-ui,sans-serif"><header><a href="/">Chronolyte</a></header><h1>' + pageName + '</h1><p>' + description + '</p><nav aria-label="Explore services">' + navigation + '</nav><p>Describe your requirements to discuss a practical development scope, project cost and timeline.</p><p><a href="/contact">Request a project quote</a></p></main>';
+  return '<main><header><a href="/">Chronolyte</a></header><h1>' + pageName + '</h1><p>' + description + '</p><nav aria-label="Explore services">' + navigation + '</nav><p>Describe your requirements to discuss a practical development scope, project cost and timeline.</p><p><a href="/contact">Request a project quote</a></p></main>';
 }
 
 function defaultServices() {

@@ -1,6 +1,8 @@
+import { ReadingLayout } from '../components/editorial/ReadingLayout';
+import { StudioCover } from '../components/editorial/StudioCover';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, BookOpen, CalendarDays, Clock3, Eye, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, CalendarDays, Clock3, Eye } from 'lucide-react';
 import { Sheet } from '../components/editorial/EditorialPage';
 import { BlogRecord, formatBlogDate, normalizeBlog } from '../utils/blog';
 
@@ -160,7 +162,7 @@ export function BlogPost() {
       ) : error || !blog ? (
         <Sheet tone="paper" medium>
           <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
-            <div style={{ margin: '0 auto 1rem', width: 54, height: 54, display: 'grid', placeItems: 'center', borderRadius: 4, background: 'rgba(197,222,151,0.6)', border: '1px solid rgba(123,24,42,0.3)', color: '#7b182a' }}>
+            <div style={{ margin: '0 auto 1rem', width: 54, height: 54, display: 'grid', placeItems: 'center', borderRadius: 4, background: 'var(--signal-wash)', border: '1px solid var(--line)', color: 'var(--accent-ink)' }}>
               <BookOpen className="h-6 w-6" />
             </div>
             <h1 className="ed-title ed-title--sm">We couldn’t find that guide</h1>
@@ -173,7 +175,7 @@ export function BlogPost() {
       ) : (
         <>
           <Sheet tone="paper">
-            <nav aria-label="Breadcrumb" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.45rem', marginBottom: '1.4rem', fontSize: '0.8rem', color: '#6a746a' }}>
+            <nav aria-label="Breadcrumb" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.45rem', marginBottom: '1.4rem', fontSize: '0.8rem', color: 'var(--muted)' }}>
               <Link to="/" className="ed-link" style={{ textDecoration: 'none' }}>Home</Link>
               <span aria-hidden="true">/</span>
               <Link to="/blog" className="ed-link" style={{ textDecoration: 'none' }}>Guides</Link>
@@ -185,14 +187,14 @@ export function BlogPost() {
               )}
             </nav>
 
-            <article>
-              <header style={{ maxWidth: '56rem' }}>
-                <span className="ed-chip"><Sparkles className="h-3.5 w-3.5" /> {blog.category}</span>
+            <article className="guide-story">
+              <div className={`article-spread ${!blog.featured_image ? 'article-spread--text' : ''}`}><header>
+                <span className="ed-chip"><BookOpen className="h-3.5 w-3.5" /> {blog.category}</span>
                 <h1 className="ed-hero__title" style={{ fontSize: 'clamp(2.1rem, 5vw, 4.4rem)', marginTop: '0.8rem' }}>{blog.title}</h1>
                 {blog.excerpt && <p className="ed-lede">{blog.excerpt}</p>}
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.4rem 1.3rem', marginTop: '1.2rem', padding: '0.85rem 0', borderTop: '1px solid rgba(93,48,49,0.22)', borderBottom: '1px solid rgba(93,48,49,0.22)', fontSize: '0.8rem', color: '#5f6d62' }}>
-                  <span style={{ fontWeight: 700, color: '#26312a' }}>By {blog.author_name}</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.4rem 1.3rem', marginTop: '1.2rem', padding: '0.85rem 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', fontSize: '0.8rem', color: 'var(--muted)' }}>
+                  <span style={{ fontWeight: 700, color: 'var(--text)' }}>By {blog.author_name}</span>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><CalendarDays className="h-4 w-4" /> {formatBlogDate(blog.published_at, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                   {blog.reading_time > 0 && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Clock3 className="h-4 w-4" /> {blog.reading_time} min read</span>}
                   {blog.view_count > 0 && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Eye className="h-4 w-4" /> {blog.view_count.toLocaleString()} views</span>}
@@ -200,25 +202,26 @@ export function BlogPost() {
               </header>
 
               {blog.featured_image && (
-                <figure style={{ margin: '1.6rem 0', overflow: 'hidden', borderRadius: 4, border: '1px solid rgba(84,72,48,0.3)' }}>
-                  <img src={blog.featured_image} alt={blog.featured_image_alt} fetchPriority="high" style={{ width: '100%', maxHeight: '34rem', objectFit: 'cover', display: 'block' }} />
-                </figure>
+                <figure className="article-cover"><StudioCover src={blog.featured_image} alt={blog.featured_image_alt} title={blog.title} eager /></figure>
               )}
+              </div>
 
-              <div className="ed-prose" style={{ maxWidth: '52rem' }}>
+              <ReadingLayout docKey={blog.slug}>
+                <div className="ed-prose">
                 {blog.content ? (
                   <div dangerouslySetInnerHTML={{ __html: blog.content }} />
                 ) : (
                   <p>The full guide is coming soon.</p>
                 )}
-              </div>
+                </div>
+              </ReadingLayout>
 
               {blog.images.length > 0 && (
                 <section style={{ marginTop: '2rem' }} aria-labelledby="guide-gallery-title">
                   <h2 id="guide-gallery-title" className="ed-title ed-title--xs">More from this guide</h2>
                   <div className="grid gap-3 sm:grid-cols-2" style={{ marginTop: '0.9rem' }}>
                     {blog.images.map((image) => (
-                      <figure key={image.id} style={{ margin: 0, overflow: 'hidden', borderRadius: 4, border: '1px solid rgba(84,72,48,0.3)' }}>
+                      <figure key={image.id} style={{ margin: 0, overflow: 'hidden', borderRadius: 4, border: '1px solid var(--line)' }}>
                         <img src={image.image_url} alt={image.image_alt || blog.title} loading="lazy" style={{ aspectRatio: '16 / 10', width: '100%', objectFit: 'cover', display: 'block' }} />
                       </figure>
                     ))}
@@ -228,7 +231,7 @@ export function BlogPost() {
 
               {blog.tags.length > 0 && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.4rem', marginTop: '1.8rem' }} aria-label="Guide topics">
-                  <span style={{ marginRight: '0.3rem', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7b8578' }}>Topics</span>
+                  <span style={{ marginRight: '0.3rem', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)' }}>Topics</span>
                   {blog.tags.map((tag) => (
                     <Link key={tag} to={`/blog/search?q=${encodeURIComponent(tag)}`} className="ed-chip" style={{ textDecoration: 'none' }}>#{tag}</Link>
                   ))}
@@ -237,7 +240,7 @@ export function BlogPost() {
             </article>
           </Sheet>
 
-          <Sheet tone="cherry">
+          <Sheet tone="graphite">
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.2rem', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ maxWidth: '42rem' }}>
                 <p className="ed-rubric">Your next step</p>
@@ -262,16 +265,14 @@ export function BlogPost() {
               <div className="grid gap-5 md:grid-cols-3">
                 {relatedBlogs.map((related) => (
                   <Link key={related.id} to={`/blog/${related.slug}`} className="ed-card" style={{ padding: 0, overflow: 'hidden', textDecoration: 'none' }}>
-                    <div style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: '#e6ddc9', borderBottom: '1px solid rgba(84,72,48,0.3)' }}>
-                      {related.featured_image
-                        ? <img src={related.featured_image} alt={related.featured_image_alt} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        : <div style={{ display: 'grid', placeItems: 'center', height: '100%', color: '#7b182a' }}><BookOpen className="h-10 w-10" /></div>}
+                    <div style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: 'var(--alloy)', borderBottom: '1px solid var(--line)' }}>
+                      <StudioCover src={related.featured_image} alt={related.featured_image_alt} title={related.title} />
                     </div>
                     <div style={{ padding: 'clamp(14px, 2vw, 20px)' }}>
-                      <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7b182a' }}>{related.category}</span>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent-ink)' }}>{related.category}</span>
                       <h3 className="ed-card__title" style={{ marginTop: '0.35rem', fontSize: '1.05rem' }}>{related.title}</h3>
                       <p className="ed-card__body" style={{ fontSize: '0.86rem' }}>{related.excerpt}</p>
-                      <span style={{ marginTop: '0.7rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: '#7b182a' }}>
+                      <span style={{ marginTop: '0.7rem', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-ink)' }}>
                         Read guide <ArrowRight className="h-3.5 w-3.5" />
                       </span>
                     </div>
@@ -281,7 +282,7 @@ export function BlogPost() {
             </Sheet>
           )}
 
-          <Sheet tone="cream" narrow>
+          <Sheet tone="white" narrow>
             <div style={{ textAlign: 'center' }}>
               <Link to="/blog" className="ed-btn ed-btn--ghost"><ArrowLeft className="h-4 w-4" /> Back to all guides</Link>
             </div>
