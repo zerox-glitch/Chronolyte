@@ -19,8 +19,8 @@ import {
 import { LeadCaptureForm } from './components/LeadCaptureForm';
 import { FeaturedBlogs } from './components/FeaturedBlogs';
 import { CtaBand, EditorialPage, SectionHead, Sheet } from './components/editorial/EditorialPage';
-import { HomeHeroCarousel } from './components/editorial/HomeHeroCarousel';
 import { LuminousField } from './components/editorial/LuminousField';
+import './styles/home-immersive.css';
 import { MotionSwitch } from './components/editorial/MotionPreferences';
 import { CONTACT_PHONE_TEL, CONTACT_PHONE_DISPLAY } from './constants/siteContact.js';
 
@@ -234,6 +234,7 @@ function Hero({ content }: { content: HomePageContent['hero'] }) {
   const [intro, ...note] = content.subheadline.split('\n');
   return (
     <section className="studio-hero" aria-labelledby="home-title">
+      <LuminousField />
       <div className="studio-hero__inner">
         <div className="studio-hero__copy">
           <p className="studio-eyebrow">
@@ -261,7 +262,7 @@ function Hero({ content }: { content: HomePageContent['hero'] }) {
             </p>
           )}
         </div>
-        <LuminousField />
+        <div className="hero-signature" aria-hidden="true"><span>INDEPENDENT DIGITAL STUDIO</span><strong>IDEAS<br/><em>IN MOTION</em><i>✳</i></strong><span>STRATEGY / DESIGN / DEVELOPMENT</span></div>
       </div>
     </section>
   );
@@ -296,7 +297,7 @@ const assurances = [
   { Icon: BadgeCheck, text: 'Fixed-price quote, not a vague estimate' },
   { Icon: Globe, text: 'Working worldwide, remotely' },
 ];
-function ProjectPlanner({ badge, suggestion }: { badge: string; suggestion: { value: string; id: number } | null }) {
+function ProjectPlanner({ badge }: { badge: string }) {
   return (
     <Sheet id="start" className="home-planner" innerClassName="planner-layout">
       <div className="planner-intro">
@@ -315,7 +316,7 @@ function ProjectPlanner({ badge, suggestion }: { badge: string; suggestion: { va
           ))}
         </ul>
       </div>
-      <LeadCaptureForm eyebrow={badge} suggestion={suggestion} />
+      <LeadCaptureForm eyebrow={badge} />
     </Sheet>
   );
 }
@@ -325,6 +326,7 @@ function ServicesSection({ content }: { content: HomePageContent['services'] }) 
   const [expanded, setExpanded] = useState<number | null>(0);
   return (
     <Sheet id="services" tone="graphite" innerClassName="service-directory">
+      <LuminousField variant="section" />
       <SectionHead
         rubric="What we build"
         number="02 / 07"
@@ -461,11 +463,14 @@ function IndustriesSection({ content }: { content: HomePageContent['industries']
 }
 
 export function MainSite() {
-  const [suggestion, setSuggestion] = useState<{ value: string; id: number } | null>(null);
-  const suggestService = (value: string | null) => {
-    setSuggestion(value ? { value, id: Date.now() } : null);
-    document.getElementById('start')?.scrollIntoView({ behavior: document.documentElement.dataset.motion === 'paused' ? 'auto' : 'smooth', block: 'start' });
-  };
+  useEffect(() => {
+    const sections = document.querySelectorAll('.ed-home .ed-sheet');
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      entry.target.classList.toggle('home-in-view', entry.isIntersecting);
+    }), { threshold: 0.08 });
+    sections.forEach(section => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
   const [homeContent, setHomeContent] = useState<HomePageContent>(defaultHomeContent);
   const [websiteStartingPrice, setWebsiteStartingPrice] = useState<string | null>(null);
 
@@ -502,8 +507,7 @@ export function MainSite() {
     <EditorialPage className="ed-home">
       <Hero content={homeContent.hero} />
       <CapabilitiesStrip services={homeContent.services.items} />
-      <HomeHeroCarousel onSuggestion={suggestService} />
-      <ProjectPlanner badge={homeContent.hero.badge_text} suggestion={suggestion} />
+      <ProjectPlanner badge={homeContent.hero.badge_text} />
       <ServicesSection content={homeContent.services} />
       <WhySection
         content={{
