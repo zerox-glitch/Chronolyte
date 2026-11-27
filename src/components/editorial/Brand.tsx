@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom';
+import { useId } from 'react';
 
 /** The two cuts of the original hourglass, folded into a single speed mark. */
 export function BrandMark({ className = '' }: { className?: string }) {
+  const clip = useId();
+  const mark = 'M5 2h31l-6.4 7.4H1.4zM3 12h24.5l-8 8.6H12zM17.6 22h8.2l8.9 8.4H9.8zM7.1 33H36L32.4 40H.8z';
   return (
     <svg className={`ed-brand__mark ${className}`} viewBox="0 0 38 40" fill="currentColor" aria-hidden="true">
-      <path d="M5 2h31l-6.4 7.4H1.4zM3 12h24.5l-8 8.6H12zM17.6 22h8.2l8.9 8.4H9.8zM7.1 33H36L32.4 40H.8z" />
+      <defs><clipPath id={clip}><path d={mark}/></clipPath></defs>
+      <path d={mark} />
+      <g clipPath={`url(#${clip})`} className="brand-light"><path d="M-14 0h12l32 40H18z" fill="#fff2da" opacity=".8" /></g>
     </svg>
   );
 }

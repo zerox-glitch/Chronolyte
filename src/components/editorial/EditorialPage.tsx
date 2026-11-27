@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { LuminousField } from './LuminousField';
+import '../../styles/site-motion.css';
 import { ArrowUpRight } from 'lucide-react';
 import { SiteNavigation } from '../SiteNavigation';
 import { Footer } from '../Footer';
@@ -65,6 +67,12 @@ interface PageHeroProps {
   study?: StudyKind;
   visual?: ReactNode;
 }
+export function InnerAmbient() {
+  const { pathname } = useLocation();
+  const seed = [...pathname].reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 0);
+  return <LuminousField variant="inner" seed={seed} />;
+}
+
 export function PageHero({
   eyebrow,
   title,
@@ -79,6 +87,7 @@ export function PageHero({
 }: PageHeroProps) {
   return (
     <Sheet tone={tone} className={`ed-hero ${className}`}>
+      <InnerAmbient />
       <div className="inner-hero-grid">
         <div className="inner-hero-copy">
           {eyebrow && (
@@ -102,6 +111,7 @@ export function PageHero({
 export function LegalHero({ title, updated }: { title: string; updated: string }) {
   return (
     <Sheet className="legal-head" medium>
+      <InnerAmbient />
       <p className="studio-eyebrow">
         <span className="signal-rule" />
         Legal

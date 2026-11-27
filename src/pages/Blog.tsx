@@ -3,7 +3,7 @@ import { StudioCover } from '../components/editorial/StudioCover';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, BookOpen, CalendarDays, Clock3, Eye } from 'lucide-react';
-import { Sheet } from '../components/editorial/EditorialPage';
+import { InnerAmbient, Sheet } from '../components/editorial/EditorialPage';
 import { BlogRecord, formatBlogDate, normalizeBlog } from '../utils/blog';
 
 function setDocumentMeta(selector: string, attribute: string, value: string, create: () => HTMLElement) {
@@ -148,7 +148,8 @@ export function BlogPost() {
   return (
     <>
       {loading ? (
-        <Sheet tone="paper">
+        <Sheet tone="paper" className="guide-ambient">
+          <InnerAmbient />
           <div style={{ display: 'grid', gap: '0.8rem' }}>
             <div style={{ height: 14, width: 200, background: 'rgba(31,39,35,0.12)', borderRadius: 2 }} />
             <div style={{ height: 46, width: '70%', background: 'rgba(31,39,35,0.12)', borderRadius: 2 }} />
@@ -160,7 +161,8 @@ export function BlogPost() {
           </div>
         </Sheet>
       ) : error || !blog ? (
-        <Sheet tone="paper" medium>
+        <Sheet tone="paper" medium className="guide-ambient">
+          <InnerAmbient />
           <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
             <div style={{ margin: '0 auto 1rem', width: 54, height: 54, display: 'grid', placeItems: 'center', borderRadius: 4, background: 'var(--signal-wash)', border: '1px solid var(--line)', color: 'var(--accent-ink)' }}>
               <BookOpen className="h-6 w-6" />
