@@ -1,46 +1,35 @@
-import { motion } from 'framer-motion';
-import { Footer } from '../components/Footer';
-import { SiteNavigation } from '../components/SiteNavigation';
+import { ReadingLayout } from '../components/editorial/ReadingLayout';
+import { LegalHero, Sheet } from '../components/editorial/EditorialPage';
 
 export function RefundPolicy() {
   return (
-    <div className="min-h-screen bg-dark-900 text-white">
-      <SiteNavigation />
+    <>
+      <LegalHero title="Refund Policy" updated="Last updated: February 7, 2026" />
 
-      {/* Content */}
-      <main className="pt-24 pb-16 px-4 md:px-6">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto"
-        >
-          <div className="glass rounded-3xl p-8 md:p-12">
-            <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 gradient-text">Refund Policy</h1>
-            <p className="text-white/50 mb-8">Last updated: February 7, 2026</p>
-
-            <div className="space-y-8 text-white/80 leading-relaxed">
+      <Sheet tone="white">
+        <ReadingLayout docKey="RefundPolicy" label="In this policy">
+          <div className="ed-prose legal-prose">
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">1. Overview</h2>
+                <h2 className="text-2xl font-bold mb-4">1. Overview</h2>
                 <p className="mb-4">
-                  At Chronolyte, we strive to deliver high-quality digital services that meet your expectations. 
-                  This Refund Policy outlines the terms and conditions under which refunds may be issued for 
+                  At Chronolyte, we strive to deliver high-quality digital services that meet your expectations.
+                  This Refund Policy outlines the terms and conditions under which refunds may be issued for
                   our services.
                 </p>
                 <p>
-                  All payments are processed by <strong>Paddle.com Market Limited</strong> ("Paddle"), our 
+                  All payments are processed by <strong>Paddle.com Market Limited</strong> ("Paddle"), our
                   Merchant of Record. Refund requests are handled through Paddle's refund system.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">2. Digital Products and Services</h2>
+                <h2 className="text-2xl font-bold mb-4">2. Digital Products and Services</h2>
                 <p className="mb-4">
-                  Due to the nature of digital products and services, refund eligibility varies depending 
+                  Due to the nature of digital products and services, refund eligibility varies depending
                   on the type of purchase:
                 </p>
 
-                <h3 className="text-xl font-semibold text-cyan-400 mb-3">2.1 Software Subscriptions</h3>
+                <h3 className="text-xl font-semibold mb-3">2.1 Software Subscriptions</h3>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li>You may request a refund within <strong>14 days</strong> of your initial purchase if you are not satisfied with the service</li>
                   <li>Refunds are typically not provided for subscription renewals; we recommend cancelling before your renewal date</li>
@@ -48,14 +37,14 @@ export function RefundPolicy() {
                   <li>Partial refunds for unused portions of a billing period are not typically provided</li>
                 </ul>
 
-                <h3 className="text-xl font-semibold text-cyan-400 mb-3">2.2 One-Time Purchases</h3>
+                <h3 className="text-xl font-semibold mb-3">2.2 One-Time Purchases</h3>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li>Digital products that have been downloaded or accessed are generally non-refundable</li>
                   <li>If you experience technical issues preventing access, contact us for support before requesting a refund</li>
                   <li>Refunds may be considered within <strong>14 days</strong> of purchase if the product is demonstrably not as described</li>
                 </ul>
 
-                <h3 className="text-xl font-semibold text-cyan-400 mb-3">2.3 Custom Development Services</h3>
+                <h3 className="text-xl font-semibold mb-3">2.3 Custom Development Services</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Custom projects are subject to the terms outlined in your individual service agreement</li>
                   <li>Deposits and milestone payments are generally non-refundable once work has commenced</li>
@@ -65,18 +54,18 @@ export function RefundPolicy() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">3. How to Request a Refund</h2>
+                <h2 className="text-2xl font-bold mb-4">3. How to Request a Refund</h2>
                 <p className="mb-4">
-                  Since Paddle handles all payment processing, refund requests should be submitted through 
+                  Since Paddle handles all payment processing, refund requests should be submitted through
                   one of the following methods:
                 </p>
                 <ol className="list-decimal pl-6 space-y-3">
                   <li>
-                    <strong>Contact Paddle directly:</strong> You can request a refund through your Paddle 
+                    <strong>Contact Paddle directly:</strong> You can request a refund through your Paddle
                     receipt email or by contacting Paddle's customer support
                   </li>
                   <li>
-                    <strong>Contact Chronolyte:</strong> Email us at <span className="text-cyan-400">support@chronolyte.com</span> with 
+                    <strong>Contact Chronolyte:</strong> Email us at <span>support@chronolyte.com</span> with
                     your order details, and we will coordinate with Paddle on your behalf
                   </li>
                 </ol>
@@ -91,7 +80,7 @@ export function RefundPolicy() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">4. Refund Processing</h2>
+                <h2 className="text-2xl font-bold mb-4">4. Refund Processing</h2>
                 <p className="mb-4">
                   Once a refund is approved:
                 </p>
@@ -104,7 +93,7 @@ export function RefundPolicy() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">5. Non-Refundable Situations</h2>
+                <h2 className="text-2xl font-bold mb-4">5. Non-Refundable Situations</h2>
                 <p className="mb-4">Refunds will generally not be provided in the following situations:</p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>You changed your mind after accessing or downloading the product</li>
@@ -117,9 +106,9 @@ export function RefundPolicy() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">6. Chargebacks</h2>
+                <h2 className="text-2xl font-bold mb-4">6. Chargebacks</h2>
                 <p className="mb-4">
-                  Before initiating a chargeback with your bank or credit card company, please contact 
+                  Before initiating a chargeback with your bank or credit card company, please contact
                   us first. We are committed to resolving issues fairly and promptly.
                 </p>
                 <p>
@@ -136,9 +125,9 @@ export function RefundPolicy() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">7. EU Consumer Rights</h2>
+                <h2 className="text-2xl font-bold mb-4">7. EU Consumer Rights</h2>
                 <p className="mb-4">
-                  If you are a consumer in the European Union, you have the right to withdraw from a 
+                  If you are a consumer in the European Union, you have the right to withdraw from a
                   purchase within 14 days without giving any reason (the "cooling-off period").
                 </p>
                 <p className="mb-4">
@@ -146,20 +135,20 @@ export function RefundPolicy() {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>
-                    The withdrawal right expires once the performance of services has begun with your 
+                    The withdrawal right expires once the performance of services has begun with your
                     prior express consent and acknowledgment that you lose your right of withdrawal
                   </li>
                   <li>
-                    For digital products, by accessing or downloading the content, you agree to waive 
+                    For digital products, by accessing or downloading the content, you agree to waive
                     your right of withdrawal
                   </li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">8. Exceptions and Special Circumstances</h2>
+                <h2 className="text-2xl font-bold mb-4">8. Exceptions and Special Circumstances</h2>
                 <p className="mb-4">
-                  We understand that exceptional circumstances may arise. We evaluate refund requests 
+                  We understand that exceptional circumstances may arise. We evaluate refund requests
                   on a case-by-case basis and may make exceptions for:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
@@ -171,35 +160,32 @@ export function RefundPolicy() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">9. Contact Information</h2>
+                <h2 className="text-2xl font-bold mb-4">9. Contact Information</h2>
                 <p className="mb-4">
                   If you have questions about this Refund Policy or need assistance with a refund request:
                 </p>
                 <p>
-                  <strong className="text-cyan-400">Email:</strong> support@chronolyte.com<br />
-                  <strong className="text-cyan-400">Website:</strong> https://chronolyte.com
+                  <strong >Email:</strong> support@chronolyte.com<br />
+                  <strong >Website:</strong> https://chronolyte.com
                 </p>
                 <p className="mt-4">
-                  For payment-specific inquiries, you may also contact Paddle directly through the 
+                  For payment-specific inquiries, you may also contact Paddle directly through the
                   link provided in your purchase receipt.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">10. Policy Updates</h2>
+                <h2 className="text-2xl font-bold mb-4">10. Policy Updates</h2>
                 <p>
-                  We reserve the right to modify this Refund Policy at any time. Changes will be 
-                  effective immediately upon posting to this page. We encourage you to review this 
-                  policy periodically. Purchases made before a policy change will be governed by 
+                  We reserve the right to modify this Refund Policy at any time. Changes will be
+                  effective immediately upon posting to this page. We encourage you to review this
+                  policy periodically. Purchases made before a policy change will be governed by
                   the policy in effect at the time of purchase.
                 </p>
               </section>
-            </div>
           </div>
-        </motion.div>
-      </main>
-
-      <Footer />
-    </div>
+        </ReadingLayout>
+      </Sheet>
+    </>
   );
 }

@@ -11,3 +11,6 @@ node_modules/
 .env
 .env.local
 .env.production
+
+# Local design sources and browser QA captures
+.cache/

@@ -1,3 +1,4 @@
+import { useDialogFocus } from './useDialogFocus';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, ChevronLeft, Check, Loader2, Send, User, Building2, Mail, Phone, FileText, Clock, DollarSign, Sparkles } from 'lucide-react';
@@ -59,6 +60,7 @@ const timelineOptions = [
 ];
 
 export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectIntakeFormProps) {
+  const dialogRef = useDialogFocus(isOpen, onClose);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
@@ -218,11 +220,12 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="chronolyte-intake-dialog relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-[#0d0d14] to-[#141420] rounded-2xl border border-white/10 shadow-2xl"
+            ref={dialogRef} role="dialog" aria-modal="true" aria-label="Start your project"
+            className="ed-dialog chronolyte-intake-dialog relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-white/10 shadow-2xl"
           >
             {/* Close Button */}
             <button
-              onClick={onClose}
+              onClick={onClose} aria-label="Close project form"
               className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors z-10"
             >
               <X className="w-5 h-5" />
@@ -312,13 +315,13 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
                         className="space-y-5"
                       >
                         <div>
-                          <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
+                          <label htmlFor="quote-full_name" className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
                             <User className="w-4 h-4" />
                             Full Name <span className="text-red-400">*</span>
                           </label>
                           <input
                             type="text"
-                            value={formData.full_name}
+                            id="quote-full_name" value={formData.full_name}
                             onChange={(e) => updateField('full_name', e.target.value)}
                             placeholder="John Doe"
                             className={`w-full px-4 py-3 bg-white/5 border ${
@@ -331,13 +334,13 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
                         </div>
 
                         <div>
-                          <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
+                          <label htmlFor="quote-email" className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
                             <Mail className="w-4 h-4" />
                             Email Address <span className="text-red-400">*</span>
                           </label>
                           <input
                             type="email"
-                            value={formData.email}
+                            id="quote-email" value={formData.email}
                             onChange={(e) => updateField('email', e.target.value)}
                             placeholder="john@company.com"
                             className={`w-full px-4 py-3 bg-white/5 border ${
@@ -350,13 +353,13 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
                         </div>
 
                         <div>
-                          <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
+                          <label htmlFor="quote-company_name" className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
                             <Building2 className="w-4 h-4" />
                             Company Name <span className="text-white/40">(optional)</span>
                           </label>
                           <input
                             type="text"
-                            value={formData.company_name}
+                            id="quote-company_name" value={formData.company_name}
                             onChange={(e) => updateField('company_name', e.target.value)}
                             placeholder="Your Company Inc."
                             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-cyan-400 transition-colors"
@@ -364,13 +367,13 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
                         </div>
 
                         <div>
-                          <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
+                          <label htmlFor="quote-phone" className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
                             <Phone className="w-4 h-4" />
                             Phone Number <span className="text-white/40">(optional)</span>
                           </label>
                           <input
                             type="tel"
-                            value={formData.phone}
+                            id="quote-phone" value={formData.phone}
                             onChange={(e) => updateField('phone', e.target.value)}
                             placeholder="+1 (555) 000-0000"
                             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-cyan-400 transition-colors"
@@ -401,12 +404,12 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
-                            <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
+                            <label htmlFor="quote-budget" className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
                               <DollarSign className="w-4 h-4" />
                               Budget Range <span className="text-red-400">*</span>
                             </label>
                             <select
-                              value={formData.budget}
+                              id="quote-budget" value={formData.budget}
                               onChange={(e) => updateField('budget', e.target.value)}
                               className={`w-full px-4 py-3 bg-white/5 border ${
                                 errors.budget ? 'border-red-500' : 'border-white/10'
@@ -425,12 +428,12 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
                           </div>
 
                           <div>
-                            <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
+                            <label htmlFor="quote-timeline" className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
                               <Clock className="w-4 h-4" />
                               Desired Timeline <span className="text-red-400">*</span>
                             </label>
                             <select
-                              value={formData.timeline}
+                              id="quote-timeline" value={formData.timeline}
                               onChange={(e) => updateField('timeline', e.target.value)}
                               className={`w-full px-4 py-3 bg-white/5 border ${
                                 errors.timeline ? 'border-red-500' : 'border-white/10'
@@ -450,12 +453,12 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
                         </div>
 
                         <div>
-                          <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
+                          <label htmlFor="quote-project_description" className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
                             <FileText className="w-4 h-4" />
                             Project Description <span className="text-red-400">*</span>
                           </label>
                           <textarea
-                            value={formData.project_description}
+                            id="quote-project_description" value={formData.project_description}
                             onChange={(e) => updateField('project_description', e.target.value)}
                             placeholder="Tell us about your project goals, target audience, and what you're looking to achieve..."
                             rows={4}
@@ -478,12 +481,12 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
                         </div>
 
                         <div>
-                          <label className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
+                          <label htmlFor="quote-must_have_features" className="flex items-center gap-2 text-sm font-medium text-white/80 mb-2">
                             <Sparkles className="w-4 h-4" />
                             Must-Have Features <span className="text-white/40">(optional)</span>
                           </label>
                           <textarea
-                            value={formData.must_have_features}
+                            id="quote-must_have_features" value={formData.must_have_features}
                             onChange={(e) => updateField('must_have_features', e.target.value)}
                             placeholder="List any specific features or functionality you need (e.g., user authentication, payment processing, analytics dashboard...)"
                             rows={3}
@@ -546,19 +549,12 @@ export function ProjectIntakeForm({ isOpen, onClose, selectedPackage }: ProjectI
                           errors.terms_accepted ? 'border-red-500 bg-red-500/5' : 'border-white/10 bg-white/5'
                         }`}>
                           <label className="flex items-start gap-3 cursor-pointer">
-                            <button
-                              type="button"
-                              onClick={() => updateField('terms_accepted', !formData.terms_accepted)}
-                              className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                                formData.terms_accepted 
-                                  ? 'bg-cyan-500 border-cyan-500' 
-                                  : 'bg-transparent border-white/40 hover:border-cyan-400'
-                              }`}
-                            >
-                              {formData.terms_accepted && (
-                                <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />
-                              )}
-                            </button>
+                            <input
+                              type="checkbox"
+                              checked={formData.terms_accepted}
+                              onChange={e => updateField('terms_accepted', e.target.checked)}
+                              className="mt-0.5 h-5 w-5 flex-shrink-0"
+                            />
                             <span className="text-sm text-white/70 leading-relaxed">
                               I understand that projects begin after consultation and a 50% deposit payment. 
                               I have read and agree to the{' '}

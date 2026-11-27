@@ -1,3 +1,4 @@
+import { useDialogFocus } from './useDialogFocus';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -41,6 +42,7 @@ const getMinBudget = (service: string): number => {
 };
 
 export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
+  const dialogRef = useDialogFocus(isOpen, onClose);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -190,10 +192,11 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative bg-dark-900 border border-white/10 rounded-3xl p-8 md:p-12 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        ref={dialogRef} role="dialog" aria-modal="true" aria-label="Schedule a free consultation call"
+        className="ed-dialog relative bg-dark-900 border border-white/10 rounded-3xl p-8 md:p-12 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         <button
-          onClick={onClose}
+          onClick={onClose} aria-label="Close scheduling form"
           className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-full transition-colors"
         >
           <X className="w-6 h-6 text-white/70" />
@@ -230,7 +233,7 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm">
+                <div role="alert" className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm">
                   {error}
                 </div>
               )}
@@ -238,10 +241,10 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
               {/* Name & Email */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Name *</label>
+                  <label htmlFor="call-name" className="block text-sm font-medium text-white/70 mb-2">Name *</label>
                   <input
                     type="text"
-                    name="name"
+                    id="call-name" name="name"
                     value={formData.name}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
@@ -249,10 +252,10 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Email *</label>
+                  <label htmlFor="call-email" className="block text-sm font-medium text-white/70 mb-2">Email *</label>
                   <input
                     type="email"
-                    name="email"
+                    id="call-email" name="email"
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
@@ -264,10 +267,10 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
               {/* Phone & Company */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Phone</label>
+                  <label htmlFor="call-phone" className="block text-sm font-medium text-white/70 mb-2">Phone</label>
                   <input
                     type="tel"
-                    name="phone"
+                    id="call-phone" name="phone"
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
@@ -275,10 +278,10 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Company</label>
+                  <label htmlFor="call-company" className="block text-sm font-medium text-white/70 mb-2">Company</label>
                   <input
                     type="text"
-                    name="company"
+                    id="call-company" name="company"
                     value={formData.company}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
@@ -289,9 +292,9 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
 
               {/* Service Selection */}
               <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Service *</label>
+                <label htmlFor="call-service" className="block text-sm font-medium text-white/70 mb-2">Service *</label>
                 <select
-                  name="service"
+                  id="call-service" name="service"
                   value={formData.service}
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
@@ -332,7 +335,7 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
 
               {/* Custom Budget Input */}
               <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">
+                <label htmlFor="call-customBudget" className="block text-sm font-medium text-white/70 mb-2">
                   {selectedService === 'other' ? 'Your Budget *' : 'Or Enter Custom Budget'}
                   {selectedService && selectedService !== 'other' && minBudget > 0 && (
                     <span className="text-white/50 text-xs ml-2">(minimum: ${minBudget})</span>
@@ -342,7 +345,7 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
                   <span className="absolute left-4 top-3 text-white/50 font-semibold">$</span>
                   <input
                     type="number"
-                    name="customBudget"
+                    id="call-customBudget" name="customBudget"
                     value={formData.customBudget}
                     onChange={handleChange}
                     className="w-full px-4 py-3 pl-8 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-colors"
@@ -354,9 +357,9 @@ export function ScheduleCall({ isOpen, onClose }: ScheduleCallProps) {
 
               {/* Message */}
               <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Project Details</label>
+                <label htmlFor="call-message" className="block text-sm font-medium text-white/70 mb-2">Project Details</label>
                 <textarea
-                  name="message"
+                  id="call-message" name="message"
                   value={formData.message}
                   onChange={handleChange}
                   rows={4}

@@ -1,7 +1,7 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { SiteNavigation } from '../components/SiteNavigation';
-import { Footer } from '../components/Footer';
+import { ArrowRight, Globe2, PhoneCall } from 'lucide-react';
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from '../constants/siteContact.js';
+import { CtaBand, PageHero, SectionHead, Sheet } from '../components/editorial/EditorialPage';
 
 const countries = [
   { name: 'United States', note: 'Remote website development across all 50 states', examples: 'Service businesses, startups, consultants and growing teams' },
@@ -12,58 +12,119 @@ const countries = [
   { name: 'New Zealand', note: 'Remote design and web application work', examples: 'Independent businesses and product teams' },
   { name: 'Ireland', note: 'Remote website and software services', examples: 'Small businesses, consultants and startups' }
 ];
+
+const faqs = [
+  { q: 'Do you work with businesses outside the United States?', a: 'Yes. Chronolyte welcomes remote inquiries from the UK, Pakistan, Canada, Australia, New Zealand, Ireland and elsewhere, subject to project fit and the ability to provide services.' },
+  { q: 'Are your website prices the same worldwide?', a: 'Published prices are in US dollars and are starting quotes, not guaranteed local-currency totals. Final cost, currency, payment method and applicable fees should be agreed before work starts.' },
+  { q: 'Can you deliver a business website within a week?', a: 'Eligible, clearly scoped starter websites may target three to seven days after assets and approvals are ready. Complex stores, custom software and third-party approvals require separate timelines.' },
+  { q: 'Do you have an office in each country?', a: 'No. Country coverage describes remote service availability, not local office locations or guaranteed local business registration.' }
+];
+
 export function InternationalServices() {
-  return <div className="min-h-screen bg-[#050508] text-white">
-    <SiteNavigation />
-    <main className="mx-auto max-w-6xl px-5 pt-32 pb-20">
-      <p className="text-cyan-300 text-sm uppercase tracking-[0.2em] mb-4">Worldwide remote delivery</p>
-      <h1 className="text-4xl md:text-6xl font-bold max-w-4xl leading-tight">Website Design & Software Development for Businesses Worldwide</h1>
-      <p className="text-white/70 text-lg max-w-3xl mt-6 leading-relaxed">Chronolyte works remotely with businesses in the USA, UK, Pakistan, Canada, Australia, New Zealand, Ireland and other countries. We build responsive websites, online stores, focused software MVPs and practical AI workflows. You can plan your project and collaborate with us online regardless of location.</p>
-      <div className="flex flex-wrap gap-4 mt-8">
-        <Link to="/contact" className="bg-cyan-400 text-black rounded-full px-7 py-3 font-semibold">Request a project quote</Link>
-        <Link to="/pricing" className="border border-white/30 rounded-full px-7 py-3">Explore starting prices</Link>
-      </div>
-      <section className="mt-20">
-        <h2 className="text-3xl font-bold mb-3">Countries we welcome projects from</h2>
-        <p className="text-white/60 mb-8">These are remote service areas, not claims of physical offices or locally incorporated entities.</p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {countries.map(country => <article key={country.name} className="rounded-2xl bg-white/5 border border-white/10 p-6">
-            <h3 className="text-xl font-semibold mb-3">{country.name}</h3>
-            <p className="text-white/80 mb-3">{country.note}</p>
-            <p className="text-white/55 text-sm">{country.examples}</p>
-          </article>)}
+  return (
+    <>
+      <PageHero
+        study="globe"
+        eyebrow="Worldwide remote delivery"
+        title={<>Website design & software for businesses <em>worldwide</em></>}
+        lede="Chronolyte works remotely with businesses in the USA, UK, Pakistan, Canada, Australia, New Zealand, Ireland and other countries. We build responsive websites, online stores, focused software MVPs and practical AI workflows — planned and delivered online, wherever you are."
+        actions={
+          <>
+            <Link to="/contact" className="ed-btn">Request a project quote <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/pricing" className="ed-btn ed-btn--ghost">Explore starting prices</Link>
+          </>
+        }
+        meta={
+          <>
+            <span><Globe2 className="h-4 w-4" /> 7+ countries served remotely</span>
+            <span><PhoneCall className="h-4 w-4" /> {CONTACT_PHONE_DISPLAY}</span>
+            <span>USD pricing</span>
+          </>
+        }
+      />
+
+      <Sheet tone="paper">
+        <SectionHead
+          rubric="Countries we welcome"
+          number="01 / 04"
+          title={<>Remote service, <em>worldwide</em></>}
+          lede="These are remote service areas, not claims of physical offices or locally incorporated entities."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {countries.map((country, index) => (
+            <article key={country.name} className="ed-card h-full">
+              <span className="ed-card__num">{String(index + 1).padStart(2, '0')}</span>
+              <h3 className="ed-card__title">{country.name}</h3>
+              <p className="ed-card__body">{country.note}</p>
+              <p className="ed-card__body" style={{ marginTop: '0.7rem', paddingTop: '0.7rem', borderTop: '1px solid var(--line)', fontSize: '0.8rem', color: 'var(--muted)' }}>
+                {country.examples}
+              </p>
+            </article>
+          ))}
         </div>
-      </section>
-      <section className="mt-20 grid md:grid-cols-2 gap-10">
-        <div>
-          <h2 className="text-3xl font-bold mb-5">What you can hire Chronolyte to build</h2>
-          <ul className="text-white/75 space-y-3 list-disc pl-5">
-            <li><Link to="/website-design" className="text-cyan-300">Business websites</Link>, landing pages and redesigns</li>
-            <li>Starter e-commerce storefronts and catalogues</li>
-            <li><Link to="/custom-software" className="text-cyan-300">Custom software</Link>, dashboards and SaaS prototypes</li>
-            <li><Link to="/ai-automation" className="text-cyan-300">AI-assisted workflow automation</Link> and integrations</li>
-          </ul>
+      </Sheet>
+
+      <Sheet tone="fog">
+        <div className="grid gap-10 md:grid-cols-2">
+          <div>
+            <SectionHead
+              rubric="What you can hire us for"
+              number="02 / 04"
+              title={<>Build the <em>whole thing</em></>}
+            />
+            <ul style={{ margin: '1.2rem 0 0', paddingLeft: '1.2rem', display: 'grid', gap: '0.6rem', color: 'var(--copy)', lineHeight: 1.65 }}>
+              <li><Link to="/website-design" className="ed-link">Business websites</Link>, landing pages and redesigns</li>
+              <li>Starter e-commerce storefronts and catalogues</li>
+              <li><Link to="/custom-software" className="ed-link">Custom software</Link>, dashboards and SaaS prototypes</li>
+              <li><Link to="/ai-automation" className="ed-link">AI-assisted workflow automation</Link> and integrations</li>
+            </ul>
+          </div>
+          <div>
+            <SectionHead
+              rubric="How it works"
+              number="03 / 04"
+              title={<>Cross-border, <em>without friction</em></>}
+            />
+            <ol style={{ margin: '1.2rem 0 0', paddingLeft: '1.2rem', display: 'grid', gap: '0.6rem', color: 'var(--copy)', lineHeight: 1.65 }}>
+              <li>Share your goals, country, audience and required features</li>
+              <li>Receive a written scope, quote, milestones and delivery estimate</li>
+              <li>Collaborate remotely using an agreed communication schedule</li>
+              <li>Review the build, approve launch and receive agreed handover materials</li>
+            </ol>
+          </div>
         </div>
-        <div>
-          <h2 className="text-3xl font-bold mb-5">How cross-border projects work</h2>
-          <ol className="text-white/75 space-y-3 list-decimal pl-5">
-            <li>Share your goals, country, audience and required features</li>
-            <li>Receive a written scope, quote, milestones and delivery estimate</li>
-            <li>Collaborate remotely using an agreed communication schedule</li>
-            <li>Review the build, approve launch and receive agreed handover materials</li>
-          </ol>
+      </Sheet>
+
+      <Sheet tone="paper">
+        <SectionHead
+          rubric="Frequently asked"
+          number="04 / 04"
+          title={<>Questions we <em>hear often</em></>}
+        />
+        <div style={{ display: 'grid', gap: '0.8rem' }}>
+          {faqs.map((faq) => (
+            <article key={faq.q} className="ed-card ed-card--flat">
+              <h3 className="ed-card__title">{faq.q}</h3>
+              <p className="ed-card__body">{faq.a}</p>
+            </article>
+          ))}
         </div>
-      </section>
-      <section className="mt-20">
-        <h2 className="text-3xl font-bold mb-6">Frequently asked questions</h2>
-        <div className="space-y-6 max-w-4xl">
-          <div><h3 className="text-xl font-semibold">Do you work with businesses outside the United States?</h3><p className="text-white/70 mt-2">Yes. Chronolyte welcomes remote inquiries from the UK, Pakistan, Canada, Australia, New Zealand, Ireland and elsewhere, subject to project fit and the ability to provide services.</p></div>
-          <div><h3 className="text-xl font-semibold">Are your website prices the same worldwide?</h3><p className="text-white/70 mt-2">Published prices are in US dollars and are starting quotes, not guaranteed local-currency totals. Final cost, currency, payment method and applicable fees should be agreed before work starts.</p></div>
-          <div><h3 className="text-xl font-semibold">Can you deliver a business website within a week?</h3><p className="text-white/70 mt-2">Eligible, clearly scoped starter websites may target three to seven days after assets and approvals are ready. Complex stores, custom software and third-party approvals require separate timelines.</p></div>
-          <div><h3 className="text-xl font-semibold">Do you have an office in each country?</h3><p className="text-white/70 mt-2">No. Country coverage describes remote service availability, not local office locations or guaranteed local business registration.</p></div>
-        </div>
-      </section>
-      <div className="mt-16 p-8 rounded-2xl border border-cyan-400/20 bg-cyan-400/5"><h2 className="text-2xl font-bold mb-3">Ready to discuss your project?</h2><p className="text-white/70 mb-6">Tell us where your customers are and what you need built. We will discuss a scope and realistic timeline.</p><Link to="/contact" className="inline-block rounded-full bg-cyan-400 text-black font-semibold px-6 py-3">Contact Chronolyte</Link></div>
-    </main><Footer />
-  </div>;
+      </Sheet>
+
+      <CtaBand
+        eyebrow="No obligation"
+        title={<>Ready to discuss <em>your project?</em></>}
+        description="Tell us where your customers are and what you need built. We will discuss a scope and a realistic timeline."
+        primaryTo="/contact"
+        primaryLabel="Contact Chronolyte"
+        secondaryTo="/locations"
+        secondaryLabel="See U.S. coverage"
+        note={`Or call ${CONTACT_PHONE_DISPLAY} — Monday to Friday, remote.`}
+      >
+        <p style={{ marginTop: '1rem', fontSize: '0.82rem' }}>
+          <a href={CONTACT_PHONE_TEL} className="ed-link">Call {CONTACT_PHONE_DISPLAY}</a>
+        </p>
+      </CtaBand>
+    </>
+  );
 }

@@ -1,3 +1,4 @@
+import { injectSeo } from '../seo/engine.js';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -17,6 +18,21 @@ for (const route of ['international-web-development','services','pricing','portf
   assert.match(page, /<main\b/i, 'missing visible content at ' + route);
   assert.match(page, /<h1\b/i, 'missing heading at ' + route);
   assert.ok(page.includes(origin + '/' + route), 'wrong route canonical: ' + route);
+}
+// Shared assets must survive both build-time prerendering and a second injection
+// into that same page when the pricing/blog handlers serve fresh CMS content.
+const entry = html.match(/<script[^>]*src="(\/assets\/[^"]+\.js)"/i)?.[1];
+const css = html.match(/<link[^>]*href="(\/assets\/[^"]+\.css)"/i)?.[1];
+for (const asset of [entry, css]) assert.ok(asset && existsSync(join(root, asset)), 'missing shared entry asset: ' + asset);
+const runtimeContent = '<main><h1>Current package listing</h1></main>';
+const rerendered = injectSeo(html, { pathname: '/pricing', title: 'Pricing', description: 'Packages', ssrContent: runtimeContent });
+assert.ok(rerendered.includes('<!--CONTENT-START-->' + runtimeContent + '<!--CONTENT-END-->'));
+assert.equal((rerendered.match(/<main\b/gi) || []).length, 1, 'stale prerendered content alongside the dynamic page');
+for (const page of [rerendered, read('services/index.html'), read('blog/index.html')]) {
+  assert.ok(page.includes(entry) && page.includes(css), 'prerender lost the shared client entry or stylesheet');
+}
+for (const asset of [...JSON.parse(read('site.webmanifest')).icons, ...JSON.parse(read('site.webmanifest')).screenshots]) {
+  assert.ok(existsSync(join(root, asset.src)), 'missing web app asset: ' + asset.src);
 }
 const robots = read('robots.txt');
 for(const agent of ['OAI-SearchBot','ChatGPT-User','GPTBot','Claude-SearchBot','Claude-User','PerplexityBot','Googlebot','Bingbot']) {

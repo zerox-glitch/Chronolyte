@@ -1,0 +1,258 @@
+/* A quieter instrument-panel edition for forms and the working side of the studio.
+   Status colours (success, error, pipeline stages) retain their semantic meaning. */
+.desk,
+.ed-dialog {
+  --text: #f7f7ef;
+  --copy: #d4d5ca;
+  --muted: #b6b8ac;
+  --line: #51544a;
+  --accent-ink: #ff9269;
+  --surface: #292b25;
+  --color-cyan-200: #ffb599;
+  --color-cyan-300: #ffa37e;
+  --color-cyan-400: #ff8a5d;
+  --color-cyan-500: #ff7442;
+  --color-cyan-600: #cd4518;
+  --color-blue-300: #e8c3aa;
+  --color-blue-400: #f6b190;
+  --color-blue-500: #ea6939;
+  --color-blue-600: #bc4820;
+  --color-blue-700: #a43915;
+  --color-gray-400: #b9bbb0;
+  --color-gray-500: #a7aa9e;
+  --radius-3xl: 8px;
+  --radius-2xl: 6px;
+  --radius-xl: 5px;
+  --radius-lg: 4px;
+  background: var(--carbon);
+  color: var(--text);
+  font-family: var(--sans);
+  color-scheme: dark;
+}
+.desk-loading {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  color: var(--muted);
+}
+.desk .ed-brand__word {
+  color: inherit;
+}
+.desk-sidebar {
+  background: #242620;
+  border-color: #404339;
+}
+.desk-sidebar .ed-brand__mark {
+  width: 25px;
+  height: 27px;
+}
+.desk-sidebar .ed-brand__word {
+  font-size: 23px;
+}
+.desk-sidebar nav a[aria-current='page'] {
+  background: #352b24;
+  color: var(--accent-ink);
+  border-color: #80543f;
+  box-shadow: inset 2px 0 var(--signal);
+}
+.desk header.sticky {
+  background: #20221eec;
+  border-color: #3c3e36;
+}
+.desk-workspace {
+  min-height: calc(100vh - 64px);
+}
+.desk-workspace h1,
+.desk-login h1 {
+  font: 800 clamp(32px, 3.2vw, 52px) / 1 var(--display);
+  letter-spacing: -0.018em;
+  text-transform: uppercase;
+}
+.desk-workspace :is(h2, h3) {
+  letter-spacing: -0.025em;
+}
+.desk-workspace .bg-\[\#0d0d14\],
+.desk .bg-\[\#15151f\],
+.desk .bg-\[\#12121a\],
+.desk .bg-\[\#1a1a20\] {
+  background: #292b25;
+}
+.desk-workspace .border-white\/5,
+.desk-workspace .border-white\/10 {
+  border-color: #42453b;
+}
+.desk .bg-gradient-to-r.from-cyan-500,
+.ed-dialog :is(button, div)[class*='bg-gradient-to-'] {
+  background: var(--signal);
+  color: var(--carbon);
+  box-shadow: none;
+}
+.desk-workspace--light {
+  background: var(--canvas);
+  --text: var(--carbon);
+  --accent-ink: #aa350e;
+  --color-gray-400: #6e7266;
+  --color-gray-500: #5e6157;
+  --color-blue-600: #a63c19;
+  color: var(--text);
+  color-scheme: light;
+}
+.desk-workspace--light :is(input, select, textarea) {
+  background: #fff;
+  color: var(--carbon);
+}
+.desk :is(button, a, select) {
+  cursor: pointer;
+}
+.desk button:disabled,
+.ed-dialog button:disabled {
+  cursor: not-allowed;
+}
+.desk input[type='checkbox'],
+.ed-dialog input[type='checkbox'],
+.ed-dialog input[type='radio'] {
+  accent-color: var(--signal);
+}
+.desk .text-white\/40,
+.ed-dialog .text-white\/40,
+.ed-dialog .text-white\/50 {
+  color: #b1b3a8;
+}
+.desk-workspace table {
+  font-variant-numeric: tabular-nums;
+}
+.desk-workspace thead {
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.desk-login {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.login-studio {
+  --text: var(--carbon);
+  --muted: #606358;
+  --line: #cdd0c4;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--edge);
+  background: var(--canvas);
+  color: var(--carbon);
+  overflow: hidden;
+}
+.login-studio .study-plate {
+  margin: auto;
+  max-width: 540px;
+  width: 100%;
+}
+.login-studio .study-field {
+  aspect-ratio: 1.15;
+}
+.login-workspace {
+  padding: clamp(22px, 5vw, 84px);
+  display: grid;
+  place-items: center;
+}
+.login-form {
+  width: 100%;
+  max-width: 440px;
+}
+.login-form .studio-eyebrow {
+  color: var(--muted);
+}
+.login-form h1 {
+  font-size: clamp(40px, 4vw, 66px);
+}
+.ed-dialog {
+  border: 1px solid #53554c;
+  border-top: 3px solid var(--signal);
+  border-radius: 6px;
+  scrollbar-color: #77796f #272923;
+  box-shadow: 0 20px 80px #0003;
+  overscroll-behavior: contain;
+}
+.ed-dialog :is(h2, h3) {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(28px, 2.5vw, 40px);
+  line-height: 1.03;
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+}
+.ed-dialog .gradient-text {
+  color: var(--signal-light);
+}
+.ed-dialog :is(input:not([type='checkbox']):not([type='radio']), textarea, select) {
+  background: #2c2e28;
+  color: #fff;
+  border: 1px solid #5b5e52;
+  border-radius: 4px;
+  font-family: var(--sans);
+}
+.ed-dialog :is(input, textarea)::placeholder {
+  color: #b6b9ab;
+}
+.ed-dialog option {
+  background: #292b25;
+  color: #fff;
+}
+.ed-dialog :is(a, button, input, select, textarea):focus-visible {
+  outline-color: var(--signal-light);
+}
+@media (max-width: 900px) {
+  .desk-login {
+    grid-template-columns: 1fr;
+  }
+  .login-studio {
+    padding: 16px 24px;
+  }
+  .login-studio .study-plate {
+    display: none;
+  }
+  .desk-login {
+    grid-template-rows: auto 1fr;
+  }
+  .login-workspace {
+    padding-block: 36px;
+  }
+}
+@media (max-width: 640px) {
+  .desk-workspace h1 {
+    font-size: 32px;
+  }
+  .desk-workspace > div > div:first-child:has(h1) {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .ed-dialog :is(input, textarea, select) {
+    font-size: 16px;
+  }
+  .ed-dialog .w-16.sm\:w-24 {
+    width: clamp(15px, 8vw, 45px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .desk-sidebar[data-open='false'] {
+    visibility: hidden;
+  }
+  .desk-sidebar[data-open='true'] {
+    visibility: visible;
+  }
+}
+
+.metric-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  margin-left: 6px;
+  border: 1px solid #645042;
+  border-radius: 3px;
+  background: #352d26;
+  color: var(--signal-light);
+}

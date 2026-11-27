@@ -32,9 +32,10 @@ const CONTACT_METHODS = ['Email', 'Phone call', 'WhatsApp'] as const;
 
 interface LeadCaptureFormProps {
   source?: string;
+  eyebrow?: string;
 }
 
-export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProps) {
+export function LeadCaptureForm({ source = 'homepage-cta', eyebrow = 'Free project plan' }: LeadCaptureFormProps) {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [services, setServices] = useState<string[]>([]);
@@ -109,92 +110,78 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
   if (reference) {
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="mt-10 max-w-3xl mx-auto rounded-[28px] border border-emerald-500/30 bg-[#0c1220]/85 p-8 md:p-10 text-center shadow-[0_0_60px_rgba(16,185,129,0.15)] backdrop-blur-xl"
+        className="ed-card lead-success" role="status"
+        style={{ maxWidth: '46rem', margin: '0 auto', textAlign: 'center', padding: 'clamp(24px, 4vw, 44px)' }}
       >
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 14, delay: 0.15 }}
-          className="w-16 h-16 mx-auto mb-5 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.5)]"
+          style={{ width: 62, height: 62, margin: '0 auto 1.1rem', borderRadius: '50%', background: 'var(--signal-light)', border: '2px solid var(--accent-ink)', display: 'grid', placeItems: 'center' }}
         >
-          <Check className="w-8 h-8 text-black" strokeWidth={3} />
+          <Check className="h-7 w-7" strokeWidth={3} style={{ color: 'var(--accent-ink)' }} />
         </motion.div>
-        <h3 className="font-display text-2xl md:text-3xl font-bold text-white flex items-center justify-center gap-3">
-          You&apos;re all set, {name.split(' ')[0]}! <PartyPopper className="w-6 h-6 text-emerald-400" />
+        <p className="ed-rubric" style={{ justifyContent: 'center' }}>Request received</p>
+        <h3 className="ed-title ed-title--xs" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+          You&apos;re all set, {name.split(' ')[0]}! <PartyPopper className="h-5 w-5" style={{ color: 'var(--accent-ink)' }} />
         </h3>
-        <p className="mt-3 text-white/70">
-          Your request <span className="text-cyan-400 font-mono font-semibold">{reference}</span> has been received.
+        <p className="ed-copy" style={{ marginTop: '0.6rem' }}>
+          Your request <strong style={{ color: 'var(--accent-ink)', fontFamily: 'monospace' }}>{reference}</strong> has been received.
         </p>
-        <div className="mt-6 max-w-md mx-auto text-left space-y-3">
+        <div style={{ marginTop: '1.4rem', textAlign: 'left', display: 'grid', gap: '0.7rem' }}>
           {[
             'We review what you shared.',
             `We contact you by ${contactMethod === 'Phone call' ? 'phone' : contactMethod === 'WhatsApp' ? 'WhatsApp' : 'email'} within one business day.`,
             'You get a free plan, timeline and quote — no obligation.'
           ].map((line, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="w-6 h-6 shrink-0 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 text-xs font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
-              <p className="text-white/70 text-sm">{line}</p>
+            <div key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
+              <span style={{ flex: 'none', width: 24, height: 24, borderRadius: '50%', background: 'var(--signal-wash)', border: '1px solid var(--accent-ink)', color: 'var(--accent-ink)', fontSize: '0.7rem', fontWeight: 700, display: 'grid', placeItems: 'center' }}>{i + 1}</span>
+              <p className="ed-copy" style={{ margin: 0, fontSize: '0.9rem' }}>{line}</p>
             </div>
           ))}
         </div>
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-3 text-sm">
-          <a href="/blog/how-much-does-a-website-cost" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 text-white/70 hover:text-cyan-300 hover:border-cyan-400/40 transition">
-            <BookOpen className="w-4 h-4" /> Website cost guide
-          </a>
-          <a href="/blog/saas-mvp-development-guide" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 text-white/70 hover:text-cyan-300 hover:border-cyan-400/40 transition">
-            <BookOpen className="w-4 h-4" /> SaaS MVP guide
-          </a>
+        <div className="ed-btn-row" style={{ justifyContent: 'center', marginTop: '1.4rem' }}>
+          <a href="/blog/how-much-does-a-website-cost" className="ed-btn ed-btn--ghost ed-btn--sm"><BookOpen className="h-4 w-4" /> Website cost guide</a>
+          <a href="/blog/saas-mvp-development-guide" className="ed-btn ed-btn--ghost ed-btn--sm"><BookOpen className="h-4 w-4" /> SaaS MVP guide</a>
         </div>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/40">
-          <span className="flex items-center gap-2"><Clock className="w-3.5 h-3.5 text-cyan-400" /> Reply within one business day</span>
-          <span className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> 100% free, no obligation</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1.4rem', justifyContent: 'center', marginTop: '1.2rem', fontSize: '0.74rem', color: 'var(--muted)' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Clock className="h-3.5 w-3.5" /> Reply within one business day</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><ShieldCheck className="h-3.5 w-3.5" /> 100% free, no obligation</span>
         </div>
       </motion.div>
     );
   }
 
-  const inputClass = 'w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-white placeholder:text-white/30 focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition';
-
   return (
-    <div className="mt-10 max-w-4xl mx-auto rounded-[28px] border border-white/10 bg-[#0c1220]/80 p-5 md:p-8 shadow-[0_0_50px_rgba(34,210,255,0.12)] backdrop-blur-xl">
-      {/* Header */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Free project plan</p>
-          <h3 className="mt-2 font-display text-2xl md:text-3xl font-bold text-white">
-            {step === 0 && 'What would you like to build?'}
-            {step === 1 && 'Tell us about it (optional)'}
-            {step === 2 && 'Where should we send your free plan?'}
-          </h3>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              className={`h-1.5 rounded-full transition-all duration-300 ${i === step ? 'w-8 bg-gradient-to-r from-cyan-400 to-blue-500' : i < step ? 'w-4 bg-cyan-500/50' : 'w-4 bg-white/15'}`}
-            />
-          ))}
-          <span className="ml-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
-            Step {step + 1} / 3
-          </span>
+    <div className="lead-panel">
+      <div className="lead-head">
+        <p className="lead-kicker">{eyebrow}</p>
+        <div className="lead-progress" aria-label={`Step ${step + 1} of 3`}>
+          <span>Step 0{step + 1} / 03</span>
+          {[0, 1, 2].map(i => <i key={i} data-complete={i <= step} />)}
         </div>
       </div>
+      <h3 className="lead-title" aria-live="polite">
+        {step === 0 && 'What would you like to build?'}
+        {step === 1 && 'Tell us about it (optional)'}
+        {step === 2 && 'Where should we send your free plan?'}
+      </h3>
 
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={step}
           custom={direction}
-          initial={{ opacity: 0, x: direction * 40 }}
+          initial={{ opacity: 0, x: direction * 34 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: direction * -40 }}
-          transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          exit={{ opacity: 0, x: direction * -34 }}
+          transition={{ duration: 0.26, ease: [0.25, 0.1, 0.25, 1] }}
         >
           {/* STEP 1 — What would you like to build? (pick one or more) */}
           {step === 0 && (
             <div>
-              <p className="text-sm text-white/50 mb-4">Pick one or more — you can change this later.</p>
+              <p className="ed-copy" style={{ margin: '0 0 0.9rem', fontSize: '0.9rem' }}>Pick one or more — you can change this later.</p>
               <div className="grid gap-2.5 sm:grid-cols-2">
                 {PROJECT_OPTIONS.map((opt) => {
                   const Icon = opt.icon;
@@ -205,19 +192,11 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
                       type="button"
                       aria-pressed={active}
                       onClick={() => toggleService(opt.value)}
-                      className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all duration-200 ${
-                        active
-                          ? 'border-cyan-400 bg-cyan-500/10 shadow-[0_0_25px_rgba(34,211,238,0.18)]'
-                          : 'border-white/10 bg-white/[0.03] hover:border-cyan-400/40 hover:bg-white/[0.06]'
-                      }`}
+                      className={`ed-choice ${active ? 'ed-choice--active' : ''}`}
                     >
-                      <span className={`flex items-center justify-center w-10 h-10 shrink-0 rounded-xl transition-colors ${active ? 'bg-gradient-to-br from-cyan-400 to-blue-500 text-black' : 'bg-cyan-500/10 text-cyan-400'}`}>
-                        <Icon className="w-5 h-5" />
-                      </span>
-                      <span className={`flex-1 text-sm font-semibold leading-snug ${active ? 'text-white' : 'text-white/75'}`}>{opt.label}</span>
-                      <span className={`shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${active ? 'bg-cyan-400 border-cyan-400' : 'border-white/25'}`}>
-                        {active && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3.5} />}
-                      </span>
+                      <Icon className="choice-symbol" size={20} strokeWidth={1.6} />
+                      <span className="choice-label">{opt.label}</span>
+                      <span className="choice-check">{active && <Check size={12} strokeWidth={3} />}</span>
                     </button>
                   );
                 })}
@@ -227,11 +206,10 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
 
           {/* STEP 2 — Tell us about it (optional) + budget + timeline */}
           {step === 1 && (
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <label htmlFor="lead-brief" className="block text-sm font-medium text-white/60">
-                  What are you trying to achieve?{' '}
-                  <span className="text-white/35">A few lines is plenty — skip it if you would rather talk it through.</span>
+            <div style={{ display: 'grid', gap: '1.1rem' }}>
+              <div className="ed-field">
+                <label htmlFor="lead-brief" className="ed-label">
+                  What are you trying to achieve? <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: 'var(--muted)' }}>A few lines is plenty — skip it if you would rather talk it through.</span>
                 </label>
                 <textarea
                   id="lead-brief"
@@ -240,30 +218,21 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
                   rows={4}
                   maxLength={4000}
                   placeholder="Example: I run a restaurant and need online bookings. Or: I have a SaaS idea and need an MVP to validate it…"
-                  className={`${inputClass} resize-none`}
+                  className="ed-textarea"
+                  style={{ minHeight: 120 }}
                 />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label htmlFor="lead-budget" className="block text-sm font-medium text-white/60">Budget <span className="text-white/35">(optional)</span></label>
-                  <select
-                    id="lead-budget"
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
-                    className={`${inputClass} appearance-none cursor-pointer [&>option]:bg-[#0c1220]`}
-                  >
+                <div className="ed-field">
+                  <label htmlFor="lead-budget" className="ed-label">Budget <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
+                  <select id="lead-budget" value={budget} onChange={(e) => setBudget(e.target.value)} className="ed-select">
                     <option value="">Select a range (optional)</option>
                     {BUDGET_OPTIONS.map((b) => <option key={b} value={b}>{b}</option>)}
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="lead-timeline" className="block text-sm font-medium text-white/60">Timeline <span className="text-white/35">(optional)</span></label>
-                  <select
-                    id="lead-timeline"
-                    value={timeline}
-                    onChange={(e) => setTimeline(e.target.value)}
-                    className={`${inputClass} appearance-none cursor-pointer [&>option]:bg-[#0c1220]`}
-                  >
+                <div className="ed-field">
+                  <label htmlFor="lead-timeline" className="ed-label">Timeline <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
+                  <select id="lead-timeline" value={timeline} onChange={(e) => setTimeline(e.target.value)} className="ed-select">
                     <option value="">Select a timeline (optional)</option>
                     {TIMELINE_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
@@ -274,112 +243,80 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
 
           {/* STEP 3 — Contact details */}
           {step === 2 && (
-            <div className="space-y-4">
-              <p className="text-sm text-white/50">We reply within one business day. No spam, no obligation.</p>
+            <div style={{ display: 'grid', gap: '0.9rem' }}>
+              <p className="ed-copy" style={{ margin: 0, fontSize: '0.88rem' }}>We reply within one business day. No spam, no obligation.</p>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label htmlFor="lead-name" className="block text-sm font-medium text-white/60">Your name <span className="text-cyan-400">*</span></label>
-                  <input id="lead-name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder="Alex Founder" className={inputClass} />
+                <div className="ed-field">
+                  <label htmlFor="lead-name" className="ed-label">Your name <span style={{ color: 'var(--accent-ink)' }}>*</span></label>
+                  <input id="lead-name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder="Alex Founder" className="ed-input" />
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="lead-email" className="block text-sm font-medium text-white/60">Email <span className="text-cyan-400">*</span></label>
-                  <input id="lead-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="you@company.com" className={inputClass} />
+                <div className="ed-field">
+                  <label htmlFor="lead-email" className="ed-label">Email <span style={{ color: 'var(--accent-ink)' }}>*</span></label>
+                  <input id="lead-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="you@company.com" className="ed-input" />
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="lead-phone" className="block text-sm font-medium text-white/60">Phone <span className="text-white/35">(optional)</span></label>
-                  <input id="lead-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" placeholder="+1 (555) 123-4567" className={inputClass} />
+                <div className="ed-field">
+                  <label htmlFor="lead-phone" className="ed-label">Phone <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
+                  <input id="lead-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" placeholder="+1 (555) 123-4567" className="ed-input" />
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="lead-company" className="block text-sm font-medium text-white/60">Company <span className="text-white/35">(optional)</span></label>
-                  <input id="lead-company" value={company} onChange={(e) => setCompany(e.target.value)} autoComplete="organization" placeholder="Acme Inc." className={inputClass} />
+                <div className="ed-field">
+                  <label htmlFor="lead-company" className="ed-label">Company <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
+                  <input id="lead-company" value={company} onChange={(e) => setCompany(e.target.value)} autoComplete="organization" placeholder="Acme Inc." className="ed-input" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <span className="block text-sm font-medium text-white/60">Best way to reach you</span>
-                <div className="flex flex-wrap gap-2">
+              <div className="ed-field">
+                <span className="ed-label">Best way to reach you</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {CONTACT_METHODS.map((m) => (
                     <button
                       key={m}
                       type="button"
                       onClick={() => setContactMethod(m)}
-                      className={`px-4 py-2 rounded-full text-sm border transition-all ${contactMethod === m ? 'border-cyan-400 bg-cyan-500/15 text-cyan-200' : 'border-white/10 bg-white/[0.03] text-white/60 hover:border-cyan-400/40 hover:text-white'}`}
+                      aria-pressed={contactMethod === m}
+                      className={`ed-choice ${contactMethod === m ? 'ed-choice--active' : ''}`}
+                      style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem', fontWeight: 600 }}
                     >
                       {m}
                     </button>
                   ))}
                 </div>
               </div>
-              <label className="flex items-start gap-3 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={consent}
-                  onChange={(e) => setConsent(e.target.checked)}
-                  className="mt-1 w-4 h-4 accent-cyan-500"
-                />
-                <span className="text-sm text-white/55">
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', cursor: 'pointer' }}>
+                <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="ed-check" style={{ marginTop: 3 }} />
+                <span className="ed-copy" style={{ fontSize: '0.86rem' }}>
                   I agree that Chronolyte may contact me about my project. See our{' '}
-                  <a href="/privacy" className="text-cyan-400 hover:underline">privacy policy</a>.
+                  <a href="/privacy" className="ed-link">privacy policy</a>.
                 </span>
               </label>
               {/* Honeypot — bots fill this, humans never see it */}
-              <input
-                type="text"
-                name="website"
-                value={honeypot}
-                onChange={(e) => setHoneypot(e.target.value)}
-                tabIndex={-1}
-                autoComplete="off"
-                aria-hidden="true"
-                className="hidden"
-              />
+              <input type="text" name="website" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ display: 'none' }} />
             </div>
           )}
         </motion.div>
       </AnimatePresence>
 
-      {error && (
-        <div className="mt-4 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-          {error}
-        </div>
-      )}
+      {error && <div role="alert" className="ed-alert" style={{ marginTop: '1rem' }}>{error}</div>}
 
       {/* Footer actions */}
-      <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.7rem', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.4rem' }}>
         <button
           type="button"
           onClick={goBack}
-          className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 font-medium text-white/80 hover:bg-white/10 transition ${step === 0 ? 'invisible' : ''}`}
+          className="ed-btn ed-btn--ghost ed-btn--sm"
+          style={{ visibility: step === 0 ? 'hidden' : 'visible' }}
         >
-          <ArrowLeft className="w-4 h-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> Back
         </button>
 
         {step === 0 && (
-          <button
-            type="button"
-            onClick={goNext}
-            disabled={!canContinueStep1}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-7 py-3 font-semibold text-black transition hover:shadow-[0_0_30px_rgba(34,211,238,0.4)] disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Next <ArrowRight className="w-4 h-4" />
+          <button type="button" onClick={goNext} disabled={!canContinueStep1} className="ed-btn" style={{ opacity: canContinueStep1 ? 1 : 0.45, cursor: canContinueStep1 ? 'pointer' : 'not-allowed' }}>
+            Next <ArrowRight className="h-4 w-4" />
           </button>
         )}
 
         {step === 1 && (
-          <div className="flex flex-col-reverse sm:flex-row gap-3">
-            <button
-              type="button"
-              onClick={goNext}
-              className="rounded-full border border-white/15 px-5 py-3 font-medium text-white/70 hover:bg-white/5 transition text-sm"
-            >
-              Skip
-            </button>
-            <button
-              type="button"
-              onClick={goNext}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-7 py-3 font-semibold text-black transition hover:shadow-[0_0_30px_rgba(34,211,238,0.4)]"
-            >
-              Next <ArrowRight className="w-4 h-4" />
-            </button>
+          <div style={{ display: 'flex', gap: '0.6rem' }}>
+            <button type="button" onClick={goNext} className="ed-btn ed-btn--ghost ed-btn--sm">Skip</button>
+            <button type="button" onClick={goNext} className="ed-btn">Next <ArrowRight className="h-4 w-4" /></button>
           </div>
         )}
 
@@ -388,13 +325,10 @@ export function LeadCaptureForm({ source = 'homepage-cta' }: LeadCaptureFormProp
             type="button"
             onClick={handleSubmit}
             disabled={submitting || !canSubmit}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-3 font-semibold text-black transition hover:shadow-[0_0_30px_rgba(34,211,238,0.4)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="ed-btn"
+            style={{ opacity: submitting || !canSubmit ? 0.45 : 1, cursor: submitting || !canSubmit ? 'not-allowed' : 'pointer' }}
           >
-            {submitting ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
-            ) : (
-              <>Get my free plan <ArrowRight className="w-4 h-4" /></>
-            )}
+            {submitting ? (<><Loader2 className="h-4 w-4 animate-spin" /> Sending…</>) : (<>Get my free plan <ArrowRight className="h-4 w-4" /></>)}
           </button>
         )}
       </div>

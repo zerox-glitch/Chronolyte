@@ -1,10 +1,11 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { StudioCover } from '../components/editorial/StudioCover';
+import { useDialogFocus } from '../components/useDialogFocus';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ExternalLink, Play, Sparkles, X } from 'lucide-react';
+import { ArrowUpRight, ExternalLink, Play, X } from 'lucide-react';
 import { CallNowButton } from '../components/CallNowButton';
-import { Footer } from '../components/Footer';
-import { SiteNavigation } from '../components/SiteNavigation';
+import { CtaBand, PageHero, Sheet } from '../components/editorial/EditorialPage';
 
 interface ProjectVideo {
   id: number | string;
@@ -204,25 +205,12 @@ function safeMetricLabel(value: string): string {
   return value.replace(/[_-]/g, ' ');
 }
 
-function AnimatedSection({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
 export function Portfolio() {
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [activeFilter, setActiveFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [selectedVideoProject, setSelectedVideoProject] = useState<number | string | null>(null);
+  const videoDialog = useDialogFocus(selectedVideoProject !== null, () => setSelectedVideoProject(null));
 
   const filters = [
     { id: 'all', label: 'All projects' },
@@ -276,214 +264,198 @@ export function Portfolio() {
   const filteredProjects = activeFilter === 'all'
     ? projects
     : projects.filter((project) => project.project_type === activeFilter);
+  const coverProject = projects.find(p => p.featured_image.startsWith('/images/')) || projects[0];
   const selectedProject = projects.find((project) => String(project.id) === String(selectedVideoProject));
   const selectedVideoUrl = selectedProject?.video_url || selectedProject?.videos.find((video) => video.is_primary)?.video_url || selectedProject?.videos[0]?.video_url || '';
 
   return (
-    <div className="min-h-screen bg-dark-900 text-white">
-      <SiteNavigation />
+    <>
+      <PageHero
+        study="gyroscope"
+        visual={coverProject && <figure className="work-plate"><a href="#work-index" aria-label="Explore the portfolio">
+          <div className="work-plate__image"><StudioCover src={coverProject.featured_image} title={coverProject.title} label="Project index" eager /></div>
+          <figcaption className="study-caption"><span><b>{coverProject.portfolio_kind === 'concept' ? 'Concept project' : coverProject.portfolio_kind === 'personal' ? 'Personal project' : 'Client work'}</b><span className="caption-slash">/</span>{coverProject.title}</span><ArrowUpRight size={15} /></figcaption>
+        </a></figure>}
+        eyebrow="Selected work & experiments"
+        title={<>Built with <em>curiosity.</em></>}
+        lede="QRWho is a product I built. The other clearly marked concept projects show how I approach thoughtful, useful digital experiences."
+        actions={
+          <>
+            <Link to="/contact" className="ed-btn">Start a project <ArrowUpRight className="h-4 w-4" /></Link>
+            <CallNowButton />
+          </>
+        }
+        meta={
+          <>
+            <span>Client work</span>
+            <span>Personal builds</span>
+            <span>Concept projects</span>
+          </>
+        }
+      />
 
-      <section className="relative overflow-hidden px-4 pb-12 pt-32 md:px-6 md:pb-16 md:pt-40">
-        <div className="pointer-events-none absolute left-1/2 top-20 h-96 w-[min(80vw,56rem)] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[130px]" />
-        <div className="relative mx-auto max-w-5xl text-center">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
-              <Sparkles className="h-4 w-4" /> Selected work & experiments
-            </span>
-            <h1 className="font-display text-4xl font-bold leading-tight text-white sm:text-5xl md:text-7xl">
-              Built with <span className="gradient-text">curiosity.</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-white/55 md:text-lg">
-              QRWho is a product I built. The other clearly marked concept projects show how I approach thoughtful, useful digital experiences.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="px-4 py-4 md:px-6" aria-label="Filter projects">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-wrap justify-center gap-2.5">
+      <Sheet tone="paper" id="work-index">
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: 'clamp(18px, 2.4vw, 28px)' }}>
+          <div>
+            <p className="ed-rubric">The work<span className="ed-rubric__num">01 / 02</span></p>
+            <h2 className="ed-title ed-title--sm">Filter the <em>portfolio</em></h2>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }} role="group" aria-label="Filter projects">
             {filters.map((filter) => (
-              <motion.button
+              <button
                 key={filter.id}
                 type="button"
                 aria-pressed={activeFilter === filter.id}
                 onClick={() => setActiveFilter(filter.id)}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all ${activeFilter === filter.id
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-black'
-                  : 'border border-white/10 bg-white/5 text-white/65 hover:border-cyan-400/40 hover:text-white'}`}
+                className={`ed-choice ${activeFilter === filter.id ? 'ed-choice--active' : ''}`}
+                style={{ padding: '0.45rem 0.85rem', fontSize: '0.78rem', fontWeight: 700 }}
               >
                 {filter.label}
-              </motion.button>
+              </button>
             ))}
           </div>
         </div>
-      </section>
 
-      <section className="px-4 py-10 md:px-6 md:py-14" aria-label="Portfolio projects">
-        <div className="mx-auto max-w-7xl">
-          {loading ? (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {[0, 1, 2].map((item) => <div key={item} className="glass h-[440px] animate-pulse rounded-3xl" />)}
-            </div>
-          ) : filteredProjects.length > 0 ? (
-            <motion.div layout className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              <AnimatePresence mode="popLayout">
-                {filteredProjects.map((project, index) => {
-                  const videoUrl = project.video_url || project.videos.find((video) => video.is_primary)?.video_url || project.videos[0]?.video_url;
-                  return (
-                    <motion.article
-                      key={project.id}
-                      layout
-                      initial={{ opacity: 0, y: 18 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 18 }}
-                      transition={{ duration: 0.25, delay: Math.min(index * 0.035, 0.2) }}
-                      className="group glass flex h-full flex-col overflow-hidden rounded-3xl transition duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:shadow-[0_18px_55px_rgba(0,200,255,0.12)]"
-                    >
-                      <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-cyan-950 via-[#101a2a] to-blue-950">
-                        {project.featured_image && (
-                          <img
-                            src={project.featured_image}
-                            alt={`${project.title} project preview`}
-                            loading="lazy"
-                            onError={(event) => { event.currentTarget.style.display = 'none'; }}
-                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                          />
-                        )}
-                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#05070c]/80 via-transparent to-black/10" />
-                        {videoUrl && (
-                          <button
-                            type="button"
-                            aria-label={`Play ${project.title} project video`}
-                            onClick={() => setSelectedVideoProject(project.id)}
-                            className="absolute inset-0 flex items-center justify-center bg-black/10 transition hover:bg-black/25"
-                          >
-                            <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-black/45 text-cyan-200 backdrop-blur transition group-hover:scale-105">
-                              <Play className="ml-1 h-6 w-6 fill-current" />
-                            </span>
-                          </button>
-                        )}
-                        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                          <span className="rounded-full border border-cyan-300/25 bg-[#07101e]/85 px-3 py-1.5 text-xs font-semibold text-cyan-100 backdrop-blur">
-                            {projectTypeLabel(project.project_type)}
-                          </span>
-                          {project.portfolio_kind !== 'client' && (
-                            <span className="rounded-full border border-white/20 bg-black/60 px-3 py-1.5 text-xs font-medium text-white/90 backdrop-blur">
-                              {project.portfolio_kind === 'personal' ? 'Personal project' : 'Concept project'}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-1 flex-col p-5 md:p-6">
-                        <h2 className="font-display text-xl font-bold text-white transition-colors group-hover:text-cyan-200 md:text-2xl">{project.title}</h2>
-                        {project.client_name && <p className="mt-1.5 text-xs font-medium uppercase tracking-wider text-white/35">{project.client_name}</p>}
-                        <p className="mt-4 flex-1 text-sm leading-6 text-white/60">{project.short_description}</p>
-
-                        {project.tech_stack.length > 0 && (
-                          <div className="mt-5 flex flex-wrap gap-2">
-                            {project.tech_stack.slice(0, 4).map((tag) => (
-                              <span key={tag} className="rounded-lg border border-white/5 bg-white/[0.04] px-2.5 py-1.5 text-xs text-white/55">{tag}</span>
-                            ))}
-                            {project.tech_stack.length > 4 && <span className="rounded-lg border border-white/5 bg-white/[0.04] px-2.5 py-1.5 text-xs text-white/40">+{project.tech_stack.length - 4}</span>}
-                          </div>
-                        )}
-
-                        {Object.keys(project.metrics).length > 0 && (
-                          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 border-t border-white/10 pt-4">
-                            {Object.entries(project.metrics).slice(0, 2).map(([key, value]) => (
-                              <div key={key}>
-                                <p className="text-sm font-bold text-cyan-200">{value}</p>
-                                <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/35">{safeMetricLabel(key)}</p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {project.live_url && (
-                          <a
-                            href={project.live_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-5 inline-flex w-fit items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/10 px-4 py-2.5 text-sm font-semibold text-cyan-100 transition hover:border-cyan-200/50 hover:bg-cyan-400/15"
-                          >
-                            View live project <ExternalLink className="h-4 w-4" />
-                          </a>
-                        )}
-                      </div>
-                    </motion.article>
-                  );
-                })}
-              </AnimatePresence>
-            </motion.div>
-          ) : (
-            <div className="glass rounded-3xl px-6 py-12 text-center">
-              <h2 className="font-display text-xl font-semibold text-white">No projects in this category yet.</h2>
-              <button type="button" onClick={() => setActiveFilter('all')} className="mt-4 text-sm font-medium text-cyan-300 hover:text-white">Show all projects</button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="px-4 py-12 md:px-6 md:py-20">
-        <div className="mx-auto max-w-4xl">
-          <AnimatedSection>
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#101a28] to-[#080b12] p-7 text-center md:p-12">
-              <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-500/10 blur-[100px]" />
-              <div className="relative">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Have a project in mind?</span>
-                <h2 className="mt-3 font-display text-3xl font-bold text-white md:text-4xl">
-                  Let’s build something <span className="gradient-text">useful.</span>
-                </h2>
-                <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-white/55 md:text-base">
-                  Tell us what you want to make and get a free, no-obligation plan with scope, timeline and a quote.
-                </p>
-                <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                  <Link to="/contact" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-7 py-3.5 font-semibold text-black transition hover:shadow-lg hover:shadow-cyan-500/25 sm:w-auto">
-                    Start a project <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                  <CallNowButton />
-                </div>
+        {loading ? (
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {[0, 1, 2].map((item) => (
+              <div key={item} className="ed-card" style={{ height: 380, alignItems: 'center', justifyContent: 'center' }}>
+                <span className="ed-loading-dot" />
               </div>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
+            ))}
+          </div>
+        ) : filteredProjects.length > 0 ? (
+          <motion.div layout className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, index) => {
+                const videoUrl = project.video_url || project.videos.find((video) => video.is_primary)?.video_url || project.videos[0]?.video_url;
+                return (
+                  <motion.article
+                    key={project.id}
+                    layout
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 18 }}
+                    transition={{ duration: 0.24, delay: Math.min(index * 0.03, 0.18) }}
+                    className="ed-card"
+                    style={{ padding: 0, overflow: 'hidden' }}
+                  >
+                    <div style={{ position: 'relative', aspectRatio: '16 / 10', overflow: 'hidden', background: 'var(--alloy)', borderBottom: '1px solid var(--line)' }}>
+                      <StudioCover src={project.featured_image} alt={`${project.title} project preview`} title={project.title} label="Project index" />
+                      {videoUrl && (
+                        <button
+                          type="button"
+                          aria-label={`Play ${project.title} project video`}
+                          onClick={() => setSelectedVideoProject(project.id)}
+                          style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', background: 'rgba(31,39,35,0.18)', border: 0, cursor: 'pointer' }}
+                        >
+                          <span style={{ display: 'grid', placeItems: 'center', width: 54, height: 54, borderRadius: '50%', background: 'var(--canvas)', border: '2px solid var(--accent-ink)', color: 'var(--accent-ink)' }}>
+                            <Play className="ml-1 h-5 w-5 fill-current" />
+                          </span>
+                        </button>
+                      )}
+                      <div style={{ position: 'absolute', left: 10, top: 10, display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                        <span className="ed-chip" style={{ background: 'var(--canvas)' }}>{projectTypeLabel(project.project_type)}</span>
+                        {project.portfolio_kind !== 'client' && (
+                          <span className="ed-chip" style={{ background: 'var(--canvas)' }}>{project.portfolio_kind === 'personal' ? 'Personal project' : 'Concept project'}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, padding: 'clamp(16px, 2vw, 22px)' }}>
+                      <h3 className="ed-card__title" style={{ marginTop: 0 }}>{project.title}</h3>
+                      {project.client_name && <p style={{ margin: '0.2rem 0 0', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--muted)' }}>{project.client_name}</p>}
+                      <p className="ed-card__body" style={{ marginTop: '0.7rem', flexGrow: 1 }}>{project.short_description}</p>
+
+                      {project.tech_stack.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.8rem' }}>
+                          {project.tech_stack.slice(0, 4).map((tag) => (
+                            <span key={tag} className="ed-chip" style={{ background: 'transparent', borderColor: 'var(--line)', color: 'var(--copy)', fontWeight: 600 }}>{tag}</span>
+                          ))}
+                          {project.tech_stack.length > 4 && <span className="ed-chip" style={{ background: 'transparent', borderColor: 'var(--line)', color: 'var(--muted)' }}>+{project.tech_stack.length - 4}</span>}
+                        </div>
+                      )}
+
+                      {Object.keys(project.metrics).length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem 1.4rem', marginTop: '0.9rem', paddingTop: '0.8rem', borderTop: '1px solid var(--line)' }}>
+                          {Object.entries(project.metrics).slice(0, 2).map(([key, value]) => (
+                            <div key={key}>
+                              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent-ink)' }}>{value}</p>
+                              <p style={{ margin: '0.15rem 0 0', fontSize: '0.6rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--muted)' }}>{safeMetricLabel(key)}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {project.live_url && (
+                        <a href={project.live_url} target="_blank" rel="noopener noreferrer" className="ed-btn ed-btn--ghost ed-btn--sm" style={{ marginTop: '0.9rem', width: 'fit-content', textDecoration: 'none' }}>
+                          View live project <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      )}
+                    </div>
+                  </motion.article>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
+        ) : (
+          <div className="ed-card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
+            <h3 className="ed-card__title">No projects in this category yet.</h3>
+            <button type="button" onClick={() => setActiveFilter('all')} className="ed-btn ed-btn--sm" style={{ marginTop: '1rem' }}>Show all projects</button>
+          </div>
+        )}
+      </Sheet>
+
+      <CtaBand
+        eyebrow="02 / 02 — Have a project in mind?"
+        title={<>Let’s build something <em>useful.</em></>}
+        description="Tell us what you want to make and get a free, no-obligation plan with scope, timeline and a quote."
+        primaryTo="/contact"
+        primaryLabel="Start a project"
+        secondaryTo="/pricing"
+        secondaryLabel="See pricing"
+        note="References and project walkthroughs available on request."
+      >
+        <div style={{ marginTop: '1rem' }}><CallNowButton /></div>
+      </CtaBand>
 
       <AnimatePresence>
         {selectedVideoProject !== null && (
           <motion.div
-            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+            ref={videoDialog} role="dialog" aria-modal="true" aria-label="Project video"
+            className="ed-modal-backdrop"
+            style={{ alignItems: 'center', zIndex: 90 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedVideoProject(null)}
           >
             <motion.div
-              className="relative w-full max-w-4xl"
               initial={{ scale: 0.96, y: 12 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.96, y: 12 }}
               onClick={(event) => event.stopPropagation()}
+              style={{ position: 'relative', width: '100%', maxWidth: '56rem' }}
             >
-              <button type="button" aria-label="Close project video" onClick={() => setSelectedVideoProject(null)} className="absolute -right-1 -top-12 rounded-full border border-white/10 bg-white/5 p-2 text-white/70 transition hover:text-white sm:right-0">
-                <X className="h-5 w-5" />
+              <button
+                type="button"
+                aria-label="Close project video"
+                onClick={() => setSelectedVideoProject(null)}
+                className="ed-btn ed-btn--onDark ed-btn--sm"
+                style={{ position: 'absolute', right: 0, top: -46 }}
+              >
+                <X className="h-4 w-4" /> Close
               </button>
               {selectedVideoUrl ? (
-                <video key={selectedVideoUrl} src={selectedVideoUrl} controls autoPlay className="max-h-[80vh] w-full rounded-2xl bg-black" />
+                <video key={selectedVideoUrl} src={selectedVideoUrl} controls autoPlay style={{ width: '100%', maxHeight: '80vh', borderRadius: 5, background: '#000' }} />
               ) : (
-                <div className="flex h-80 items-center justify-center rounded-2xl bg-black/70 text-white/60">No video available.</div>
+                <div style={{ display: 'grid', placeItems: 'center', height: 260, borderRadius: 5, background: 'var(--carbon)', color: 'var(--canvas)' }}>No video available.</div>
               )}
-              <p className="mt-3 text-center text-sm text-white/60">{selectedProject?.title}</p>
+              <p style={{ marginTop: '0.7rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--canvas)' }}>{selectedProject?.title}</p>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      <Footer />
-    </div>
+    </>
   );
 }

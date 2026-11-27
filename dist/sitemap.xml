@@ -1,97 +1,193 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://chronolyte.com/</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/services</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/services</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/pricing</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/industries</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/locations</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/international-web-development</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/fiverr-upwork-alternative</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/pricing</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/portfolio</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/portfolio</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/about</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/about</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/contact</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/contact</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/faq</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/faq</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/blog</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/blog</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/terms</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/website-design</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/affordable-web-design</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/website-redesign</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/ai-automation</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/custom-software</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/terms</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/privacy</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/privacy</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/refunds</loc>
-    <lastmod>2026-10-05</lastmod>
+    <loc>https://www.chronolyteai.site/refunds</loc>
+    <lastmod>2026-11-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/blog/fiverr-upwork-alternative</loc>
+    <loc>https://www.chronolyteai.site/blog/how-to-compare-fast-web-design-agencies</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/blog/what-does-a-499-dollar-business-website-include</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/blog/best-website-development-service-for-small-business-on-a-budget</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/blog/affordable-website-design-for-small-businesses-and-personal-projects</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/blog/chronolyte-vs-wix-squarespace-fiverr-small-business-website</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/blog/48-hour-website-vs-7-day-website-what-you-get</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/blog/affordable-website-design-agency-vs-freelancer-vs-diy-2026</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.chronolyteai.site/blog/fiverr-upwork-alternative</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/blog/saas-mvp-development-guide</loc>
+    <loc>https://www.chronolyteai.site/blog/saas-mvp-development-guide</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/blog/how-to-hire-a-web-developer</loc>
+    <loc>https://www.chronolyteai.site/blog/how-to-hire-a-web-developer</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/blog/how-much-does-it-cost-to-build-an-app</loc>
+    <loc>https://www.chronolyteai.site/blog/how-much-does-it-cost-to-build-an-app</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chronolyte.com/blog/how-much-does-a-website-cost</loc>
+    <loc>https://www.chronolyteai.site/blog/how-much-does-a-website-cost</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

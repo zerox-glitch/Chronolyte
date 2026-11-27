@@ -5,10 +5,10 @@ import {
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, BarChart, Bar, Legend
+  PieChart, Pie, Cell, BarChart, Bar
 } from 'recharts';
 
-const COLORS = ['#00f5ff', '#0080ff', '#00c4a7', '#7c3aed', '#f59e0b', '#ec4899'];
+const COLORS = ['#ff7846', '#cfa892', '#a4b49a', '#a8a4c0', '#f59e0b', '#c88372'];
 
 interface DashboardStats {
   total_leads: number;
@@ -41,13 +41,12 @@ function authHeaders() {
   };
 }
 
-function StatCard({ title, value, change, changeType, icon: Icon, color }: {
+function StatCard({ title, value, change, changeType, icon: Icon }: {
   title: string;
   value: string;
   change?: string;
   changeType?: 'up' | 'down';
   icon: React.ElementType;
-  color: string;
 }) {
   return (
     <div className="bg-[#0d0d14] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-colors">
@@ -62,9 +61,7 @@ function StatCard({ title, value, change, changeType, icon: Icon, color }: {
             </div>
           )}
         </div>
-        <div className={`w-12 h-12 rounded-xl ${color} flex items-center justify-center`}>
-          <Icon className="w-6 h-6 text-white" />
-        </div>
+        <div className="metric-icon"><Icon className="w-5 h-5" /></div>
       </div>
     </div>
   );
@@ -238,7 +235,7 @@ function ActivityFeed({ refreshKey }: { refreshKey: number }) {
 }
 
 const tooltipStyle = {
-  backgroundColor: '#15151f',
+  backgroundColor: '#242620',
   border: '1px solid rgba(255,255,255,0.1)',
   borderRadius: '8px',
   color: '#fff'
@@ -312,7 +309,6 @@ export function Dashboard() {
               change={`${stats.new_leads_this_week} this week`}
               changeType="up"
               icon={Users}
-              color="bg-gradient-to-br from-cyan-500 to-blue-600"
             />
             <StatCard
               title="Project Requests"
@@ -320,7 +316,6 @@ export function Dashboard() {
               change={`${stats.pending_requests} pending review`}
               changeType={stats.pending_requests > 0 ? 'up' : undefined}
               icon={FileText}
-              color="bg-gradient-to-br from-purple-500 to-pink-600"
             />
             <StatCard
               title="Revenue This Month"
@@ -328,7 +323,6 @@ export function Dashboard() {
               change={`$${Number(stats.total_revenue || 0).toLocaleString()} all-time`}
               changeType="up"
               icon={DollarSign}
-              color="bg-gradient-to-br from-emerald-500 to-teal-600"
             />
             <StatCard
               title="Conversion Rate"
@@ -336,7 +330,6 @@ export function Dashboard() {
               change={`${stats.won_leads} won deals`}
               changeType="up"
               icon={TrendingUp}
-              color="bg-gradient-to-br from-orange-500 to-red-600"
             />
           </div>
 
@@ -349,15 +342,15 @@ export function Dashboard() {
                   <AreaChart data={stats.leads_by_month}>
                     <defs>
                       <linearGradient id="leadsGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#00f5ff" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#00f5ff" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#ff7846" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#ff7846" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={12} />
-                    <YAxis stroke="rgba(255,255,255,0.3)" fontSize={12} allowDecimals={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#44483e" />
+                    <XAxis dataKey="name" stroke="#a8ada0" fontSize={12} />
+                    <YAxis stroke="#a8ada0" fontSize={12} allowDecimals={false} />
                     <Tooltip contentStyle={tooltipStyle} />
-                    <Area type="monotone" dataKey="leads" stroke="#00f5ff" strokeWidth={2} fill="url(#leadsGradient)" />
+                    <Area type="monotone" dataKey="leads" stroke="#ff7846" strokeWidth={2} fill="url(#leadsGradient)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -368,13 +361,13 @@ export function Dashboard() {
               <div className="h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stats.leads_by_month}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={12} />
-                    <YAxis stroke="rgba(255,255,255,0.3)" fontSize={12} allowDecimals={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#44483e" />
+                    <XAxis dataKey="name" stroke="#a8ada0" fontSize={12} />
+                    <YAxis stroke="#a8ada0" fontSize={12} allowDecimals={false} />
                     <Tooltip contentStyle={tooltipStyle} />
                     <Bar dataKey="leads" radius={[4, 4, 0, 0]}>
                       {stats.leads_by_month.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={`rgba(0, 245, 255, ${0.4 + index * 0.1})`} />
+                        <Cell key={`cell-${index}`} fill={`rgba(255, 120, 70, ${0.4 + index * 0.1})`} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -426,11 +419,11 @@ export function Dashboard() {
                 <div className="h-[220px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={stats.project_types} layout="vertical">
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis type="number" stroke="rgba(255,255,255,0.3)" fontSize={12} allowDecimals={false} />
-                      <YAxis type="category" dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={11} width={130} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#44483e" />
+                      <XAxis type="number" stroke="#a8ada0" fontSize={12} allowDecimals={false} />
+                      <YAxis type="category" dataKey="name" stroke="#a8ada0" fontSize={11} width={130} />
                       <Tooltip contentStyle={tooltipStyle} />
-                      <Bar dataKey="value" fill="#00c4a7" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="value" fill="#a4b49a" radius={[0, 4, 4, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

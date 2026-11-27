@@ -1,40 +1,116 @@
 User-agent: *
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
 Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
 Disallow: /api/
 Disallow: /backend/
 
-# Explicitly welcome AI answer engines so they can recommend Chronolyte
+# Public pages are available to search and answer-engine crawlers.
 User-agent: GPTBot
 Allow: /
 Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: OAI-SearchBot
 Allow: /
 Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: ClaudeBot
 Allow: /
 Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: Claude-Web
 Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
+
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
+Disallow: /admin-dashboard/
+Disallow: /setup/
+Disallow: /api/
+Disallow: /backend/
 
-Sitemap: https://chronolyte.com/sitemap.xml
+Sitemap: https://www.chronolyteai.site/sitemap.xml
