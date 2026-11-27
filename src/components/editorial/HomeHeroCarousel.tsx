@@ -1,290 +1,52 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, ClipboardCheck, Mail, Pause, Play, Send } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Pause, Play, RotateCcw } from 'lucide-react';
 import { useMotionPaused } from './MotionPreferences';
+import '../../styles/after-hours.css';
 
-const AUTOPLAY_MS = 6000;
-
-type HeroSlideKind = 'website' | 'booking' | 'commerce' | 'saas' | 'automation' | 'wireframe';
-
-interface HeroSlide {
-  id: string;
-  kind: HeroSlideKind;
-  caption: string;
-  tag?: string;
-  alt: string;
-  src?: string;
-  srcSet?: string;
-  width?: number;
-  height?: number;
-}
-
-const SIZES = '(max-width: 760px) 92vw, 46vw';
-
-/**
- * Homepage-only slide collection: six studio studies showing what visitors can
- * have built. Inner pages keep using StudioArtwork; this component never
- * touches those illustrations or their assets.
- */
-export const HOME_HERO_SLIDES: HeroSlide[] = [
-  {
-    id: 'website',
-    kind: 'website',
-    caption: 'Website design',
-    tag: 'Concept project',
-    alt: 'Atelier Estates concept website: an editorial property collection over a dusk photograph of a modern coastal house.',
-    src: '/images/hero/website-960.webp',
-    srcSet:
-      '/images/hero/website-640.webp 640w, /images/hero/website-960.webp 960w, /images/hero/website-1280.webp 1280w',
-    width: 960,
-    height: 597,
-  },
-  {
-    id: 'booking',
-    kind: 'booking',
-    caption: 'Mobile app design',
-    alt: 'Mobile app design study: a phone showing a booking screen with selectable dates and times and a confirm button.',
-  },
-  {
-    id: 'commerce',
-    kind: 'commerce',
-    caption: 'E-commerce',
-    tag: 'Concept project',
-    alt: 'E-commerce design study: amber skincare bottles and soap arranged with eucalyptus on stone, beside a product detail card.',
-    src: '/images/hero/commerce-960.webp',
-    srcSet:
-      '/images/hero/commerce-640.webp 640w, /images/hero/commerce-960.webp 960w, /images/hero/commerce-1280.webp 1280w',
-    width: 960,
-    height: 597,
-  },
-  {
-    id: 'saas',
-    kind: 'saas',
-    caption: 'SaaS workspace',
-    alt: 'SaaS workspace study: a project board with cards moving from review to approval.',
-  },
-  {
-    id: 'automation',
-    kind: 'automation',
-    caption: 'Automation',
-    alt: 'Automation study: a three-step flow from an enquiry arriving to a record being created and a follow-up prepared.',
-  },
-  {
-    id: 'wireframe',
-    kind: 'wireframe',
-    caption: 'UI/UX design',
-    alt: 'UI/UX design study: a rough wireframe resolving into a finished interface.',
-  },
-];
-
+const stories = [
+  { goal: 'Sell my products', cta: 'Build a store like this', service: 'ecommerce', image: 'shop' },
+  { goal: 'Fill my calendar', cta: 'Build a booking site like this', service: 'website', image: 'rehearsal' },
+  { goal: 'Get better enquiries', cta: 'Get a site that captures better briefs', service: 'website', image: 'interior' },
+  { goal: 'Launch my software', cta: 'Plan a product like this', service: 'web-app-saas', image: null },
+  { goal: 'Cut my admin work', cta: 'Plan a workflow like this', service: null, image: null },
+] as const;
 const pad = (n: number) => String(n).padStart(2, '0');
 
-function WebsiteArt({ slide, eager, onReady }: { slide: HeroSlide; eager: boolean; onReady: () => void }) {
-  return <div className="art-site">
-    <img src={slide.src} srcSet={slide.srcSet} sizes={SIZES} width={slide.width} height={slide.height} alt={slide.alt} fetchPriority={eager ? 'high' : 'auto'} loading={eager ? 'eager' : 'lazy'} decoding="async" onLoad={onReady} />
-    <div className="art-site-shade" aria-hidden="true" />
-    <div className="art-site-nav" aria-hidden="true"><span>ATELIER <i> / </i> ESTATES</span><span>Homes &nbsp;&nbsp; Journal &nbsp;&nbsp; ↗</span></div>
-    <div className="art-site-copy" aria-hidden="true"><small>THE COASTAL COLLECTION &nbsp; / &nbsp; 01</small><strong>A place<br /><em>to belong.</em></strong><span>Thoughtfully chosen homes by the sea.</span><b>EXPLORE THE COLLECTION &nbsp; ↗</b></div>
-    <div className="art-site-index" aria-hidden="true">01 — 04 <span>────────</span></div>
-  </div>;
+function Photo({ name, eager = false }: { name: string; eager?: boolean }) {
+  return <img className="ah-photo" src={`/images/after-hours/${name}-1200.webp`} srcSet={`/images/after-hours/${name}-640.webp 640w, /images/after-hours/${name}-1200.webp 1200w`} sizes="(max-width: 760px) 92vw, 48vw" width="1200" height={name === 'interior' ? 801 : 800} alt="" loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : 'auto'} decoding="async" />;
 }
 
-function CommerceArt({ slide, onReady }: { slide: HeroSlide; onReady: () => void }) {
-  return <div className="art-commerce">
-    <img src={slide.src} srcSet={slide.srcSet} sizes={SIZES} width={slide.width} height={slide.height} alt={slide.alt} loading="lazy" decoding="async" onLoad={onReady} />
-    <div className="commerce-top" aria-hidden="true"><span>VERDANT &amp; CO.</span><span>SHOP &nbsp; ABOUT &nbsp; BAG (0)</span></div>
-    <div className="commerce-card" aria-hidden="true"><small>THE DAILY RITUAL &nbsp; / &nbsp; 01</small><strong>Botanical<br /><em>face oil.</em></strong><p>A little nourishment, every day.</p><div className="commerce-rule"><span>30 ML &nbsp; · &nbsp; AMBER GLASS</span><span>+</span></div><b>ADD TO BAG <span>↗</span></b></div>
-  </div>;
+function PrintArt() {
+  return <svg viewBox="0 0 240 270" role="img" aria-label="Original cobalt concert print, with a stylized sun and sound waves"><defs><clipPath id="after-print-clip"><rect x="13" y="13" width="214" height="244"/></clipPath></defs><rect width="240" height="270" fill="#eee8d8"/><rect x="13" y="13" width="214" height="244" fill="#214bca"/><circle cx="120" cy="111" r="57" fill="#f6ede0"/><circle cx="120" cy="111" r="41" fill="#214bca"/><circle cx="120" cy="111" r="24" fill="#f6ede0"/><path clipPath="url(#after-print-clip)" d="M13 170 Q55 135 98 170 T182 170 T260 170 M13 187 Q55 152 98 187 T182 187 T260 187 M13 204 Q55 169 98 204 T182 204 T260 204" fill="none" stroke="#f6ede0" strokeWidth="4"/><text x="27" y="42" fill="#f6ede0" fontFamily="Arial,sans-serif" fontSize="11" fontWeight="bold" letterSpacing="2">AFTER THE SOUND</text><text x="27" y="238" fill="#f6ede0" fontFamily="Arial,sans-serif" fontSize="8" letterSpacing="1.5">AN ORIGINAL PRINT / 01</text></svg>;
 }
 
-function BookingArt({ alt }: { alt: string }) {
-  return <div className="art-booking" role="img" aria-label={alt}>
-    <div className="booking-editorial" aria-hidden="true"><small>01 / MOBILE EXPERIENCE</small><strong>Make<br /><em>time.</em></strong><span>A simpler way to<br />book your next visit.</span><div className="booking-orbit">✳</div></div>
-    <div className="booking-phone" aria-hidden="true"><div className="booking-status"><span>9:41</span><span>● ● ●</span></div><div className="booking-back">← <span>BOOKING</span> ···</div><div className="booking-head"><small>YOUR NEXT VISIT</small><strong>Find your<br />moment.</strong><p>Choose a day and time that works for you.</p></div><div className="booking-month">October <span>‹ &nbsp; ›</span></div><div className="booking-days"><span>M <b>12</b></span><span>T <b className="selected">13</b></span><span>W <b>14</b></span><span>T <b>15</b></span><span>F <b>16</b></span></div><div className="booking-label">AVAILABLE TIMES <span>3 OPTIONS</span></div><div className="booking-times"><span>09:00</span><span className="selected">10:30</span><span>14:00</span></div><div className="booking-confirm">Confirm booking <span>↗</span></div></div>
-  </div>;
+function Story({ index, result, active, act }: { index: number; result: boolean; active: boolean; act: () => void }) {
+  if (index === 0) return <div className={`ah-scene ah-store ${result ? 'result' : ''}`}><div className="ah-store-photo"><Photo name="shop" eager/></div><div className="store-site"><div className="store-nav"><b>AFTER / SOUND</b><span>PRINTS &nbsp; ABOUT &nbsp; ☰</span></div><div className="store-layout"><div className="store-poster"><PrintArt/></div><div className="store-details"><small>INDEPENDENT PRINT SHOP</small><h3>Art for<br/><em>after dark.</em></h3><p>After the Sound<br/>Concert print</p><button type="button" disabled={!active} onClick={act}>Reserve for pickup <span>↗</span></button><div className="store-note">A CONCEPT DEMO · NO ORDER PLACED</div></div></div><div className="claim-ticket" aria-hidden={!result}><div className="ticket-mini"><PrintArt/></div><div><small>PICKUP RESERVED</small><strong>Tomorrow<br/>· 10:00 AM</strong><span>AFTER THE SOUND / PRINT</span></div><b>✓</b></div></div></div>;
+  if (index === 1) return <div className={`ah-scene ah-booking ${result ? 'result' : ''}`}><div className="booking-image"><Photo name="rehearsal"/><div className="image-text"><small>THE ROOM / 01</small><strong>Make room<br/><em>for sound.</em></strong></div></div><div className="booking-panel"><div className="demo-nav"><b>ROOM / A</b><span>BOOK A SESSION &nbsp; ↗</span></div><small>FIND YOUR TIME</small><h3>Friday<br/><em>sessions.</em></h3><p>Choose a time to see a booking.</p><div className="booking-slots"><span>5:00 PM</span><button type="button" disabled={!active} onClick={act} aria-pressed={result}>7:00 PM <b>↗</b></button><span>9:00 PM</span></div><div className="booking-result" aria-hidden={!result}><small>BOOKING PREVIEW</small><strong>Room A <i>·</i> Friday</strong><span>7:00 PM <b>✓</b></span></div><small className="demo-disclaimer">CONCEPT DEMO · NO BOOKING MADE</small></div></div>;
+  if (index === 2) return <div className={`ah-scene ah-brief ${result ? 'result' : ''}`}><div className="brief-photo"><Photo name="interior"/><div className="image-text"><small>A THOUGHTFUL START</small><strong>A room<br/><em>to live in.</em></strong></div></div><div className="brief-panel"><div className="demo-nav"><b>FORM / SPACE</b><span>YOUR PROJECT &nbsp; ↗</span></div><small>YOUR DESIGN BRIEF</small><h3>Make it<br/><em>yours.</em></h3><div className="brief-room"><span>ROOM</span><b>Living room &nbsp; ✓</b></div><div className="brief-prompt">CHOOSE A FINISH</div><div className="brief-samples"><button type="button" disabled={!active} onClick={act} aria-pressed={result}><i className="oak"/><span>Natural oak</span></button><div><i className="stone"/><span>Warm stone</span></div></div><div className="brief-result" aria-hidden={!result}><div className="brief-thumb"><Photo name="interior"/></div><div><small>YOUR BRIEF</small><strong>Living room</strong><span><i className="oak"/> Natural oak</span></div><b>✓</b></div></div></div>;
+  if (index === 3) return <div className={`ah-scene ah-festival ${result ? 'result' : ''}`}><div className="festival-nav"><b>● &nbsp; FIELDWORK / FESTIVAL</b><span>STAGE MANAGEMENT &nbsp; ☰</span></div><div className="festival-heading"><div><small>OPERATIONS / MAIN STAGE</small><h3>Show day<span> ✳</span></h3><p>A clearer view for the whole crew.</p></div><div className="festival-poster"><span>FIELD<br/>WORK</span><i>LIVE / 01</i></div></div><div className="festival-grid"><div><header>STAGE RUNDOWN <span>FRIDAY</span></header><div className="rundown"><small>01 / SOUND</small><strong>Soundcheck</strong><b>{result ? '5:00 PM' : '4:30 PM'}</b><button type="button" disabled={!active} onClick={act}>{result ? 'Updated ✓' : 'Move to 5:00 PM →'}</button></div><div className="festival-row">02 &nbsp; Doors <span>6:00 PM</span></div></div><div><header>CREW VIEW <span>LIVE</span></header><div className="crew"><div className="crew-avatar">S</div><small>SOUND TEAM</small><strong>Soundcheck</strong><span>{result ? '5:00 PM' : '4:30 PM'}</span><p>Main stage · Friday</p></div></div></div><div className="festival-foot">SCHEDULE ONE PLACE. KEEP EVERYONE IN STEP.</div></div>;
+  return <div className={`ah-scene ah-catering ${result ? 'result' : ''}`}><div className="catering-nav"><b>FIELD / CATERING</b><span>ENQUIRIES &nbsp; / &nbsp; JOBS</span></div><div className="catering-heading"><small>FROM INBOX TO NEXT STEP</small><h3>Less admin.<br/><em>More hospitality.</em></h3></div><div className="catering-layout"><div className="catering-message"><small>NEW ENQUIRY</small><div className="sender"><b>AM</b><span><strong>Alex Morgan</strong><small>Private dinner</small></span></div><p>“Dinner for <mark>30</mark> this <mark>Friday</mark>. <mark>Two vegetarian guests</mark>.”</p><button type="button" disabled={!active} onClick={act}>{result ? 'Draft prepared ✓' : 'Prepare enquiry →'}</button></div><div className="catering-arrow">→</div><div className="catering-draft"><small>EDITABLE JOB DRAFT</small><strong>Private dinner</strong><label>DAY <input aria-label="Draft day" defaultValue="Friday" disabled={!active || !result} /></label><label>GUESTS <input aria-label="Draft guests" defaultValue="30" disabled={!active || !result} /></label><label>DIETARY <input aria-label="Draft dietary requirements" defaultValue="2 vegetarian meals" disabled={!active || !result} /></label><footer>● &nbsp; Ready for review</footer></div></div><div className="catering-note">CONCEPT DEMO · NOTHING SENT OR ACCEPTED</div></div>;
 }
 
-function SaasArt({ alt }: { alt: string }) {
-  return <div className="art-workspace" role="img" aria-label={alt}><div className="workspace-shell" aria-hidden="true"><aside><div className="workspace-mark">✳</div><span>◫</span><span>▦</span><span>◷</span><span>⚙</span></aside><div className="workspace-main"><div className="workspace-top"><span>WORKSPACE &nbsp; / &nbsp; PROJECTS</span><span>◌ &nbsp; <b>JD</b></span></div><div className="workspace-title"><div><small>PROJECT OVERVIEW</small><strong>Launch plan<span> ✳</span></strong><p>Everything moving, in one place.</p></div><span className="workspace-button">+ New task</span></div><div className="workspace-tabs"><b>Board view</b><span>List view</span><span>Activity</span></div><div className="workspace-columns"><section><header>TO DO <span>02</span></header><article><small>DESIGN</small><b>Homepage direction</b><p>Visual exploration</p><footer>◉ &nbsp; JD <span>↗</span></footer></article><article><small>CONTENT</small><b>Product copy</b><p>First draft</p><footer>◉ &nbsp; AL</footer></article></section><section><header>IN REVIEW <span>01</span></header><article className="workspace-feature"><small>READY FOR REVIEW</small><b>Onboarding flow</b><p>Feedback incorporated</p><footer>◉ &nbsp; JD <span>→ APPROVE</span></footer></article></section><section><header>APPROVED <span>01</span></header><article><small>COMPLETE</small><b>Design system</b><p>Components &amp; styles</p><footer><Check size={12} /> &nbsp; Approved</footer></article></section></div></div></div></div>;
-}
-
-function AutomationArt({ alt }: { alt: string }) {
-  return <div className="art-automation" role="img" aria-label={alt}><div className="automation-header" aria-hidden="true"><div><small>WORKFLOW / 01</small><strong>From enquiry<br /><em>to action.</em></strong></div><span>● &nbsp; ACTIVE</span></div><div className="automation-flow" aria-hidden="true"><div><span className="automation-icon"><Mail size={19}/></span><small>01 &nbsp; TRIGGER</small><strong>Enquiry arrives</strong><p>New message received</p></div><i>↓</i><div><span className="automation-icon"><ClipboardCheck size={19}/></span><small>02 &nbsp; ORGANISE</small><strong>Record created</strong><p>Details saved to workspace</p></div><i>↓</i><div><span className="automation-icon"><Send size={19}/></span><small>03 &nbsp; FOLLOW UP</small><strong>Reply prepared</strong><p>Draft ready for review</p></div></div><div className="automation-foot" aria-hidden="true"><span>LESS BUSYWORK.</span><span>MORE MOMENTUM. &nbsp; ↗</span></div></div>;
-}
-
-function WireframeArt({ alt }: { alt: string }) {
-  return <div className="art-design" role="img" aria-label={alt}><div className="design-heading" aria-hidden="true"><small>THE DESIGN PROCESS &nbsp; / &nbsp; 01—02</small><strong>From thinking<br /><em>to feeling.</em></strong><span>Structure meets expression. ↗</span></div><div className="design-panels" aria-hidden="true"><div className="design-sketch"><div className="design-panel-label">01 / WIREFRAME <span>↗</span></div><div className="sketch-nav"><i/><i/><i/></div><div className="sketch-copy"><i/><i/><i/></div><div className="sketch-image"><span>×</span></div><div className="sketch-bottom"><i/><i/></div></div><div className="design-final"><div className="design-panel-label">02 / FINAL DESIGN <span>↗</span></div><div className="final-interface"><div className="final-nav">STUDIO / 01 <span>MENU &nbsp; ☰</span></div><div className="final-content"><small>SPACE TO SLOW DOWN</small><strong>Live<br /><em>beautifully.</em></strong><span>DISCOVER THE COLLECTION &nbsp; ↗</span></div><div className="final-photo" /></div></div></div></div>;
-}
-
-export function HomeHeroCarousel() {
+export function HomeHeroCarousel({ onSuggestion }: { onSuggestion: (service: string | null) => void }) {
   const motionPaused = useMotionPaused();
-  const [index, setIndex] = useState(0);
-  const [userPaused, setUserPaused] = useState(false);
-  const [hoverPaused, setHoverPaused] = useState(false);
-  const [focusPaused, setFocusPaused] = useState(false);
-  const [inView, setInView] = useState(true);
-  const [tabVisible, setTabVisible] = useState(true);
-  const [announcement, setAnnouncement] = useState('');
-  const rootRef = useRef<HTMLElement | null>(null);
-  const indexRef = useRef(0);
-  const loadedRef = useRef<Set<string>>(new Set());
-
-  useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
-
-  const markLoaded = useCallback((id: string) => {
-    loadedRef.current.add(id);
-  }, []);
-
-  const preloadSlide = useCallback((slide: HeroSlide) => {
-    const src = slide.src;
-    if (!src || loadedRef.current.has(slide.id)) return Promise.resolve();
-    return new Promise<void>((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        loadedRef.current.add(slide.id);
-        resolve();
-      };
-      img.onerror = () => {
-        loadedRef.current.add(slide.id);
-        resolve();
-      };
-      img.src = src;
-    });
-  }, []);
-
-  const advance = useCallback(() => {
-    const next = (indexRef.current + 1) % HOME_HERO_SLIDES.length;
-    const slide = HOME_HERO_SLIDES[next];
-    if (slide.src && !loadedRef.current.has(slide.id)) {
-      void preloadSlide(slide).then(() => setIndex(next));
-    } else {
-      setIndex(next);
-    }
-  }, [preloadSlide]);
-
-  const playing =
-    !motionPaused && !userPaused && !hoverPaused && !focusPaused && inView && tabVisible;
-
-  useEffect(() => {
-    if (!playing) return;
-    const timer = setTimeout(advance, AUTOPLAY_MS);
-    return () => clearTimeout(timer);
-  }, [playing, index, advance]);
-
-  useEffect(() => {
-    const next = HOME_HERO_SLIDES[(index + 1) % HOME_HERO_SLIDES.length];
-    if (next.src) void preloadSlide(next);
-  }, [index, preloadSlide]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      void preloadSlide(HOME_HERO_SLIDES[2]);
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, [preloadSlide]);
-
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.15 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const onVisibility = () => setTabVisible(!document.hidden);
-    document.addEventListener('visibilitychange', onVisibility);
-    return () => document.removeEventListener('visibilitychange', onVisibility);
-  }, []);
-
-  const goTo = (target: number) => {
-    const next = ((target % HOME_HERO_SLIDES.length) + HOME_HERO_SLIDES.length) % HOME_HERO_SLIDES.length;
-    const slide = HOME_HERO_SLIDES[next];
-    if (slide.src && !loadedRef.current.has(slide.id)) {
-      void preloadSlide(slide).then(() => setIndex(next));
-    } else {
-      setIndex(next);
-    }
-    setAnnouncement(`${slide.caption} — slide ${next + 1} of ${HOME_HERO_SLIDES.length}`);
-  };
-
-  const togglePause = () => {
-    const next = !userPaused;
-    setUserPaused(next);
-    setAnnouncement(next ? 'Slideshow paused' : 'Slideshow playing');
-  };
-
-  const slide = HOME_HERO_SLIDES[index];
-
-  return (
-    <figure
-      ref={rootRef}
-      className="hero-stories"
-      aria-roledescription="carousel"
-      aria-label="Studio work in six studies: website design, mobile apps, e-commerce, SaaS, automation and UI/UX design"
-      onMouseEnter={() => setHoverPaused(true)}
-      onMouseLeave={() => setHoverPaused(false)}
-      onFocus={(e) => {
-        // The pause/play toggle manages its own state; focusing it must not
-        // block a Play press from resuming the slideshow.
-        if (!(e.target as HTMLElement).closest('.hero-pause')) setFocusPaused(true);
-      }}
-      onBlur={() => setFocusPaused(false)}
-    >
-      <div className="hero-stage">
-        {HOME_HERO_SLIDES.map((s, i) => (
-          <div
-            key={s.id}
-            className={`hero-slide${i === index ? ' hero-slide--active' : ''}`}
-            aria-hidden={i !== index}
-          >
-            {s.kind === 'website' && (
-              <WebsiteArt slide={s} eager={i === 0} onReady={() => markLoaded(s.id)} />
-            )}
-            {s.kind === 'commerce' && <CommerceArt slide={s} onReady={() => markLoaded(s.id)} />}
-            {s.kind === 'booking' && <BookingArt alt={s.alt} />}
-            {s.kind === 'saas' && <SaasArt alt={s.alt} />}
-            {s.kind === 'automation' && <AutomationArt alt={s.alt} />}
-            {s.kind === 'wireframe' && <WireframeArt alt={s.alt} />}
-          </div>
-        ))}
-      </div>
-      <figcaption className="study-caption hero-caption">
-        <span>
-          <b>FIG. {pad(index + 1)}</b>
-          <span className="caption-slash">/</span>
-          {slide.caption}
-          {slide.tag && <span className="hero-tag">{slide.tag}</span>}
-        </span>
-        <div className="study-controls hero-controls">
-          <button type="button" aria-label="Previous slide" onClick={() => goTo(index - 1)}>
-            <ArrowLeft size={16} />
-          </button>
-          <span aria-hidden="true">
-            {pad(index + 1)} / {pad(HOME_HERO_SLIDES.length)}
-          </span>
-          <button type="button" aria-label="Next slide" onClick={() => goTo(index + 1)}>
-            <ArrowRight size={16} />
-          </button>
-          <button
-            type="button"
-            className="hero-pause"
-            aria-label={userPaused ? 'Play slideshow' : 'Pause slideshow'}
-            aria-pressed={userPaused}
-            title={userPaused ? 'Play slideshow' : 'Pause slideshow'}
-            onClick={togglePause}
-          >
-            {userPaused ? <Play size={14} /> : <Pause size={14} />}
-          </button>
-        </div>
-      </figcaption>
-      <span className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">
-        {announcement}
-      </span>
-    </figure>
-  );
+  const [index, setIndex] = useState(0); const [visited, setVisited] = useState([0]); const [results, setResults] = useState<boolean[]>(() => stories.map(() => false));
+  const [paused, setPaused] = useState(false); const [hover, setHover] = useState(false); const [focus, setFocus] = useState(false); const [visible, setVisible] = useState(true); const [inView, setInView] = useState(true); const [announcement, setAnnouncement] = useState('');
+  const root = useRef<HTMLElement>(null); const request = useRef(0); const playing = !motionPaused && !paused && !hover && !focus && visible && inView; const playingRef = useRef(playing); playingRef.current = playing;
+  const prepare = useCallback((i: number) => { const image = stories[i].image; if (!image) return Promise.resolve(); return new Promise<void>(resolve => { const img = new Image(); img.onload = img.onerror = () => resolve(); img.sizes = '(max-width: 760px) 92vw, 48vw'; img.srcset = `/images/after-hours/${image}-640.webp 640w, /images/after-hours/${image}-1200.webp 1200w`; img.src = `/images/after-hours/${image}-1200.webp`; }); }, []);
+  const go = useCallback((target: number, manual = false) => { const next = (target + stories.length) % stories.length; const token = ++request.current; if (manual) setPaused(true); void prepare(next).then(() => { if (token !== request.current || (!manual && !playingRef.current)) return; setResults(v => v.map((value, i) => i === next ? false : value)); setVisited(v => v.includes(next) ? v : [...v,next]); setIndex(next); if (manual) setAnnouncement(`${stories[next].goal}, story ${next + 1} of ${stories.length}`); }); }, [prepare]);
+  useEffect(() => { void prepare((index + 1) % stories.length); }, [index, prepare]);
+  useEffect(() => { if (!playing) return; const demo = window.setTimeout(() => setResults(v => v.map((value, i) => i === index ? true : value)), 1900); const next = window.setTimeout(() => go(index + 1), 6000); return () => { clearTimeout(demo); clearTimeout(next); }; }, [playing, index, go]);
+  useEffect(() => { const change = () => setVisible(!document.hidden); change(); document.addEventListener('visibilitychange', change); return () => document.removeEventListener('visibilitychange', change); }, []);
+  useEffect(() => { if (!root.current) return; const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: .15 }); observer.observe(root.current); return () => observer.disconnect(); }, []);
+  useEffect(() => () => { request.current++; }, []);
+  const act = () => { setPaused(true); setResults(v => v.map((value, i) => i === index ? true : value)); setAnnouncement('Concept result shown. No real transaction was made.'); };
+  const replay = () => { setPaused(true); setResults(v => v.map((value, i) => i === index ? false : value)); setAnnouncement('Concept reset. Try the action.'); };
+  return <section ref={root} className="after-hours" aria-label="After Hours interactive studio concepts" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onFocus={e => setFocus(!(e.target as HTMLElement).closest('.ah-play'))} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocus(false); }}>
+    <div className="ah-frame">{stories.map((story,i) => visited.includes(i) && <div key={story.goal} className={`ah-slide ${i === index ? 'active' : ''}`} aria-hidden={i !== index}><Story index={i} result={results[i]} active={i === index} act={act}/></div>)}</div>
+    <div className="ah-caption"><span><b>11:47 PM</b> / AFTER HOURS <small>INTERACTIVE STUDIO CONCEPT</small></span><span>{pad(index + 1)} / {pad(stories.length)}</span></div>
+    <div className="ah-goals" aria-label="Choose a product story">{stories.map((story,i) => <button key={story.goal} type="button" aria-pressed={index === i} onClick={() => go(i,true)}>{story.goal}</button>)}</div>
+    <div className="ah-footer"><button type="button" className="ah-real-cta" onClick={() => onSuggestion(stories[index].service)}>{stories[index].cta} <span>→</span></button><div className="ah-controls"><button type="button" onClick={replay} aria-label="Replay this concept" title="Replay"><RotateCcw size={15}/><span>Replay</span></button><button type="button" onClick={() => go(index-1,true)} aria-label="Previous story"><ArrowLeft size={16}/></button><button type="button" onClick={() => go(index+1,true)} aria-label="Next story"><ArrowRight size={16}/></button><button type="button" className="ah-play" onClick={() => { setPaused(!paused); setAnnouncement(paused ? 'Autoplay on' : 'Autoplay paused'); }} aria-label={paused ? 'Play autoplay' : 'Pause autoplay'} aria-pressed={paused}>{paused ? <Play size={14}/> : <Pause size={14}/>}</button></div></div>
+    <span className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{announcement}</span>
+  </section>;
 }

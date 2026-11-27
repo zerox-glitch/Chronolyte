@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Globe, Rocket, Smartphone, ShoppingCart, PenTool, RefreshCw, Users, HelpCircle,
@@ -33,9 +33,10 @@ const CONTACT_METHODS = ['Email', 'Phone call', 'WhatsApp'] as const;
 interface LeadCaptureFormProps {
   source?: string;
   eyebrow?: string;
+  suggestion?: { value: string; id: number } | null;
 }
 
-export function LeadCaptureForm({ source = 'homepage-cta', eyebrow = 'Free project plan' }: LeadCaptureFormProps) {
+export function LeadCaptureForm({ source = 'homepage-cta', eyebrow = 'Free project plan', suggestion }: LeadCaptureFormProps) {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [services, setServices] = useState<string[]>([]);
@@ -52,6 +53,11 @@ export function LeadCaptureForm({ source = 'homepage-cta', eyebrow = 'Free proje
   const [error, setError] = useState('');
   const [reference, setReference] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
+
+  useEffect(() => {
+    if (!suggestion || !PROJECT_OPTIONS.some(option => option.value === suggestion.value)) return;
+    setServices(previous => previous.includes(suggestion.value) ? previous : [...previous, suggestion.value]);
+  }, [suggestion]);
 
   const canContinueStep1 = services.length > 0;
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
@@ -295,6 +301,8 @@ export function LeadCaptureForm({ source = 'homepage-cta', eyebrow = 'Free proje
       </AnimatePresence>
 
       {error && <div role="alert" className="ed-alert" style={{ marginTop: '1rem' }}>{error}</div>}
+
+      {suggestion && <p className="ed-copy" role="status" style={{ marginTop: '1rem', fontSize: '0.84rem' }}>Suggested service: {SERVICE_LABELS[suggestion.value]}. You can edit your choices on step 1.</p>}
 
       {/* Footer actions */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.7rem', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.4rem' }}>

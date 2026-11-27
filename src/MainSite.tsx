@@ -229,7 +229,7 @@ const defaultHomeContent: HomePageContent = {
   },
 };
 
-function Hero({ content }: { content: HomePageContent['hero'] }) {
+function Hero({ content, onSuggestion }: { content: HomePageContent['hero']; onSuggestion: (service: string | null) => void }) {
   const [intro, ...note] = content.subheadline.split('\n');
   return (
     <section className="studio-hero" aria-labelledby="home-title">
@@ -260,7 +260,7 @@ function Hero({ content }: { content: HomePageContent['hero'] }) {
             </p>
           )}
         </div>
-        <HomeHeroCarousel />
+        <HomeHeroCarousel onSuggestion={onSuggestion} />
       </div>
     </section>
   );
@@ -295,7 +295,7 @@ const assurances = [
   { Icon: BadgeCheck, text: 'Fixed-price quote, not a vague estimate' },
   { Icon: Globe, text: 'Working worldwide, remotely' },
 ];
-function ProjectPlanner({ badge }: { badge: string }) {
+function ProjectPlanner({ badge, suggestion }: { badge: string; suggestion: { value: string; id: number } | null }) {
   return (
     <Sheet id="start" className="home-planner" innerClassName="planner-layout">
       <div className="planner-intro">
@@ -314,7 +314,7 @@ function ProjectPlanner({ badge }: { badge: string }) {
           ))}
         </ul>
       </div>
-      <LeadCaptureForm eyebrow={badge} />
+      <LeadCaptureForm eyebrow={badge} suggestion={suggestion} />
     </Sheet>
   );
 }
@@ -460,6 +460,11 @@ function IndustriesSection({ content }: { content: HomePageContent['industries']
 }
 
 export function MainSite() {
+  const [suggestion, setSuggestion] = useState<{ value: string; id: number } | null>(null);
+  const suggestService = (value: string | null) => {
+    setSuggestion(value ? { value, id: Date.now() } : null);
+    document.getElementById('start')?.scrollIntoView({ behavior: document.documentElement.dataset.motion === 'paused' ? 'auto' : 'smooth', block: 'start' });
+  };
   const [homeContent, setHomeContent] = useState<HomePageContent>(defaultHomeContent);
   const [websiteStartingPrice, setWebsiteStartingPrice] = useState<string | null>(null);
 
@@ -494,9 +499,9 @@ export function MainSite() {
 
   return (
     <EditorialPage className="ed-home">
-      <Hero content={homeContent.hero} />
+      <Hero content={homeContent.hero} onSuggestion={suggestService} />
       <CapabilitiesStrip services={homeContent.services.items} />
-      <ProjectPlanner badge={homeContent.hero.badge_text} />
+      <ProjectPlanner badge={homeContent.hero.badge_text} suggestion={suggestion} />
       <ServicesSection content={homeContent.services} />
       <WhySection
         content={{
